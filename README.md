@@ -21,5 +21,5 @@
 - [x] PING
 - [ ] SET
 - [x] TTL
-- [ ] TYPE
-- [ ] UNWATCH
+- [x] TYPE
+- [x] UNWATCH

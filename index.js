@@ -43,5 +43,10 @@ const db = new DiceDB({
     console.log(await db.increment('test'));
     console.log(await db.incrementBy('test', 500));
 
+    console.log(await db.type('test'));
+    console.log(await db.type('Welcomes'));
+
+    console.log(await db.unwatch('sddasdad'));
+
     console.log(await db.flushDB());
 })();

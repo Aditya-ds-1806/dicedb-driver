@@ -184,6 +184,16 @@ class DiceDB {
         return this.#execCommand('TTL', String(key));
     }
 
+    async type(key) {
+        validateKey(key);
+
+        return this.#execCommand('TYPE', String(key));
+    }
+
+    async unwatch(fingerprint) {
+        return this.#execCommand('UNWATCH', fingerprint);
+    }
+
     async #execCommand(command, ...args) {
         const msg = encodeCommand({
             cmd: command,
