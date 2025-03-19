@@ -5,7 +5,7 @@
 - [x] DECR
 - [x] DECRBY
 - [x] DEL
-- [ ] ECHO
+- [X] ECHO
 - [ ] EXISTS
 - [ ] EXPIRE
 - [ ] EXPIREAT

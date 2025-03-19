@@ -23,4 +23,8 @@ const db = new DiceDB({
     console.log(await db.decrementBy('testing', -20));
 
     console.log(await db.delete('delete', 'assas', 'sasa'));
+
+    console.log(await db.echo('hello there'));
+    console.log(await db.echo(''));
+    console.log(await db.echo());
 })();

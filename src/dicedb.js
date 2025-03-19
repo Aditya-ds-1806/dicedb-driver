@@ -102,6 +102,12 @@ class DiceDB {
         return this.#execCommand('DEL', ...keys);
     }
 
+    async echo(message = '') {
+        message = (message ?? '').toString();
+
+        return this.#execCommand('ECHO', message);
+    }
+
     async #execCommand(command, ...args) {
         const msg = encodeCommand({
             cmd: command,
