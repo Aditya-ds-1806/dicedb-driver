@@ -4,7 +4,7 @@
 
 - [x] DECR
 - [x] DECRBY
-- [ ] DEL
+- [x] DEL
 - [ ] ECHO
 - [ ] EXISTS
 - [ ] EXPIRE

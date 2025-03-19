@@ -93,6 +93,15 @@ class DiceDB {
         return this.#execCommand('DECRBY', key, delta);
     }
 
+    async delete(...keys) {
+        if (keys.length === 0) {
+            const err = new RangeError('No keys provided to delete!')
+            throw err;
+        }
+
+        return this.#execCommand('DEL', ...keys);
+    }
+
     async #execCommand(command, ...args) {
         const msg = encodeCommand({
             cmd: command,
