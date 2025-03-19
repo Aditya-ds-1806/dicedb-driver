@@ -19,7 +19,7 @@
 - [x] INCR
 - [x] INCRBY
 - [x] PING
-- [ ] SET
+- [x] SET
 - [x] TTL
 - [x] TYPE
 - [x] UNWATCH
