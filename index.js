@@ -7,6 +7,7 @@ const db = new DiceDB({
 
 (async () => {
     await db.connect();
+    console.log('connected to DB');
 
     console.log(await db.ping());
     console.log(await db.ping('Hey there!'));

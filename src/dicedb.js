@@ -1,6 +1,6 @@
-const net = require('node:net');
 const crypto = require('node:crypto')
 
+const DiceDBSocket = require('../lib/DiceDBSocket');
 const { encodeCommand, decodeResponse } = require('../build/cmd');
 
 class DiceDB {
@@ -10,47 +10,26 @@ class DiceDB {
     }
 
     async connect() {
-        return new Promise((resolve, reject) => {
-            const { host, port } = this.opts;
+        const { host, port } = this.opts;
 
-            if (!host) {
-                const err = new Error('Host is required!');
-                reject(err);
-            }
+        if (!host) {
+            const err = new Error('Host is required!');
+            reject(err);
+        }
 
-            if (!Number.isInteger(port) || port <= 0) {
-                const err = new Error('Port is required and must be an interger!');
-                reject(err);
-            }
+        if (!Number.isInteger(port) || port <= 0) {
+            const err = new Error('Port is required and must be an interger!');
+            reject(err);
+        }
 
-            this.conn = net.createConnection({
-                host,
-                port
-            });
+        this.conn = new DiceDBSocket({
+            host,
+            port
+        });
 
-            this.conn.on('connect', () => {
-                console.log('connected to DB')
-                resolve(this.conn);
-            });
+        await this.conn.connect();
 
-            this.conn.on('error', reject);
-
-            this.conn.on('end', () => {
-                console.log('Ended')
-            });
-
-            this.conn.on('drain', () => {
-                console.log('that was what I got');
-            });
-
-            this.conn.on('close', (err) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log('Closed connection');
-                }
-            });
-        })
+        return this.conn;
     }
 
     async handshake(execMode = 'command') {
@@ -59,22 +38,7 @@ class DiceDB {
             throw err;
         }
 
-        return new Promise((resolve, reject) => {
-            const msg = encodeCommand({
-                cmd: 'HANDSHAKE',
-                args: [this.client_id, 'command']
-            });
-
-            this.conn.once('data', (data) => {
-                return resolve({ data: decodeResponse(data) });
-            });
-
-            this.conn.write(msg, (err) => {
-                if (err) {
-                    return reject(err);
-                }
-            });
-        });
+        return this.#execCommand('HANDSHAKE', this.client_id, execMode);
     }
 
     async ping(message = '') {
@@ -83,22 +47,11 @@ class DiceDB {
             throw err;
         }
 
-        return new Promise((resolve, reject) => {
-            const msg = encodeCommand({
-                cmd: 'PING',
-                args: message ? [message] : []
-            });
+        if (message) {
+            return this.#execCommand('PING', message);
+        }
 
-            this.conn.once('data', (data) => {
-                return resolve({ data: decodeResponse(data) });
-            });
-
-            this.conn.write(msg, (err) => {
-                if (err) {
-                    return reject(err);
-                }
-            });
-        });
+        return this.#execCommand('PING');
     }
 
     async get(key) {
@@ -109,22 +62,18 @@ class DiceDB {
 
         key = String(key);
 
-        return new Promise((resolve, reject) => {
-            const msg = encodeCommand({
-                cmd: 'GET',
-                args: [key]
-            });
+        return this.#execCommand('GET', key);
+    }
 
-            this.conn.once('data', (data) => {
-                return resolve({ data: decodeResponse(data) });
-            });
+    async #execCommand(command, ...args) {
+        const msg = encodeCommand({
+            cmd: command,
+            args: args.filter(arg => arg !== null || arg !== 'undefined')
+        });
 
-            this.conn.write(msg, (err) => {
-                if (err) {
-                    return reject(err);
-                }
-            });
-        })
+        const data = await this.conn.write(msg);
+
+        return { data: decodeResponse(data) }
     }
 }
 
