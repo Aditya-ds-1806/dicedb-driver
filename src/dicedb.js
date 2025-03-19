@@ -155,6 +155,10 @@ class DiceDB {
         return this.#execCommand('EXPIRETIME', key);
     }
 
+    async flushDB() {
+        return this.#execCommand('FLUSHDB');
+    }
+
     async ttl(key) {
         validateKey(key);
 

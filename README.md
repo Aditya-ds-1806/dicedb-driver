@@ -5,12 +5,12 @@
 - [x] DECR
 - [x] DECRBY
 - [x] DEL
-- [X] ECHO
-- [X] EXISTS
-- [X] EXPIRE
-- [X] EXPIREAT
-- [X] EXPIRETIME
-- [ ] FLUSHDB
+- [x] ECHO
+- [x] EXISTS
+- [x] EXPIRE
+- [x] EXPIREAT
+- [x] EXPIRETIME
+- [x] FLUSHDB
 - [x] GET
 - [ ] GETDEL
 - [ ] GETEX

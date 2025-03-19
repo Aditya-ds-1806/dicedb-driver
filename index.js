@@ -36,4 +36,6 @@ const db = new DiceDB({
     console.log(await db.expireAt('test', Date.now() + 60 * 60 * 1000, 'NX'));
     console.log(await db.expireTime('test'));
     console.log(await db.ttl('test'));
+
+    console.log(await db.flushDB());
 })();
