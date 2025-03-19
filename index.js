@@ -1,0 +1,20 @@
+const DiceDB = require("./src/dicedb");
+
+const db = new DiceDB({
+    host: 'localhost',
+    port: 7379
+});
+
+(async () => {
+    await db.connect();
+
+    console.log(await db.ping());
+    console.log(await db.ping('Hey there!'));
+
+    console.log(await db.handshake('watch'));
+    console.log(await db.handshake('command'));
+    console.log(await db.handshake());
+
+    console.log(await db.get('Hey'));
+    console.log(await db.get('Welcome'));
+})();

@@ -1,0 +1,21 @@
+{
+  "name": "dicedb",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "compile": "rm -rf build && mkdir build && pbjs cmd.proto --es6 build/cmd.js",
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "protobufjs": "^7.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9",
+    "pbjs": "^0.0.14"
+  }
+}
