@@ -2,8 +2,8 @@
 
 ## Supported Commands
 
-- [ ] DECR
-- [ ] DECRBY
+- [x] DECR
+- [x] DECRBY
 - [ ] DEL
 - [ ] ECHO
 - [ ] EXISTS

@@ -17,5 +17,8 @@ const db = new DiceDB({
     console.log(await db.handshake());
 
     console.log(await db.get('Hey'));
-    console.log(await db.get('Welcome'));
+    console.log(await db.get('Welcomes'));
+
+    console.log(await db.decrement('test'));
+    console.log(await db.decrementBy('testing', -20));
 })();

@@ -65,6 +65,34 @@ class DiceDB {
         return this.#execCommand('GET', key);
     }
 
+    async decrement(key) {
+        if (typeof key !== 'string' && typeof key !== 'number') {
+            const err = new TypeError('key must be a string!');
+            throw err;
+        }
+
+        key = String(key);
+
+        return this.#execCommand('DECR', key);
+    }
+
+    async decrementBy(key, delta) {
+        if (typeof key !== 'string' && typeof key !== 'number') {
+            const err = new TypeError('key must be a string!');
+            throw err;
+        }
+
+        if (!Number.isSafeInteger(delta)) {
+            const err = new TypeError('delta must be an integer!');
+            throw err;
+        }
+
+        key = String(key);
+        delta = String(delta);
+
+        return this.#execCommand('DECRBY', key, delta);
+    }
+
     async #execCommand(command, ...args) {
         const msg = encodeCommand({
             cmd: command,
