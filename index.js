@@ -37,5 +37,8 @@ const db = new DiceDB({
     console.log(await db.expireTime('test'));
     console.log(await db.ttl('test'));
 
+    console.log(await db.getAndSetExpiry('test', { persist: true }));
+    console.log(await db.getAndDelete('test'));
+
     console.log(await db.flushDB());
 })();
