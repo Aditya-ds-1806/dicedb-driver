@@ -47,6 +47,11 @@ const db = new DiceDB({
     console.log(await db.type('Welcomes'));
 
     console.log(await db.unwatch('sddasdad'));
+    console.log(await db.set('name', 'Aditya'));
+    console.log(await db.set('age', 25));
+    console.log(await db.set('age', 29, { xx: true }));
+    console.log(await db.set('age', 302, { nx: true }));
+    console.log(await db.set('age', 302, { ex: 10 }));
 
     console.log(await db.flushDB());
 })();

@@ -7,6 +7,7 @@ const {
     validateInteger,
     validateTime,
     validateTimestamp,
+    validateSetValue,
 } = require('../lib/validators');
 const { encodeCommand, decodeResponse } = require('../build/cmd');
 
@@ -176,6 +177,43 @@ class DiceDB {
         }
 
         return this.#execCommand('PING');
+    }
+
+    async set(key, value, opts = {}) {
+        validateKey(key);
+        validateSetValue(value);
+
+        const {
+            ex,
+            px,
+            ex_at: exAt,
+            px_at: pxAt,
+            xx = false,
+            nx = false,
+            keepTTL = false
+        } = opts;
+
+        const args = [String(key), String(value)];
+
+        if (ex >= 0 && validateTime(ex)) {
+            args.push('EX', String(ex));
+        } else if (px >= 0 && validateTime(px)) {
+            args.push('PX', String(px));
+        } else if (exAt >= 0 && validateTimestamp(exAt)) {
+            args.push('EXAT', String(exAt));
+        } else if (pxAt >= 0 && validateTimestamp(pxAt)) {
+            args.push('PXAT', String(pxAt));
+        } else if (keepTTL) {
+            args.push('KEEPTTL');
+        }
+
+        if (typeof xx === 'boolean' && xx) {
+            args.push('XX');
+        } else if (typeof nx === 'boolean' && nx) {
+            args.push('NX');
+        }
+
+        return this.#execCommand('SET', ...args);
     }
 
     async ttl(key) {
