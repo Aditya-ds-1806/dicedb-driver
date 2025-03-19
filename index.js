@@ -27,4 +27,6 @@ const db = new DiceDB({
     console.log(await db.echo('hello there'));
     console.log(await db.echo(''));
     console.log(await db.echo());
+
+    console.log(await db.exists('hello', 'testing', 'Hey', 'Hey'));
 })();

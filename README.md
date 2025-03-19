@@ -6,7 +6,7 @@
 - [x] DECRBY
 - [x] DEL
 - [X] ECHO
-- [ ] EXISTS
+- [X] EXISTS
 - [ ] EXPIRE
 - [ ] EXPIREAT
 - [ ] EXPIRETIME

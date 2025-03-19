@@ -108,6 +108,17 @@ class DiceDB {
         return this.#execCommand('ECHO', message);
     }
 
+    async exists(...keys) {
+        if (keys.length === 0) {
+            const err = new RangeError('No keys provided to exists!')
+            throw err;
+        }
+
+        const uniqueKeys = new Set(keys);
+
+        return this.#execCommand('EXISTS', ...uniqueKeys);
+    }
+
     async #execCommand(command, ...args) {
         const msg = encodeCommand({
             cmd: command,
