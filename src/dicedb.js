@@ -39,19 +39,6 @@ class DiceDB {
         return this.conn;
     }
 
-    async ping(message = '') {
-        if (typeof message !== 'string') {
-            const err = new TypeError('message must be a string!');
-            throw err;
-        }
-
-        if (message) {
-            return this.#execCommand('PING', message);
-        }
-
-        return this.#execCommand('PING');
-    }
-
     async decrement(key) {
         validateKey(key);
 
@@ -176,6 +163,19 @@ class DiceDB {
         validateInteger(delta);
 
         return this.#execCommand('INCRBY', String(key), String(delta));
+    }
+
+    async ping(message = '') {
+        if (typeof message !== 'string') {
+            const err = new TypeError('message must be a string!');
+            throw err;
+        }
+
+        if (message) {
+            return this.#execCommand('PING', message);
+        }
+
+        return this.#execCommand('PING');
     }
 
     async ttl(key) {
