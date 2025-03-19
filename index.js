@@ -29,4 +29,11 @@ const db = new DiceDB({
     console.log(await db.echo());
 
     console.log(await db.exists('hello', 'testing', 'Hey', 'Hey'));
+
+    console.log(await db.expire('Hey', 10, 'NX'));
+    console.log(await db.expire('Hey', 2, 'XX'));
+
+    console.log(await db.expireAt('test', Date.now() + 60 * 60 * 1000, 'NX'));
+    console.log(await db.expireTime('test'));
+    console.log(await db.ttl('test'));
 })();

@@ -2,6 +2,7 @@ const crypto = require('node:crypto')
 
 const DiceDBSocket = require('../lib/DiceDBSocket');
 const { encodeCommand, decodeResponse } = require('../build/cmd');
+const { validateKey, validateKeys } = require('../lib/validators');
 
 class DiceDB {
     constructor(opts = {}) {
@@ -55,10 +56,7 @@ class DiceDB {
     }
 
     async get(key) {
-        if (typeof key !== 'string' && typeof key !== 'number') {
-            const err = new TypeError('key must be a string!');
-            throw err;
-        }
+        validateKey(key);
 
         key = String(key);
 
@@ -66,10 +64,7 @@ class DiceDB {
     }
 
     async decrement(key) {
-        if (typeof key !== 'string' && typeof key !== 'number') {
-            const err = new TypeError('key must be a string!');
-            throw err;
-        }
+        validateKey(key);
 
         key = String(key);
 
@@ -77,10 +72,7 @@ class DiceDB {
     }
 
     async decrementBy(key, delta) {
-        if (typeof key !== 'string' && typeof key !== 'number') {
-            const err = new TypeError('key must be a string!');
-            throw err;
-        }
+        validateKey(key);
 
         if (!Number.isSafeInteger(delta)) {
             const err = new TypeError('delta must be an integer!');
@@ -94,10 +86,7 @@ class DiceDB {
     }
 
     async delete(...keys) {
-        if (keys.length === 0) {
-            const err = new RangeError('No keys provided to delete!')
-            throw err;
-        }
+        validateKeys(keys);
 
         return this.#execCommand('DEL', ...keys);
     }
@@ -109,14 +98,69 @@ class DiceDB {
     }
 
     async exists(...keys) {
-        if (keys.length === 0) {
-            const err = new RangeError('No keys provided to exists!')
-            throw err;
-        }
+        validateKeys(keys);
 
         const uniqueKeys = new Set(keys);
 
         return this.#execCommand('EXISTS', ...uniqueKeys);
+    }
+
+    async expire(key, seconds, condition) {
+        validateKey(key);
+
+        if (!Number.isFinite(seconds)) {
+            const err = new TypeError('seconds must be a number!');
+            throw err;
+        }
+
+        const allowedConditions = ['NX', 'XX'];
+
+        if (!allowedConditions.includes(condition)) {
+            const err = new TypeError(`condition must be one of ${allowedConditions.join(', ')}!`);
+            throw err;
+        }
+
+        key = String(key);
+        seconds = String(seconds);
+
+        return this.#execCommand('EXPIRE', key, seconds, condition);
+    }
+
+    async expireAt(key, timestamp, condition) {
+        validateKey(key);
+
+        if (!Number.isFinite(timestamp)) {
+            const err = new TypeError('timestamp must be a number!');
+            throw err;
+        }
+
+        const allowedConditions = ['NX', 'XX', 'GT', 'LT'];
+
+        if (!allowedConditions.includes(condition)) {
+            const err = new TypeError(`condition must be one of ${allowedConditions.join(', ')}!`);
+            throw err;
+        }
+
+        key = String(key);
+        timestamp = String(timestamp);
+
+        return this.#execCommand('EXPIREAT', key, timestamp, condition);
+    }
+
+    async expireTime(key) {
+        validateKey(key);
+
+        key = String(key);
+
+        return this.#execCommand('EXPIRETIME', key);
+    }
+
+    async ttl(key) {
+        validateKey(key);
+
+        key = String(key);
+
+        return this.#execCommand('TTL', key);
     }
 
     async #execCommand(command, ...args) {

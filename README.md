@@ -7,9 +7,9 @@
 - [x] DEL
 - [X] ECHO
 - [X] EXISTS
-- [ ] EXPIRE
-- [ ] EXPIREAT
-- [ ] EXPIRETIME
+- [X] EXPIRE
+- [X] EXPIREAT
+- [X] EXPIRETIME
 - [ ] FLUSHDB
 - [x] GET
 - [ ] GETDEL
@@ -20,6 +20,6 @@
 - [ ] INCRBY
 - [x] PING
 - [ ] SET
-- [ ] TTL
+- [x] TTL
 - [ ] TYPE
 - [ ] UNWATCH
