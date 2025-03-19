@@ -39,15 +39,6 @@ class DiceDB {
         return this.conn;
     }
 
-    async handshake(execMode = 'command') {
-        if (execMode !== 'command' && execMode !== 'watch') {
-            const err = new TypeError('execMode must be one of \'command\' or \'watch\'');
-            throw err;
-        }
-
-        return this.#execCommand('HANDSHAKE', this.client_id, execMode);
-    }
-
     async ping(message = '') {
         if (typeof message !== 'string') {
             const err = new TypeError('message must be a string!');
@@ -163,6 +154,28 @@ class DiceDB {
         }
 
         return this.#execCommand('GETEX', ...args);
+    }
+
+    async handshake(execMode = 'command') {
+        if (execMode !== 'command' && execMode !== 'watch') {
+            const err = new TypeError('execMode must be one of \'command\' or \'watch\'');
+            throw err;
+        }
+
+        return this.#execCommand('HANDSHAKE', this.client_id, execMode);
+    }
+
+    async increment(key) {
+        validateKey(key);
+
+        return this.#execCommand('INCR', String(key));
+    }
+
+    async incrementBy(key, delta) {
+        validateKey(key);
+        validateInteger(delta);
+
+        return this.#execCommand('INCRBY', String(key), String(delta));
     }
 
     async ttl(key) {

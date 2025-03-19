@@ -40,5 +40,8 @@ const db = new DiceDB({
     console.log(await db.getAndSetExpiry('test', { persist: true }));
     console.log(await db.getAndDelete('test'));
 
+    console.log(await db.increment('test'));
+    console.log(await db.incrementBy('test', 500));
+
     console.log(await db.flushDB());
 })();

@@ -12,12 +12,12 @@
 - [x] EXPIRETIME
 - [x] FLUSHDB
 - [x] GET
-- [ ] GETDEL
-- [ ] GETEX
+- [x] GETDEL
+- [x] GETEX
 - [ ] GET.WATCH
 - [x] HANDSHAKE
-- [ ] INCR
-- [ ] INCRBY
+- [x] INCR
+- [x] INCRBY
 - [x] PING
 - [ ] SET
 - [x] TTL
