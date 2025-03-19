@@ -10,6 +10,7 @@ const {
     validateSetValue,
 } = require('../lib/validators');
 const { encodeCommand, decodeResponse } = require('../build/cmd');
+const { responseParser } = require('../lib/Parsers');
 
 class DiceDB {
     constructor(opts = {}) {
@@ -240,7 +241,7 @@ class DiceDB {
 
         const data = await this.conn.write(msg);
 
-        return { data: decodeResponse(data) }
+        return { data: responseParser(decodeResponse(data)) }
     }
 }
 
