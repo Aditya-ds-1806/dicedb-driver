@@ -17,5 +17,6 @@
   "devDependencies": {
     "nodemon": "^3.1.9",
     "pbjs": "^0.0.14"
-  }
+  },
+  "type": "module"
 }

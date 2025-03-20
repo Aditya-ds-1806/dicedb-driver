@@ -1,18 +1,19 @@
-const crypto = require('node:crypto');
+import crypto from 'node:crypto';
 
-const ConnectionPool = require('../lib/ConnectionPool');
-const {
+import { ConnectionPool } from '../lib/ConnectionPool.js';
+import {
     validateKey,
     validateKeys,
     validateInteger,
     validateTime,
     validateTimestamp,
     validateSetValue,
-} = require('../lib/validators');
-const { encodeCommand, decodeResponse } = require('../build/cmd');
-const { responseParser } = require('../lib/Parsers');
+} from '../lib/Validators.js';
+import { responseParser } from '../lib/Parsers.js';
 
-class DiceDB {
+import { encodeCommand, decodeResponse } from '../build/cmd.js';
+
+export default class DiceDB {
     constructor(opts = {}) {
         this.opts = opts;
         this.init();
@@ -28,12 +29,12 @@ class DiceDB {
 
         if (!host) {
             const err = new Error('Host is required!');
-            reject(err);
+            throw err;
         }
 
         if (!Number.isInteger(port) || port <= 0) {
             const err = new Error('Port is required and must be an interger!');
-            reject(err);
+            throw err;
         }
 
         this.client_id = clientId ?? crypto.randomUUID();
@@ -254,5 +255,3 @@ class DiceDB {
         return { data: responseParser(decodeResponse(data)) }
     }
 }
-
-module.exports = DiceDB;

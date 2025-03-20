@@ -1,4 +1,4 @@
-const DiceDB = require("./src/dicedb");
+import DiceDB from "./src/dicedb.js";
 
 const db = new DiceDB({
     host: 'localhost',
