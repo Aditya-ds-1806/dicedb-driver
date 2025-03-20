@@ -1,6 +1,6 @@
-const crypto = require('node:crypto')
+const crypto = require('node:crypto');
 
-const DiceDBSocket = require('../lib/DiceDBSocket');
+const ConnectionPool = require('../lib/ConnectionPool');
 const {
     validateKey,
     validateKeys,
@@ -15,11 +15,16 @@ const { responseParser } = require('../lib/Parsers');
 class DiceDB {
     constructor(opts = {}) {
         this.opts = opts;
-        this.client_id = opts.client_id ?? crypto.randomUUID();
+        this.init();
     }
 
-    async connect() {
-        const { host, port } = this.opts;
+    init() {
+        const {
+            host,
+            port,
+            client_id: clientId,
+            max_pool_size: maxPoolSize
+        } = this.opts;
 
         if (!host) {
             const err = new Error('Host is required!');
@@ -31,14 +36,17 @@ class DiceDB {
             reject(err);
         }
 
-        this.conn = new DiceDBSocket({
+        this.client_id = clientId ?? crypto.randomUUID();
+
+        this.connectionPool = new ConnectionPool({
+            port,
             host,
-            port
+            max_pool_size: maxPoolSize
         });
+    }
 
-        await this.conn.connect();
-
-        return this.conn;
+    async connect() {
+        return this.connectionPool.connect();
     }
 
     async decrement(key) {
@@ -234,12 +242,14 @@ class DiceDB {
     }
 
     async #execCommand(command, ...args) {
+        const conn = await this.connectionPool.acquireConnection();
+
         const msg = encodeCommand({
             cmd: command,
             args: args.filter(arg => arg !== null || arg !== 'undefined')
         });
 
-        const data = await this.conn.write(msg);
+        const data = await conn.write(msg);
 
         return { data: responseParser(decodeResponse(data)) }
     }
