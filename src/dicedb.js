@@ -10,6 +10,7 @@ import {
     validateSetValue,
 } from '../lib/Validators.js';
 import { responseParser } from '../lib/Parsers.js';
+import Logger from '../utils/Logger.js';
 
 import { encodeCommand, decodeResponse } from '../build/cmd.js';
 
@@ -27,13 +28,19 @@ export default class DiceDB {
             max_pool_size: maxPoolSize
         } = this.opts;
 
+        this.logger = new Logger('DiceDB');
+
         if (!host) {
             const err = new Error('Host is required!');
+            this.logger.error(err);
+
             throw err;
         }
 
         if (!Number.isInteger(port) || port <= 0) {
             const err = new Error('Port is required and must be an interger!');
+            this.logger.error(err);
+
             throw err;
         }
 
@@ -44,6 +51,8 @@ export default class DiceDB {
             host,
             max_pool_size: maxPoolSize
         });
+
+        this.logger.info(`Initialized DiceDB client ${this.client_id}`);
     }
 
     async connect() {
@@ -91,6 +100,8 @@ export default class DiceDB {
 
         if (!allowedConditions.includes(condition)) {
             const err = new TypeError(`condition must be one of ${allowedConditions.join(', ')}!`);
+            this.logger.error(err);
+
             throw err;
         }
 
@@ -105,6 +116,8 @@ export default class DiceDB {
 
         if (!allowedConditions.includes(condition)) {
             const err = new TypeError(`condition must be one of ${allowedConditions.join(', ')}!`);
+            this.logger.error(err);
+
             throw err;
         }
 
@@ -157,6 +170,8 @@ export default class DiceDB {
     async handshake(execMode = 'command') {
         if (execMode !== 'command' && execMode !== 'watch') {
             const err = new TypeError('execMode must be one of \'command\' or \'watch\'');
+            this.logger.error(err);
+
             throw err;
         }
 
@@ -179,6 +194,8 @@ export default class DiceDB {
     async ping(message = '') {
         if (typeof message !== 'string') {
             const err = new TypeError('message must be a string!');
+            this.logger.error(err);
+
             throw err;
         }
 
