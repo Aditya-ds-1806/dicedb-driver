@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
-    "compile": "rm -rf build && mkdir build && pbjs cmd.proto --es6 build/cmd.js",
+    "compile": "rm -rf build && mkdir build && pbjs dicedb-protos/cmd.proto --es6 build/cmd.js",
     "dev": "DEBUG=DiceDB* nodemon index.js",
     "start": "node index.js"
   },
