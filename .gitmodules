@@ -1,0 +1,3 @@
+[submodule "dicedb-protos"]
+	path = dicedb-protos
+	url = git@github.com:DiceDB/dicedb-protos.git
