@@ -1,4 +1,4 @@
-import debug from 'debug'
+import debug from 'debug';
 
 export default class Logger {
     constructor(namespace) {

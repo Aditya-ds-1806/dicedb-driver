@@ -1,5 +1,5 @@
-import Command from "../../lib/Command.js";
-import { COMMANDS } from "../constants/commands.js";
+import Command from '../../lib/Command.js';
+import { COMMANDS } from '../constants/commands.js';
 
 export default class EchoCommand extends Command {
     static get command() {

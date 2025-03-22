@@ -1,6 +1,6 @@
-import Command from "../../lib/Command.js";
-import { validateKey, validateInteger } from "../../lib/Validators.js";
-import { COMMANDS } from "../constants/commands.js";
+import Command from '../../lib/Command.js';
+import { validateKey, validateInteger } from '../../lib/Validators.js';
+import { COMMANDS } from '../constants/commands.js';
 
 export default class DecrementByCommand extends Command {
     static get command() {

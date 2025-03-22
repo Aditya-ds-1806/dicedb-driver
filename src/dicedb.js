@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import path from 'node:path'
+import path from 'node:path';
 
 import { ConnectionPool } from '../lib/ConnectionPool.js';
 import CommandRegistry from '../lib/CommandRegistry.js';
@@ -17,7 +17,7 @@ export default class DiceDB {
             host,
             port,
             client_id: clientId,
-            max_pool_size: maxPoolSize
+            max_pool_size: maxPoolSize,
         } = this.opts;
 
         this.logger = new Logger('DiceDB');
@@ -41,7 +41,7 @@ export default class DiceDB {
         this.connectionPool = new ConnectionPool({
             port,
             host,
-            max_pool_size: maxPoolSize
+            max_pool_size: maxPoolSize,
         });
 
         this.logger.info(`Initialized DiceDB client ${this.client_id}`);
@@ -70,14 +70,16 @@ export default class DiceDB {
             return;
         }
 
-        await CommandRegistry.loadCommands(path.resolve(import.meta.dirname, '../src/commands'));
+        await CommandRegistry.loadCommands(
+            path.resolve(import.meta.dirname, '../src/commands'),
+        );
 
-        CommandRegistry.list().forEach(command => {
+        CommandRegistry.list().forEach((command) => {
             const commandName = COMMAND_TO_COMMAND_NAME[command];
 
             DiceDB.prototype[commandName] = async function (...args) {
                 return this.execCommand(command, ...args);
-            }
+            };
         });
 
         DiceDB.#commandsAttached = true;

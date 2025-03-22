@@ -1,6 +1,6 @@
-import Command from "../../lib/Command.js";
-import { validateKey, validateTime } from "../../lib/Validators.js";
-import { COMMANDS } from "../constants/commands.js";
+import Command from '../../lib/Command.js';
+import { validateKey, validateTime } from '../../lib/Validators.js';
+import { COMMANDS } from '../constants/commands.js';
 
 export default class ExpireCommand extends Command {
     static get command() {
@@ -16,7 +16,9 @@ export default class ExpireCommand extends Command {
         const allowedConditions = ['NX', 'XX'];
 
         if (!allowedConditions.includes(condition)) {
-            const err = new TypeError(`condition must be one of ${allowedConditions.join(', ')}!`);
+            const err = new TypeError(
+                `condition must be one of ${allowedConditions.join(', ')}!`,
+            );
             throw err;
         }
 

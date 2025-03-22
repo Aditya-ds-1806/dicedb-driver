@@ -1,8 +1,8 @@
-import DiceDB from "./src/dicedb.js";
+import DiceDB from './src/dicedb.js';
 
 const db = new DiceDB({
     host: 'localhost',
-    port: 7379
+    port: 7379,
 });
 
 (async () => {
@@ -43,7 +43,7 @@ const db = new DiceDB({
             db.set('age', 29, { xx: true }),
             db.set('age', 302, { nx: true }),
             db.set('age', 302, { ex: 10 }),
-            db.flushDB()
+            db.flushDB(),
         ]);
 
         console.dir(data, { depth: null });

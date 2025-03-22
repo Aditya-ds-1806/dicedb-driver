@@ -1,7 +1,11 @@
-import Command from "../../lib/Command.js";
-import { validateKey, validateTime, validateTimestamp } from "../../lib/Validators.js";
+import Command from '../../lib/Command.js';
+import {
+    validateKey,
+    validateTime,
+    validateTimestamp,
+} from '../../lib/Validators.js';
 
-import { COMMANDS } from "../constants/commands.js";
+import { COMMANDS } from '../constants/commands.js';
 
 export default class GetAndSetExpiryCommand extends Command {
     static get command() {

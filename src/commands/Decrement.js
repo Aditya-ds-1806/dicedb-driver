@@ -1,7 +1,7 @@
-import Command from "../../lib/Command.js";
-import { validateKey } from "../../lib/Validators.js";
+import Command from '../../lib/Command.js';
+import { validateKey } from '../../lib/Validators.js';
 
-import { COMMANDS } from "../constants/commands.js";
+import { COMMANDS } from '../constants/commands.js';
 
 export default class DecrementCommand extends Command {
     static get command() {

@@ -1,6 +1,6 @@
-import Command from "../../lib/Command.js";
-import { validateKeys } from "../../lib/Validators.js";
-import { COMMANDS } from "../constants/commands.js";
+import Command from '../../lib/Command.js';
+import { validateKeys } from '../../lib/Validators.js';
+import { COMMANDS } from '../constants/commands.js';
 
 export default class ExistsCommand extends Command {
     static get command() {

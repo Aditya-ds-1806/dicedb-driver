@@ -1,6 +1,11 @@
-import Command from "../../lib/Command.js";
-import { validateKey, validateSetValue, validateTime, validateTimestamp } from "../../lib/Validators.js";
-import { COMMANDS } from "../constants/commands.js";
+import Command from '../../lib/Command.js';
+import {
+    validateKey,
+    validateSetValue,
+    validateTime,
+    validateTimestamp,
+} from '../../lib/Validators.js';
+import { COMMANDS } from '../constants/commands.js';
 
 export default class SetCommand extends Command {
     static get command() {
@@ -20,7 +25,7 @@ export default class SetCommand extends Command {
             px_at: pxAt,
             xx = false,
             nx = false,
-            keepTTL = false
+            keepTTL = false,
         } = opts;
 
         const cmdArgs = [String(key), String(value)];
