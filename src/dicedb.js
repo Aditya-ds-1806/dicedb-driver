@@ -6,7 +6,7 @@ import CommandRegistry from '../lib/CommandRegistry.js';
 import Logger from '../utils/Logger.js';
 import { COMMAND_TO_COMMAND_NAME } from './constants/commands.js';
 
-class DiceDB {
+export default class DiceDB {
     constructor(opts = {}) {
         this.opts = opts;
         this.init();
@@ -48,6 +48,8 @@ class DiceDB {
     }
 
     async connect() {
+        await DiceDB.#attachCommands();
+
         return this.connectionPool.connect();
     }
 
@@ -63,7 +65,7 @@ class DiceDB {
 
     static #commandsAttached = false;
 
-    static async attachCommands() {
+    static async #attachCommands() {
         if (DiceDB.#commandsAttached) {
             return;
         }
@@ -81,7 +83,3 @@ class DiceDB {
         DiceDB.#commandsAttached = true;
     }
 }
-
-await DiceDB.attachCommands();
-
-export default DiceDB;
