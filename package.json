@@ -7,7 +7,7 @@
     "lint:fix": "npx eslint . --fix",
     "compile": "rm -rf build && mkdir build && pbjs dicedb-protos/cmd.proto --es6 build/cmd.js",
     "dev": "DEBUG=DiceDB* nodemon index.js",
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -29,5 +29,6 @@
   "engines": {
     "node": ">=16.0.0"
   },
-  "type": "module"
+  "type": "module",
+  "types": "index.d.ts"
 }

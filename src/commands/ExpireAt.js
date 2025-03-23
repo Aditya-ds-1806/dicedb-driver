@@ -1,4 +1,5 @@
 import Command from '../../lib/Command.js';
+import { DiceDBCommandError } from '../../lib/Errors.js';
 import { validateKey, validateTimestamp } from '../../lib/Validators.js';
 
 import { COMMANDS } from '../constants/commands.js';
@@ -17,8 +18,8 @@ export default class ExpireAtCommand extends Command {
         const allowedConditions = ['NX', 'XX', 'GT', 'LT'];
 
         if (!allowedConditions.includes(condition)) {
-            const err = new TypeError(
-                `condition must be one of ${allowedConditions.join(', ')}!`,
+            const err = new DiceDBCommandError(
+                `${this.command} condition must be one of ${allowedConditions.join(', ')}!`,
             );
             throw err;
         }

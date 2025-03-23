@@ -23,6 +23,7 @@ export default defineConfig([
                     singleQuote: true,
                 },
             ],
+            'no-useless-constructor': 'error',
         },
     },
     { settings: { node: { version: '>=16.0.0' } } },

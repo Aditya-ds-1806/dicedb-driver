@@ -1,4 +1,5 @@
 import Command from '../../lib/Command.js';
+import { DiceDBCommandError } from '../../lib/Errors.js';
 import { COMMANDS } from '../constants/commands.js';
 
 export default class HandshakeCommand extends Command {
@@ -10,8 +11,8 @@ export default class HandshakeCommand extends Command {
         const execMode = args?.[0] ?? 'command';
 
         if (execMode !== 'command' && execMode !== 'watch') {
-            const err = new TypeError(
-                "execMode must be one of 'command' or 'watch'",
+            const err = new DiceDBCommandError(
+                `${this.command} execMode must be one of 'command' or 'watch'`,
             );
             throw err;
         }

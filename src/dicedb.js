@@ -5,6 +5,11 @@ import { ConnectionPool } from '../lib/ConnectionPool.js';
 import CommandRegistry from '../lib/CommandRegistry.js';
 import Logger from '../utils/Logger.js';
 import { COMMAND_TO_COMMAND_NAME } from './constants/commands.js';
+import {
+    DiceDBError,
+    DiceDBCommandError,
+    DiceDBConnectionError,
+} from '../lib/Errors.js';
 
 export default class DiceDB {
     constructor(opts = {}) {
@@ -23,14 +28,16 @@ export default class DiceDB {
         this.logger = new Logger('DiceDB');
 
         if (!host) {
-            const err = new Error('Host is required!');
+            const err = new DiceDBError('Host is required!');
             this.logger.error(err);
 
             throw err;
         }
 
         if (!Number.isInteger(port) || port <= 0) {
-            const err = new Error('Port is required and must be an interger!');
+            const err = new DiceDBError(
+                'Port is required and must be an interger!',
+            );
             this.logger.error(err);
 
             throw err;
@@ -48,19 +55,40 @@ export default class DiceDB {
     }
 
     async connect() {
-        await DiceDB.#attachCommands();
-
-        return this.connectionPool.connect();
+        try {
+            await DiceDB.#attachCommands();
+            return this.connectionPool.connect();
+        } catch (err) {
+            this.logger.error(err);
+            throw err;
+        }
     }
 
     async execCommand(command, ...args) {
-        const conn = await this.connectionPool.acquireConnection();
-        const Command = CommandRegistry.get(command);
+        try {
+            const conn = await this.connectionPool.acquireConnection();
+            const Command = CommandRegistry.get(command);
 
-        const cmd = new Command({ conn, client_id: this.client_id });
-        const data = await cmd.exec(...args);
+            const cmd = new Command({ conn, client_id: this.client_id });
+            const data = await cmd.exec(...args);
 
-        return data;
+            return data;
+        } catch (err) {
+            if (err instanceof DiceDBConnectionError) {
+                throw new DiceDBError({
+                    message:
+                        'Failed to execute command, did you forget to call connect()?',
+                    cause: err,
+                });
+            } else if (err instanceof DiceDBCommandError) {
+                throw new DiceDBError({
+                    message: 'Failed to execute command',
+                    cause: err,
+                });
+            } else {
+                throw err;
+            }
+        }
     }
 
     static #commandsAttached = false;
