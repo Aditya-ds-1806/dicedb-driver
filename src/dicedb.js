@@ -83,6 +83,7 @@ export default class DiceDB {
             client_id: this.client_id,
             max_pool_size: maxPoolSize,
             conn_timeout_ms: this.#connTimeoutMS,
+            query_timeout_ms: this.#queryTimeoutMS,
         });
 
         this.logger.info(`Initialized DiceDB client ${this.client_id}`);

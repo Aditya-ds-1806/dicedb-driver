@@ -3,18 +3,24 @@ import DiceDB from './src/dicedb.js';
 const db = new DiceDB({
     host: 'localhost',
     port: 7379,
+    conn_timout_ms: 5000,
+    query_timeout_ms: 5000,
 });
 
 (async () => {
     try {
         await db.connect();
         console.log('connected to DB');
+    } catch (err) {
+        console.log(err);
+    }
 
+    try {
         const data = await Promise.all([
             db.ping(),
             db.ping('Hey there!'),
-            db.handshake('watch'),
-            db.handshake('command'),
+            // db.handshake('watch'),
+            // db.handshake('command'),
             db.handshake(),
             db.get('Hey'),
             db.get('Welcomes'),
@@ -47,7 +53,7 @@ const db = new DiceDB({
         ]);
 
         console.dir(data, { depth: null });
-    } catch (err) {
-        console.log(err);
+    } catch (ex) {
+        console.log(ex);
     }
 })();
