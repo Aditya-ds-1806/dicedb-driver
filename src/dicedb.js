@@ -1,4 +1,3 @@
-import crypto from 'node:crypto';
 import path from 'node:path';
 
 import { ConnectionPool } from '../lib/ConnectionPool.js';
@@ -10,6 +9,7 @@ import {
     DiceDBCommandError,
     DiceDBConnectionError,
 } from '../lib/Errors.js';
+import { uuid } from '../utils/index.js';
 
 export default class DiceDB {
     constructor(opts = {}) {
@@ -70,7 +70,7 @@ export default class DiceDB {
             throw err;
         }
 
-        this.client_id = clientId ?? crypto.randomUUID();
+        this.client_id = clientId ?? uuid();
 
         this.connectionPool = new ConnectionPool({
             port,
