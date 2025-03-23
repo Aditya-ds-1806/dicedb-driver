@@ -13,17 +13,21 @@ import {
 
 export default class DiceDB {
     constructor(opts = {}) {
-        this.opts = opts;
-        this.init();
+        this.init(opts);
     }
 
-    init() {
+    #queryTimeoutMS = 5000;
+    #connTimeoutMS = 5000;
+
+    init(opts = {}) {
         const {
             host,
             port,
             client_id: clientId,
             max_pool_size: maxPoolSize,
-        } = this.opts;
+            query_timeout_ms: queryTimeoutMS,
+            conn_timeout_ms: connTimeoutMS,
+        } = opts;
 
         this.logger = new Logger('DiceDB');
 
@@ -43,12 +47,36 @@ export default class DiceDB {
             throw err;
         }
 
+        this.#queryTimeoutMS = queryTimeoutMS ?? this.#queryTimeoutMS;
+        this.#connTimeoutMS = connTimeoutMS ?? this.#connTimeoutMS;
+
+        if (
+            !Number.isInteger(this.#queryTimeoutMS) ||
+            this.#queryTimeoutMS <= 0
+        ) {
+            const err = new DiceDBError('query_timeout_ms must be an integer!');
+            this.logger.error(err);
+
+            throw err;
+        }
+
+        if (
+            !Number.isInteger(this.#connTimeoutMS) ||
+            this.#connTimeoutMS <= 0
+        ) {
+            const err = new DiceDBError('conn_timeout_ms must be an integer!');
+            this.logger.error(err);
+
+            throw err;
+        }
+
         this.client_id = clientId ?? crypto.randomUUID();
 
         this.connectionPool = new ConnectionPool({
             port,
             host,
             max_pool_size: maxPoolSize,
+            conn_timeout_ms: this.#connTimeoutMS,
         });
 
         this.logger.info(`Initialized DiceDB client ${this.client_id}`);
@@ -66,13 +94,16 @@ export default class DiceDB {
 
     async execCommand(command, ...args) {
         try {
-            const conn = await this.connectionPool.acquireConnection();
             const Command = CommandRegistry.get(command);
+            const conn = await this.connectionPool.acquireConnection();
 
-            const cmd = new Command({ conn, client_id: this.client_id });
-            const data = await cmd.exec(...args);
+            const cmd = new Command({
+                conn,
+                client_id: this.client_id,
+                query_timeout_ms: this.#queryTimeoutMS,
+            });
 
-            return data;
+            return await cmd.exec(...args);
         } catch (err) {
             if (err instanceof DiceDBConnectionError) {
                 throw new DiceDBError({
