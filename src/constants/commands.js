@@ -45,3 +45,6 @@ export const COMMAND_TO_COMMAND_NAME = Object.freeze({
     [COMMANDS.TYPE]: 'type',
     [COMMANDS.UNWATCH]: 'unwatch',
 });
+
+export const CONN_TIMEOUT_MS = 5000;
+export const QUERY_TIMEOUT_MS = 5000;

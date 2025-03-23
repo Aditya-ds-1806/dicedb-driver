@@ -3,7 +3,11 @@ import path from 'node:path';
 import { ConnectionPool } from '../lib/ConnectionPool.js';
 import CommandRegistry from '../lib/CommandRegistry.js';
 import Logger from '../utils/Logger.js';
-import { COMMAND_TO_COMMAND_NAME } from './constants/commands.js';
+import {
+    COMMAND_TO_COMMAND_NAME,
+    CONN_TIMEOUT_MS,
+    QUERY_TIMEOUT_MS,
+} from './constants/commands.js';
 import {
     DiceDBError,
     DiceDBCommandError,
@@ -16,8 +20,8 @@ export default class DiceDB {
         this.init(opts);
     }
 
-    #queryTimeoutMS = 5000;
-    #connTimeoutMS = 5000;
+    #queryTimeoutMS = QUERY_TIMEOUT_MS;
+    #connTimeoutMS = CONN_TIMEOUT_MS;
 
     init(opts = {}) {
         const {
