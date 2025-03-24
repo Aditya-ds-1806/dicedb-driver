@@ -5,7 +5,6 @@ import CommandRegistry from '../lib/CommandRegistry.js';
 import Logger from '../utils/Logger.js';
 import {
     COMMAND_TO_COMMAND_NAME,
-    COMMANDS,
     CONN_TIMEOUT_MS,
     QUERY_TIMEOUT_MS,
 } from './constants/commands.js';
@@ -93,14 +92,6 @@ export default class DiceDB {
         try {
             await DiceDB.#attachCommands();
             await this.connectionPool.connect();
-            const { data } = await this.execCommand(COMMANDS.HANDSHAKE);
-
-            if (data.result !== 'OK') {
-                throw new DiceDBConnectionError({
-                    message:
-                        'Connection succeeded but server handshake failed!',
-                });
-            }
         } catch (err) {
             this.logger.error(err);
             throw err;
