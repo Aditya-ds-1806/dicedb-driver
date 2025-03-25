@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
-    "build": "rollup --config",
+    "build": "npx rollup --config",
     "compile": "protoc -I=./dicedb-protos --es_out=./generated dicedb-protos/cmd.proto",
     "dev": "DEBUG=DiceDB* nodemon index.js",
     "start": "nodemon index.js"
@@ -28,7 +28,8 @@
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
     "globals": "^16.0.0",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "rollup": "^4.37.0"
   },
   "exports": {
     ".": {
