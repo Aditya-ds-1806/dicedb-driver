@@ -1,4 +1,5 @@
-import DiceDB from './src/dicedb.js';
+// import DiceDB from './src/dicedb.js';
+import DiceDB from './build/esm/index.js';
 
 const db = new DiceDB({
     host: 'localhost',

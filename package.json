@@ -1,10 +1,12 @@
 {
   "name": "dice-js",
   "version": "1.0.0",
-  "main": "src/dicedb.js",
+  "main": "./build/cjs/index.js",
+  "module": "./build/esm/index.js",
   "scripts": {
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
+    "build": "rollup --config",
     "compile": "protoc -I=./dicedb-protos --es_out=./generated dicedb-protos/cmd.proto",
     "dev": "DEBUG=DiceDB* nodemon index.js",
     "start": "nodemon index.js"
@@ -14,17 +16,35 @@
   "license": "MIT",
   "description": "DiceJS is an easy to use, promise-based database client for DiceDB, that supports connection pooling for optimal performance.",
   "dependencies": {
+    "@bufbuild/protobuf": "^2.2.5",
     "debug": "^4.4.0"
   },
   "devDependencies": {
-    "@bufbuild/protobuf": "^2.2.5",
+    "@babel/core": "^7.26.10",
+    "@babel/preset-env": "^7.26.9",
     "@eslint/js": "^9.23.0",
+    "@rollup/plugin-babel": "^6.0.4",
     "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
     "globals": "^16.0.0",
     "nodemon": "^3.1.9"
   },
+  "exports": {
+    ".": {
+      "require": "./build/cjs/index.js",
+      "import": "./build/esm/index.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Aditya-ds-1806/dicedb-js"
+  },
+  "files": [
+    "build/",
+    "README.md",
+    "LICENSE"
+  ],
   "engines": {
     "node": ">=16.0.0"
   },
