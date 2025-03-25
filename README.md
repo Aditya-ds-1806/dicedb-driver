@@ -1,25 +1,31 @@
-# DiceDB JS Client
+# DiceJS
 
-## Supported Commands
+DiceJS is an easy to use, promise-based database client for [DiceDB](https://dicedb.io/), that supports connection pooling for optimal performance.
 
-- [x] DECR
-- [x] DECRBY
-- [x] DEL
-- [x] ECHO
-- [x] EXISTS
-- [x] EXPIRE
-- [x] EXPIREAT
-- [x] EXPIRETIME
-- [x] FLUSHDB
-- [x] GET
-- [x] GETDEL
-- [x] GETEX
-- [x] GET.WATCH
-- [x] HANDSHAKE
-- [x] INCR
-- [x] INCRBY
-- [x] PING
-- [x] SET
-- [x] TTL
-- [x] TYPE
-- [x] UNWATCH
+## Command Parity
+
+DiceJS supports a wide range of DiceDB commands. Below is the list of currently supported commands:
+
+| **Command**       | **Supported** |
+|--------------------|---------------|
+| `DECR`            | ✅            |
+| `DECRBY`          | ✅            |
+| `DEL`             | ✅            |
+| `ECHO`            | ✅            |
+| `EXISTS`          | ✅            |
+| `EXPIRE`          | ✅            |
+| `EXPIREAT`        | ✅            |
+| `EXPIRETIME`      | ✅            |
+| `FLUSHDB`         | ✅            |
+| `GET`             | ✅            |
+| `GETDEL`          | ✅            |
+| `GETEX`           | ✅            |
+| `GET.WATCH`       | ✅            |
+| `HANDSHAKE`       | ✅            |
+| `INCR`            | ✅            |
+| `INCRBY`          | ✅            |
+| `PING`            | ✅            |
+| `SET`             | ✅            |
+| `TTL`             | ✅            |
+| `TYPE`            | ✅            |
+| `UNWATCH`         | ✅            |

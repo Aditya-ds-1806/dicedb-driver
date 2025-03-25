@@ -1,7 +1,7 @@
 {
-  "name": "dicedb",
+  "name": "dice-js",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/dicedb.js",
   "scripts": {
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
@@ -10,9 +10,9 @@
     "start": "nodemon index.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "author": "Aditya DS",
+  "license": "MIT",
+  "description": "DiceJS is an easy to use, promise-based database client for DiceDB, that supports connection pooling for optimal performance.",
   "dependencies": {
     "debug": "^4.4.0"
   },
