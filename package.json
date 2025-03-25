@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
-    "compile": "rm -rf build && mkdir build && pbjs dicedb-protos/cmd.proto --es6 build/cmd.js",
+    "compile": "protoc -I=./dicedb-protos --es_out=./generated dicedb-protos/cmd.proto",
     "dev": "DEBUG=DiceDB* nodemon index.js",
     "start": "nodemon index.js"
   },
@@ -14,17 +14,16 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "debug": "^4.4.0",
-    "protobufjs": "^7.4.0"
+    "debug": "^4.4.0"
   },
   "devDependencies": {
+    "@bufbuild/protobuf": "^2.2.5",
     "@eslint/js": "^9.23.0",
     "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
     "globals": "^16.0.0",
-    "nodemon": "^3.1.9",
-    "pbjs": "^0.0.14"
+    "nodemon": "^3.1.9"
   },
   "engines": {
     "node": ">=16.0.0"

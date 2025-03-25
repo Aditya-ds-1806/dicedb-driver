@@ -17,13 +17,13 @@ import { uuid } from '../utils/index.js';
 
 export default class DiceDB {
     constructor(opts = {}) {
-        this.init(opts);
+        this.#init(opts);
     }
 
     #queryTimeoutMS = QUERY_TIMEOUT_MS;
     #connTimeoutMS = CONN_TIMEOUT_MS;
 
-    init(opts = {}) {
+    #init(opts = {}) {
         const {
             host,
             port,
@@ -74,7 +74,7 @@ export default class DiceDB {
             throw err;
         }
 
-        this.client_id = clientId ?? uuid();
+        this.client_id = clientId ?? `cid_${uuid()}`;
 
         this.connectionPool = new ConnectionPool({
             port,
@@ -107,6 +107,7 @@ export default class DiceDB {
                 conn,
                 client_id: this.client_id,
                 query_timeout_ms: this.#queryTimeoutMS,
+                connection_pool: this.connectionPool,
             });
 
             return await cmd.exec(...args);

@@ -11,17 +11,13 @@ const db = new DiceDB({
     try {
         await db.connect();
         console.log('connected to DB');
-    } catch (err) {
-        console.log(err);
-    }
 
-    try {
         const data = await Promise.all([
             db.ping(),
             db.ping('Hey there!'),
             // db.handshake('watch'),
             // db.handshake('command'),
-            db.handshake(),
+            // db.handshake(),
             db.get('Hey'),
             db.get('Welcomes'),
             db.decrement('test'),
@@ -52,7 +48,16 @@ const db = new DiceDB({
             db.flushDB(),
         ]);
 
-        console.dir(data, { depth: null });
+        console.log(
+            data,
+            data.every((d) => d.success),
+        );
+
+        const conn = await db.getWatch('Hey');
+
+        conn.on('data', (data) => {
+            console.dir({ data }, { depth: null });
+        });
     } catch (ex) {
         console.log(ex);
     }

@@ -14,7 +14,7 @@
 - [x] GET
 - [x] GETDEL
 - [x] GETEX
-- [ ] GET.WATCH
+- [x] GET.WATCH
 - [x] HANDSHAKE
 - [x] INCR
 - [x] INCRBY
