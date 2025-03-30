@@ -55,7 +55,7 @@ try {
     const conn = await db.getWatch('Hey');
 
     conn.on('data', (data) => {
-        console.dir({ data }, { depth: null });
+        console.dir(data, { depth: null });
     });
 } catch (ex) {
     console.log(ex);

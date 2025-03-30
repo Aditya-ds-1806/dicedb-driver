@@ -101,7 +101,9 @@ export default class DiceDB {
     async execCommand(command, ...args) {
         try {
             const Command = CommandRegistry.get(command);
-            const conn = await this.connectionPool.acquireConnection();
+            const conn = await this.connectionPool.acquireConnection({
+                watchable: Command.watchable,
+            });
 
             const cmd = new Command({
                 conn,
