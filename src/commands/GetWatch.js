@@ -7,6 +7,10 @@ export default class GetWatchCommand extends Command {
         return COMMANDS.GET_WATCH;
     }
 
+    static get watchable() {
+        return true;
+    }
+
     async exec(...args) {
         const key = args?.[0];
         validateKey(key);
