@@ -10,8 +10,8 @@ export const timeout = async (ms, err) =>
         }, ms),
     );
 
-export const uuid = () => {
+export const uuid = (prefix = '') => {
     const [chunk1] = crypto.randomUUID().split('-');
 
-    return chunk1;
+    return `${prefix}${chunk1}`;
 };

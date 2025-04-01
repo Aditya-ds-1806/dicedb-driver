@@ -88,7 +88,7 @@ export default class DiceDB {
             throw err;
         }
 
-        this.client_id = clientId ?? `cid_${uuid()}`;
+        this.client_id = clientId ?? uuid('cid_');
 
         this.connectionPool = new ConnectionPool({
             port,
