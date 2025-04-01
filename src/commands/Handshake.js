@@ -7,6 +7,10 @@ export default class HandshakeCommand extends Command {
         return COMMANDS.HANDSHAKE;
     }
 
+    static get is_private() {
+        return true;
+    }
+
     async exec(...args) {
         const execMode = args?.[0] ?? 'command';
 

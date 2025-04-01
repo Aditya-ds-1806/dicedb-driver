@@ -113,9 +113,8 @@ export default class DiceDB {
         }
     }
 
-    async execCommand(command, ...args) {
+    async execCommand(Command, ...args) {
         try {
-            const Command = CommandRegistry.get(command);
             const conn = await this.connectionPool.acquireConnection({
                 watchable: Command.watchable,
             });
@@ -157,9 +156,14 @@ export default class DiceDB {
 
         CommandRegistry.list().forEach((command) => {
             const commandName = COMMAND_TO_COMMAND_NAME[command];
+            const Command = CommandRegistry.get(command);
+
+            if (Command.is_private) {
+                return;
+            }
 
             DiceDB.prototype[commandName] = async function (...args) {
-                return this.execCommand(command, ...args);
+                return this.execCommand(Command, ...args);
             };
         });
 
