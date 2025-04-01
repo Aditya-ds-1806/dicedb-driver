@@ -1,20 +1,16 @@
-import Command from '../../lib/Command.js';
+import { WatchableCommand } from '../../lib/Command.js';
 import { validateKey } from '../../lib/Validators.js';
 import { COMMANDS } from '../constants/commands.js';
 
-export default class GetWatchCommand extends Command {
+export default class GetWatchCommand extends WatchableCommand {
     static get command() {
         return COMMANDS.GET_WATCH;
-    }
-
-    static get watchable() {
-        return true;
     }
 
     async exec(...args) {
         const key = args?.[0];
         validateKey(key);
 
-        return super.execWatchable(String(key));
+        return super.exec(String(key));
     }
 }
