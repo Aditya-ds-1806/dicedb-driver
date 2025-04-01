@@ -1,20 +1,32 @@
-import Command from '../../lib/Command.js';
+import Command from '../../lib/Command.ts';
 import {
     validateKey,
     validateSetValue,
     validateTime,
     validateTimestamp,
-} from '../../lib/Validators.js';
-import { COMMANDS } from '../constants/commands.js';
+} from '../../lib/Validators.ts';
+import { COMMANDS } from '../constants/commands.ts';
+
+interface SetCommandOptions {
+    ex?: number;
+    px?: number;
+    ex_at?: number;
+    px_at?: number;
+    xx?: boolean;
+    nx?: boolean;
+    keepTTL?: boolean;
+}
 
 export default class SetCommand extends Command {
     static get command() {
         return COMMANDS.SET;
     }
 
-    async exec(...args) {
-        const [key, value, opts = {}] = args;
-
+    async exec(
+        key: string,
+        value: string | number,
+        opts: SetCommandOptions = {},
+    ) {
         validateKey(key);
         validateSetValue(value);
 
@@ -28,15 +40,15 @@ export default class SetCommand extends Command {
             keepTTL = false,
         } = opts;
 
-        const cmdArgs = [String(key), String(value)];
+        const cmdArgs = [key, value];
 
-        if (ex >= 0 && validateTime(ex)) {
+        if (ex !== undefined && ex >= 0 && validateTime(ex)) {
             cmdArgs.push('EX', String(ex));
-        } else if (px >= 0 && validateTime(px)) {
+        } else if (px !== undefined && px >= 0 && validateTime(px)) {
             cmdArgs.push('PX', String(px));
-        } else if (exAt >= 0 && validateTimestamp(exAt)) {
+        } else if (exAt !== undefined && exAt >= 0 && validateTimestamp(exAt)) {
             cmdArgs.push('EXAT', String(exAt));
-        } else if (pxAt >= 0 && validateTimestamp(pxAt)) {
+        } else if (pxAt !== undefined && pxAt >= 0 && validateTimestamp(pxAt)) {
             cmdArgs.push('PXAT', String(pxAt));
         } else if (keepTTL) {
             cmdArgs.push('KEEPTTL');

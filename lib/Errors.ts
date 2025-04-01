@@ -1,5 +1,16 @@
+export interface DiceDBErrorOptions {
+    message?: string;
+    name?: string;
+    cause?: Error | AggregateError;
+    timeout?: number;
+}
+
 export class DiceDBError extends Error {
-    constructor(opts = {}) {
+    name: string;
+    cause?: Error | AggregateError;
+    errors?: Error[];
+
+    constructor(opts: DiceDBErrorOptions = {}) {
         super(opts.message);
         this.name = opts.name ?? 'DiceDBError';
 
@@ -9,11 +20,16 @@ export class DiceDBError extends Error {
         } else if (opts.cause instanceof Error) {
             this.cause = opts.cause;
         }
+
+        // Maintain the stack trace in V8 engines
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, this.constructor);
+        }
     }
 }
 
 export class DiceDBConnectionError extends DiceDBError {
-    constructor(opts = {}) {
+    constructor(opts: DiceDBErrorOptions = {}) {
         super({
             name: 'DiceDBConnectionError',
             message:
@@ -25,22 +41,25 @@ export class DiceDBConnectionError extends DiceDBError {
 }
 
 export class DiceDBTimeoutError extends DiceDBError {
-    constructor(opts = {}) {
+    timeout?: number;
+
+    constructor(opts: DiceDBErrorOptions = {}) {
         super({
             name: 'DiceDBTimeoutError',
             message:
-                opts.message ?? 'A timeout ocurred when processing the request',
+                opts.message ??
+                'A timeout occurred when processing the request',
             ...opts,
-            timeout: opts.timeout,
         });
+        this.timeout = opts.timeout;
     }
 }
 
 export class DiceDBCommandError extends DiceDBError {
-    constructor(opts = {}) {
+    constructor(opts: DiceDBErrorOptions = {}) {
         super({
             name: 'DiceDBCommandError',
-            message: opts.message ?? 'There was an error runnning the command',
+            message: opts.message ?? 'There was an error running the command',
             ...opts,
         });
     }

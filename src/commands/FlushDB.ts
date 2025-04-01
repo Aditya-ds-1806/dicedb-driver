@@ -1,5 +1,5 @@
-import Command from '../../lib/Command.js';
-import { COMMANDS } from '../constants/commands.js';
+import Command from '../../lib/Command.ts';
+import { COMMANDS } from '../constants/commands.ts';
 
 export default class FlushDBCommand extends Command {
     static get command() {

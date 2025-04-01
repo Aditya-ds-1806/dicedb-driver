@@ -1,14 +1,17 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import Command from './Command.js';
-import { DiceDBCommandError } from './Errors.js';
+import Command from './Command.ts';
+import { DiceDBCommandError } from './Errors.ts';
+import { COMMAND_TO_COMMAND_NAME } from '../src/constants/commands.ts';
+
+type CommandName = keyof typeof COMMAND_TO_COMMAND_NAME;
 
 class CommandRegistry {
-    #registry = new Map();
+    private registry: Map<CommandName, typeof Command> = new Map();
 
-    register(commandName, commandClass) {
-        commandName = commandName.toUpperCase();
+    register(commandName: CommandName, commandClass: typeof Command): void {
+        commandName = commandName.toUpperCase() as CommandName;
 
         if (!commandName) {
             throw new DiceDBCommandError({
@@ -22,39 +25,41 @@ class CommandRegistry {
             });
         }
 
-        if (this.#registry.has(commandName)) {
+        if (this.registry.has(commandName)) {
             throw new DiceDBCommandError({
                 message: `Command ${commandName} has already been registered`,
             });
         }
 
-        this.#registry.set(commandName, commandClass);
+        this.registry.set(commandName, commandClass);
     }
 
-    get(commandName) {
-        commandName = commandName.toUpperCase();
+    get(commandName: CommandName): typeof Command {
+        commandName = commandName.toUpperCase() as CommandName;
 
-        if (!this.#registry.has(commandName)) {
+        if (!this.registry.has(commandName)) {
             throw new DiceDBCommandError({
                 message: `Command ${commandName} not registered in registry`,
             });
         }
 
-        return this.#registry.get(commandName);
+        return this.registry.get(commandName)!;
     }
 
     list() {
-        return Array.from(this.#registry.keys());
+        return Array.from(this.registry.keys());
     }
 
-    async loadCommands(dirPath) {
+    async loadCommands(dirPath: string): Promise<void> {
         const fileNames = await fs.readdir(dirPath);
         const imports = await Promise.all(
             fileNames.map((fileName) => import(path.join(dirPath, fileName))),
         );
 
-        imports.forEach(({ default: Command }) => {
-            this.register(Command.command, Command);
+        imports.forEach(({ default: CommandClass }) => {
+            if (CommandClass && typeof CommandClass.command === 'string') {
+                this.register(CommandClass.command, CommandClass);
+            }
         });
     }
 }

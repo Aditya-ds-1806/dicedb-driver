@@ -1,42 +1,57 @@
-import { DiceDBSocket } from './DiceDBSocket.js';
+import { DiceDBSocket } from './DiceDBSocket.ts';
 
-import { delay, timeout } from '../utils/index.js';
-import Logger from '../utils/Logger.js';
-import { DiceDBConnectionError, DiceDBTimeoutError } from './Errors.js';
+import { delay, timeout } from '../utils/index.ts';
+import Logger from '../utils/Logger.ts';
+import { DiceDBConnectionError, DiceDBTimeoutError } from './Errors.ts';
 import {
     CONN_TIMEOUT_MS,
     IDLE_TIMEOUT_MS,
     QUERY_TIMEOUT_MS,
-} from '../src/constants/commands.js';
+} from '../src/constants/commands.ts';
+
+interface ConnectionPoolOptions {
+    host: string;
+    port: number;
+    client_id: string;
+    max_pool_size?: number;
+    conn_timeout_ms?: number;
+    query_timeout_ms?: number;
+    idle_timeout_ms?: number;
+}
 
 export class ConnectionPool {
-    #pool = [];
-    #max_pool_size = 20;
-    #conn_timeout_ms = CONN_TIMEOUT_MS;
-    #query_timeout_ms = QUERY_TIMEOUT_MS;
-    #idle_timeout_ms = IDLE_TIMEOUT_MS;
-    #ready = false;
+    private pool: DiceDBSocket[] = [];
+    private max_pool_size: number = 20;
+    private conn_timeout_ms: number = CONN_TIMEOUT_MS;
+    private query_timeout_ms: number = QUERY_TIMEOUT_MS;
+    private idle_timeout_ms: number = IDLE_TIMEOUT_MS;
+    private ready: boolean = false;
+    private host: string;
+    private port: number;
+    private client_id: string;
+    private logger: Logger;
 
-    constructor(opts = {}) {
+    constructor(opts: ConnectionPoolOptions) {
         this.host = opts.host;
         this.port = opts.port;
         this.client_id = opts.client_id;
         this.logger = new Logger('DiceDB:ConnectionPool');
 
-        this.#max_pool_size = opts.max_pool_size ?? this.#max_pool_size;
-        this.#conn_timeout_ms = opts.conn_timeout_ms ?? this.#conn_timeout_ms;
-        this.#query_timeout_ms =
-            opts.query_timeout_ms ?? this.#query_timeout_ms;
-        this.#idle_timeout_ms = opts.idle_timeout_ms ?? this.#idle_timeout_ms;
+        this.max_pool_size = opts.max_pool_size ?? this.max_pool_size;
+        this.conn_timeout_ms = opts.conn_timeout_ms ?? this.conn_timeout_ms;
+        this.query_timeout_ms = opts.query_timeout_ms ?? this.query_timeout_ms;
+        this.idle_timeout_ms = opts.idle_timeout_ms ?? this.idle_timeout_ms;
     }
 
-    createDiceDBSocket({ watchable } = {}) {
+    private createDiceDBSocket({
+        watchable,
+    }: { watchable?: boolean } = {}): DiceDBSocket {
         const socket = new DiceDBSocket({
             host: this.host,
             port: this.port,
             client_id: this.client_id,
-            conn_timeout_ms: this.#conn_timeout_ms,
-            query_timeout_ms: this.#query_timeout_ms,
+            conn_timeout_ms: this.conn_timeout_ms,
+            query_timeout_ms: this.query_timeout_ms,
             watchable,
         });
 
@@ -57,9 +72,9 @@ export class ConnectionPool {
         });
 
         if (!watchable) {
-            socket.setTimeout(this.#idle_timeout_ms, () => {
+            socket.setTimeout(this.idle_timeout_ms, () => {
                 this.logger.warn(
-                    `socket ${socket.socket_id} timed out, ${this.#pool.length} sockets remaining`,
+                    `socket ${socket.socket_id} timed out, ${this.pool.length} sockets remaining`,
                 );
 
                 this.removeSocket(socket);
@@ -69,17 +84,17 @@ export class ConnectionPool {
         return socket;
     }
 
-    async connect() {
+    async connect(): Promise<void> {
         const socket = this.createDiceDBSocket();
 
         try {
             await Promise.race([
                 socket.connect(),
                 timeout(
-                    this.#conn_timeout_ms,
+                    this.conn_timeout_ms,
                     new DiceDBTimeoutError({
                         message: 'Connection to the server timed out',
-                        timeout: this.#conn_timeout_ms,
+                        timeout: this.conn_timeout_ms,
                     }),
                 ),
             ]);
@@ -88,23 +103,23 @@ export class ConnectionPool {
             throw err;
         }
 
-        this.#pool.push(socket);
-        this.#ready = true;
+        this.pool.push(socket);
+        this.ready = true;
 
         this.logger.success('Connection pool created successfully!');
     }
 
-    async #getConnection() {
+    private async getConnection(): Promise<DiceDBSocket> {
         const backoffFactor = 2;
         let retryDelay = 10;
 
         while (true) {
             this.logger.info('Looking for free connections in pool...');
 
-            for (const conn of this.#pool) {
+            for (const conn of this.pool) {
                 if (conn.acquireLock()) {
                     this.logger.success('Free connection acquired, returning');
-                    conn.setTimeout(this.#idle_timeout_ms);
+                    conn.setTimeout(this.idle_timeout_ms);
 
                     return conn;
                 }
@@ -112,12 +127,12 @@ export class ConnectionPool {
 
             this.logger.warn('No free connections in pool');
 
-            if (this.#pool.length < this.#max_pool_size) {
+            if (this.pool.length < this.max_pool_size) {
                 this.logger.info('Trying to create a new socket...');
 
                 const socket = this.createDiceDBSocket();
 
-                this.#pool.push(socket);
+                this.pool.push(socket);
                 socket.acquireLock();
 
                 await socket.connect();
@@ -137,7 +152,9 @@ export class ConnectionPool {
         }
     }
 
-    async acquireConnection({ watchable = false } = {}) {
+    async acquireConnection({
+        watchable = false,
+    }: { watchable?: boolean } = {}): Promise<DiceDBSocket> {
         if (watchable) {
             const socket = this.createDiceDBSocket({ watchable });
             await socket.connect();
@@ -154,20 +171,20 @@ export class ConnectionPool {
         }
 
         return Promise.race([
-            this.#getConnection(),
+            this.getConnection(),
             timeout(
-                this.#conn_timeout_ms,
+                this.conn_timeout_ms,
                 new DiceDBTimeoutError({
                     message:
                         'A timeout occurred while waiting to acquire a connection',
-                    timeout: this.#conn_timeout_ms,
+                    timeout: this.conn_timeout_ms,
                 }),
             ),
         ]);
     }
 
-    removeSocket(socket) {
-        const idx = this.#pool.findIndex(
+    removeSocket(socket: DiceDBSocket): void {
+        const idx = this.pool.findIndex(
             (s) => s.socket_id === socket.socket_id,
         );
 
@@ -175,19 +192,15 @@ export class ConnectionPool {
             socket.removeAllListeners();
             socket.destroy();
 
-            this.#pool.splice(idx, 1);
+            this.pool.splice(idx, 1);
         }
     }
 
-    get ready() {
-        return this.#ready;
+    get timeout(): number {
+        return this.conn_timeout_ms;
     }
 
-    get timeout() {
-        return this.#conn_timeout_ms;
-    }
-
-    set timeout(ms) {
-        this.#conn_timeout_ms = ms;
+    set timeout(ms: number) {
+        this.conn_timeout_ms = ms;
     }
 }

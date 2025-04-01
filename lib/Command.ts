@@ -3,17 +3,30 @@ import EventEmitter from 'events';
 import { create, fromBinary, toBinary } from '@bufbuild/protobuf';
 
 import { CommandSchema, ResponseSchema } from '../generated/cmd_pb.js';
-import { uuid } from '../utils/index.js';
-import { DiceDBCommandError } from './Errors.js';
-import { responseParser } from './Parsers.js';
+import { uuid } from '../utils/index.ts';
+import { DiceDBCommandError } from './Errors.ts';
+import { responseParser } from './Parsers.ts';
+import { DiceDBSocket } from './DiceDBSocket.ts';
+
+import type { ParsedResponse } from './Parsers.ts';
+
+interface CommandOptions {
+    conn: DiceDBSocket;
+    client_id: string;
+}
 
 export default class Command extends EventEmitter {
-    constructor(opts = {}) {
+    protected conn!: DiceDBSocket;
+    protected client_id!: string;
+    protected query_id!: string;
+    protected command!: string;
+
+    constructor(opts: CommandOptions) {
         super();
-        this.#init(opts);
+        this.init(opts);
     }
 
-    #init(opts = {}) {
+    private init(opts: CommandOptions): void {
         if (
             !(
                 typeof opts.conn?.write === 'function' &&
@@ -26,14 +39,12 @@ export default class Command extends EventEmitter {
         }
 
         if (typeof opts.client_id !== 'string' || opts.client_id === '') {
-            throw new DiceDBCommandError({
-                message: 'client_id is required!',
-            });
+            throw new DiceDBCommandError({ message: 'client_id is required!' });
         }
 
         if (
-            typeof this.constructor.command !== 'string' ||
-            this.constructor.command === ''
+            typeof (this.constructor as typeof Command).command !== 'string' ||
+            (this.constructor as typeof Command).command === ''
         ) {
             throw new DiceDBCommandError({
                 message: 'command getter must be specified!',
@@ -43,21 +54,25 @@ export default class Command extends EventEmitter {
         this.conn = opts.conn;
         this.client_id = opts.client_id;
         this.query_id = uuid('qid_');
-        this.command = this.constructor.command;
+        this.command = (this.constructor as typeof Command).command;
     }
 
-    static get watchable() {
+    static get watchable(): boolean {
         return false;
     }
 
-    static get is_private() {
+    static get is_private(): boolean {
         return false;
     }
 
-    async exec(...args) {
-        const cmdArgs = args.filter(
-            (arg) => arg !== null || arg !== 'undefined',
-        );
+    static get command(): string {
+        return '';
+    }
+
+    async exec(...args: any[]): Promise<ParsedResponse | Readable> {
+        const cmdArgs = args
+            .filter((arg) => arg !== null && arg !== undefined)
+            .map(String);
 
         const msg = toBinary(
             CommandSchema,
@@ -71,7 +86,7 @@ export default class Command extends EventEmitter {
         const response = responseParser(fromBinary(ResponseSchema, data));
 
         Object.assign(response.data.meta, {
-            watch: this.watchable,
+            watch: (this.constructor as typeof Command).watchable,
             command: this.command,
             args: cmdArgs,
             client_id: this.client_id,
@@ -84,52 +99,14 @@ export default class Command extends EventEmitter {
 }
 
 export class WatchableCommand extends Command {
-    constructor(opts = {}) {
-        super(opts);
-        this.#init(opts);
-    }
-
-    #init(opts = {}) {
-        if (
-            !(
-                typeof opts.conn?.write === 'function' &&
-                typeof opts.conn?.socket_id === 'string'
-            )
-        ) {
-            throw new DiceDBCommandError({
-                message: 'opts.conn must be a DiceDBSocket',
-            });
-        }
-
-        if (typeof opts.client_id !== 'string' || opts.client_id === '') {
-            throw new DiceDBCommandError({
-                message: 'client_id is required!',
-            });
-        }
-
-        if (
-            typeof this.constructor.command !== 'string' ||
-            this.constructor.command === ''
-        ) {
-            throw new DiceDBCommandError({
-                message: 'command getter must be specified!',
-            });
-        }
-
-        this.conn = opts.conn;
-        this.client_id = opts.client_id;
-        this.query_id = uuid('qid_');
-        this.command = this.constructor.command;
-    }
-
-    static get watchable() {
+    static get watchable(): boolean {
         return true;
     }
 
-    async exec(...args) {
-        const cmdArgs = args.filter(
-            (arg) => arg !== null || arg !== 'undefined',
-        );
+    async exec(...args: any[]) {
+        const cmdArgs = args
+            .filter((arg) => arg !== null && arg !== undefined)
+            .map(String);
 
         const msg = toBinary(
             CommandSchema,
@@ -138,6 +115,12 @@ export class WatchableCommand extends Command {
                 args: cmdArgs,
             }),
         );
+
+        if (!this.conn.subscribe) {
+            throw new DiceDBCommandError({
+                message: 'Connection does not support subscribe',
+            });
+        }
 
         const socket = this.conn.subscribe(msg);
         const readable = new Readable({ read() {}, objectMode: true });

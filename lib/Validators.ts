@@ -1,13 +1,13 @@
-export const validateKey = (key) => {
+export const validateKey = (key: string | number): string | number => {
     if (typeof key !== 'string' && typeof key !== 'number') {
-        const err = new TypeError('key must be a string!');
+        const err = new TypeError('key must be a string or number!');
         throw err;
     }
 
     return key;
 };
 
-export const validateKeys = (keys) => {
+export const validateKeys = (keys: (string | number)[]): boolean => {
     for (const key of keys) {
         validateKey(key);
     }
@@ -15,7 +15,7 @@ export const validateKeys = (keys) => {
     return true;
 };
 
-export const validateSetValue = (val) => {
+export const validateSetValue = (val: string | number): boolean => {
     if (typeof val !== 'string' && typeof val !== 'number') {
         throw new Error('value for set must be a string or a number');
     }
@@ -23,7 +23,16 @@ export const validateSetValue = (val) => {
     return true;
 };
 
-export const validateInteger = (num, opts = {}) => {
+interface ValidateIntegerOptions {
+    min?: number;
+    max?: number;
+    fieldName?: string;
+}
+
+export const validateInteger = (
+    num: number,
+    opts: ValidateIntegerOptions = {},
+): boolean => {
     const { min, max, fieldName } = opts;
 
     if (!Number.isSafeInteger(num)) {
@@ -31,12 +40,12 @@ export const validateInteger = (num, opts = {}) => {
         throw err;
     }
 
-    if (Number.isFinite(min) && num < min) {
+    if (min && Number.isFinite(min) && num < min) {
         const err = new RangeError(`${fieldName ?? 'num'} must be >= ${min}!`);
         throw err;
     }
 
-    if (Number.isFinite(max) && num > max) {
+    if (max && Number.isFinite(max) && num > max) {
         const err = new RangeError(`${fieldName ?? 'num'} must be <= ${max}!`);
         throw err;
     }
@@ -44,13 +53,13 @@ export const validateInteger = (num, opts = {}) => {
     return true;
 };
 
-export const validateTimestamp = (timestamp) => {
+export const validateTimestamp = (timestamp: number): boolean => {
     validateInteger(timestamp, { fieldName: 'timestamp', min: 0 });
 
     return true;
 };
 
-export const validateTime = (time) => {
+export const validateTime = (time: number): boolean => {
     validateInteger(time, { fieldName: 'time', min: 0 });
 
     return true;

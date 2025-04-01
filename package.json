@@ -8,8 +8,8 @@
     "lint:fix": "npx eslint . --fix",
     "build": "npx rollup --config",
     "compile": "protoc -I=./dicedb-protos --es_out=./generated dicedb-protos/cmd.proto",
-    "dev": "DEBUG=DiceDB* nodemon index.js",
-    "start": "nodemon index.js"
+    "dev": "DEBUG=DiceDB* nodemon -r ts-node/register index.js",
+    "start": "nodemon -r ts-node/register index.js"
   },
   "keywords": [],
   "author": "Aditya DS",
@@ -24,12 +24,18 @@
     "@babel/preset-env": "^7.26.9",
     "@eslint/js": "^9.23.0",
     "@rollup/plugin-babel": "^6.0.4",
+    "@types/debug": "^4.1.12",
+    "@types/node": "^22.13.17",
+    "@typescript-eslint/eslint-plugin": "^8.29.0",
+    "@typescript-eslint/parser": "^8.29.0",
     "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
     "globals": "^16.0.0",
     "nodemon": "^3.1.9",
-    "rollup": "^4.37.0"
+    "rollup": "^4.37.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   },
   "exports": {
     ".": {
