@@ -6,6 +6,7 @@ import Logger from '../utils/Logger.js';
 import {
     COMMAND_TO_COMMAND_NAME,
     CONN_TIMEOUT_MS,
+    IDLE_TIMEOUT_MS,
     QUERY_TIMEOUT_MS,
 } from './constants/commands.js';
 import {
@@ -22,6 +23,7 @@ export default class DiceDB {
 
     #queryTimeoutMS = QUERY_TIMEOUT_MS;
     #connTimeoutMS = CONN_TIMEOUT_MS;
+    #idleTimeoutMS = IDLE_TIMEOUT_MS;
 
     #init(opts = {}) {
         const {
@@ -31,6 +33,7 @@ export default class DiceDB {
             max_pool_size: maxPoolSize,
             query_timeout_ms: queryTimeoutMS,
             conn_timeout_ms: connTimeoutMS,
+            idleTimeoutMS: idleTimeoutMS,
         } = opts;
 
         this.logger = new Logger('DiceDB');
@@ -53,6 +56,7 @@ export default class DiceDB {
 
         this.#queryTimeoutMS = queryTimeoutMS ?? this.#queryTimeoutMS;
         this.#connTimeoutMS = connTimeoutMS ?? this.#connTimeoutMS;
+        this.#idleTimeoutMS = idleTimeoutMS ?? this.#idleTimeoutMS;
 
         if (
             !Number.isInteger(this.#queryTimeoutMS) ||
@@ -74,6 +78,16 @@ export default class DiceDB {
             throw err;
         }
 
+        if (
+            !Number.isInteger(this.#idleTimeoutMS) ||
+            this.#idleTimeoutMS <= 0
+        ) {
+            const err = new DiceDBError('idle_timeout_ms must be an integer!');
+            this.logger.error(err);
+
+            throw err;
+        }
+
         this.client_id = clientId ?? `cid_${uuid()}`;
 
         this.connectionPool = new ConnectionPool({
@@ -83,6 +97,7 @@ export default class DiceDB {
             max_pool_size: maxPoolSize,
             conn_timeout_ms: this.#connTimeoutMS,
             query_timeout_ms: this.#queryTimeoutMS,
+            idle_timeout_ms: this.#idleTimeoutMS,
         });
 
         this.logger.info(`Initialized DiceDB client ${this.client_id}`);
@@ -108,8 +123,6 @@ export default class DiceDB {
             const cmd = new Command({
                 conn,
                 client_id: this.client_id,
-                query_timeout_ms: this.#queryTimeoutMS,
-                connection_pool: this.connectionPool,
             });
 
             return await cmd.exec(...args);
