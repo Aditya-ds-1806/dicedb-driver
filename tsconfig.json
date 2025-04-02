@@ -9,8 +9,9 @@
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "allowImportingTsExtensions": true,
-    "noEmit": true
+    "allowImportingTsExtensions": false,
+    "declaration": true,
+    "declarationMap": false
   },
   "ts-node": {
     "esm": true,

@@ -1,6 +1,6 @@
-import Command from '../../lib/Command.ts';
-import { validateKey, validateInteger } from '../../lib/Validators.ts';
-import { COMMANDS } from '../constants/commands.ts';
+import Command from '../../lib/Command';
+import { validateKey, validateInteger } from '../../lib/Validators';
+import { COMMANDS } from '../constants/commands';
 
 export default class IncrementByCommand extends Command {
     static get command() {

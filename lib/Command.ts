@@ -3,14 +3,14 @@ import EventEmitter from 'events';
 import { create, fromBinary, toBinary } from '@bufbuild/protobuf';
 
 import { CommandSchema, ResponseSchema } from '../generated/cmd_pb.js';
-import { uuid } from '../utils/index.ts';
-import { DiceDBCommandError } from './Errors.ts';
-import { responseParser } from './Parsers.ts';
-import { DiceDBSocket } from './DiceDBSocket.ts';
+import { uuid } from '../utils/index';
+import { DiceDBCommandError } from './Errors';
+import { responseParser } from './Parsers';
+import { DiceDBSocket } from './DiceDBSocket';
 
-import type { ParsedResponse } from './Parsers.ts';
+import type { ParsedResponse } from './Parsers';
 
-interface CommandOptions {
+export interface CommandOptions {
     conn: DiceDBSocket;
     client_id: string;
 }

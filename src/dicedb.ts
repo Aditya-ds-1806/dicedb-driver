@@ -1,23 +1,26 @@
 import path from 'node:path';
 
-import { ConnectionPool } from '../lib/ConnectionPool.ts';
-import CommandRegistry from '../lib/CommandRegistry.ts';
-import Logger from '../utils/Logger.ts';
+import { ConnectionPool } from '../lib/ConnectionPool';
+import CommandRegistry from '../lib/CommandRegistry';
+import Logger from '../utils/Logger';
 import {
     COMMAND_TO_COMMAND_NAME,
     CONN_TIMEOUT_MS,
     IDLE_TIMEOUT_MS,
     QUERY_TIMEOUT_MS,
-} from './constants/commands.ts';
+} from './constants/commands';
 import {
     DiceDBError,
     DiceDBCommandError,
     DiceDBConnectionError,
-} from '../lib/Errors.ts';
-import { uuid } from '../utils/index.ts';
-import Command from '../lib/Command.ts';
+} from '../lib/Errors';
+import { uuid } from '../utils/index';
+import Command from '../lib/Command';
+import { ParsedResponse } from '../lib/Parsers';
+import { Readable } from 'node:stream';
+import { fileURLToPath } from 'node:url';
 
-interface DiceDBOptions {
+export interface DiceDBOptions {
     host: string;
     port: number;
     client_id?: string;
@@ -128,7 +131,7 @@ export default class DiceDB {
     async execCommand(
         CommandClass: typeof Command,
         ...args: any[]
-    ): Promise<any> {
+    ): Promise<ParsedResponse | Readable> {
         try {
             const conn = await this.connectionPool.acquireConnection({
                 watchable: CommandClass.watchable,
@@ -139,7 +142,7 @@ export default class DiceDB {
                 client_id: this.client_id,
             });
 
-            return await cmd.exec(...args);
+            return cmd.exec(...args);
         } catch (err) {
             if (err instanceof DiceDBConnectionError) {
                 throw new DiceDBError({
@@ -163,8 +166,10 @@ export default class DiceDB {
             return;
         }
 
+        const dirName = (typeof __dirname !== 'undefined') ? __dirname : path.dirname(fileURLToPath(import.meta.url));
+
         await CommandRegistry.loadCommands(
-            path.resolve(import.meta.dirname, '../src/commands'),
+            path.resolve(dirName, '../src/commands'),
         );
 
         CommandRegistry.list().forEach((command) => {

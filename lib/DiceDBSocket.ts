@@ -1,20 +1,20 @@
 import net from 'node:net';
 import { EventEmitter } from 'node:events';
 
-import Logger from '../utils/Logger.ts';
-import { DiceDBConnectionError, DiceDBTimeoutError } from './Errors.ts';
-import { timeout, uuid } from '../utils/index.ts';
-import CommandRegistry from './CommandRegistry.ts';
+import Logger from '../utils/Logger';
+import { DiceDBConnectionError, DiceDBTimeoutError } from './Errors';
+import { timeout, uuid } from '../utils/index';
+import CommandRegistry from './CommandRegistry';
 import {
     COMMANDS,
     CONN_TIMEOUT_MS,
     IDLE_TIMEOUT_MS,
     QUERY_TIMEOUT_MS,
-} from '../src/constants/commands.ts';
+} from '../src/constants/commands';
 
-import type { ParsedResponse } from './Parsers.ts';
+import type { ParsedResponse } from './Parsers';
 
-interface DiceDBSocketOpts {
+export interface DiceDBSocketOpts {
     host: string;
     port: number;
     conn_timeout_ms?: number;
@@ -31,7 +31,7 @@ export class DiceDBSocket extends EventEmitter {
     private query_timeout_ms = QUERY_TIMEOUT_MS;
     private idle_timeout_ms = IDLE_TIMEOUT_MS;
     private conn: net.Socket;
-    logger!: Logger;
+    private logger!: Logger;
     client_id!: string;
     socket_id!: string;
     host!: string;

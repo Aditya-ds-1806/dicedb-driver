@@ -1,13 +1,13 @@
-import { DiceDBSocket } from './DiceDBSocket.ts';
+import { DiceDBSocket } from './DiceDBSocket';
 
-import { delay, timeout } from '../utils/index.ts';
-import Logger from '../utils/Logger.ts';
-import { DiceDBConnectionError, DiceDBTimeoutError } from './Errors.ts';
+import { delay, timeout } from '../utils/index';
+import Logger from '../utils/Logger';
+import { DiceDBConnectionError, DiceDBTimeoutError } from './Errors';
 import {
     CONN_TIMEOUT_MS,
     IDLE_TIMEOUT_MS,
     QUERY_TIMEOUT_MS,
-} from '../src/constants/commands.ts';
+} from '../src/constants/commands';
 
 interface ConnectionPoolOptions {
     host: string;

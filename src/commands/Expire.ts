@@ -1,7 +1,7 @@
-import Command from '../../lib/Command.ts';
-import { DiceDBCommandError } from '../../lib/Errors.ts';
-import { validateKey, validateTime } from '../../lib/Validators.ts';
-import { COMMANDS } from '../constants/commands.ts';
+import Command from '../../lib/Command';
+import { DiceDBCommandError } from '../../lib/Errors';
+import { validateKey, validateTime } from '../../lib/Validators';
+import { COMMANDS } from '../constants/commands';
 
 export default class ExpireCommand extends Command {
     static get command() {

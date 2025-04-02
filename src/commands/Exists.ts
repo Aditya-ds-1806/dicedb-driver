@@ -1,6 +1,6 @@
-import Command from '../../lib/Command.ts';
-import { validateKeys } from '../../lib/Validators.ts';
-import { COMMANDS } from '../constants/commands.ts';
+import Command from '../../lib/Command';
+import { validateKeys } from '../../lib/Validators';
+import { COMMANDS } from '../constants/commands';
 
 export default class ExistsCommand extends Command {
     static get command() {

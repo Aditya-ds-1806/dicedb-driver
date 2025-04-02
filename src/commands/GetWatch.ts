@@ -1,6 +1,6 @@
-import { WatchableCommand } from '../../lib/Command.ts';
-import { validateKey } from '../../lib/Validators.ts';
-import { COMMANDS } from '../constants/commands.ts';
+import { WatchableCommand } from '../../lib/Command';
+import { validateKey } from '../../lib/Validators';
+import { COMMANDS } from '../constants/commands';
 
 export default class GetWatchCommand extends WatchableCommand {
     static get command() {

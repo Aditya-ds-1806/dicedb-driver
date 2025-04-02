@@ -1,5 +1,5 @@
-import Command from '../../lib/Command.ts';
-import { COMMANDS } from '../constants/commands.ts';
+import Command from '../../lib/Command';
+import { COMMANDS } from '../constants/commands';
 
 export default class PingCommand extends Command {
     static get command() {

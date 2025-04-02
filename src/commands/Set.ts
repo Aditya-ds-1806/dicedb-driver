@@ -1,11 +1,11 @@
-import Command from '../../lib/Command.ts';
+import Command from '../../lib/Command';
 import {
     validateKey,
     validateSetValue,
     validateTime,
     validateTimestamp,
-} from '../../lib/Validators.ts';
-import { COMMANDS } from '../constants/commands.ts';
+} from '../../lib/Validators';
+import { COMMANDS } from '../constants/commands';
 
 interface SetCommandOptions {
     ex?: number;

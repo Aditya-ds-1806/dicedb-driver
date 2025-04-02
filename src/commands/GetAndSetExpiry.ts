@@ -1,11 +1,11 @@
-import Command from '../../lib/Command.ts';
+import Command from '../../lib/Command';
 import {
     validateKey,
     validateTime,
     validateTimestamp,
-} from '../../lib/Validators.ts';
+} from '../../lib/Validators';
 
-import { COMMANDS } from '../constants/commands.ts';
+import { COMMANDS } from '../constants/commands';
 
 interface GetAndSetExpiryCommandOptions {
     ex?: number;

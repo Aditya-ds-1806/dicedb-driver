@@ -1,9 +1,9 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import Command from './Command.ts';
-import { DiceDBCommandError } from './Errors.ts';
-import { COMMAND_TO_COMMAND_NAME } from '../src/constants/commands.ts';
+import Command from './Command';
+import { DiceDBCommandError } from './Errors';
+import { COMMAND_TO_COMMAND_NAME } from '../src/constants/commands';
 
 type CommandName = keyof typeof COMMAND_TO_COMMAND_NAME;
 

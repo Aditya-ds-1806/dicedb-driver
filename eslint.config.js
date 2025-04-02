@@ -7,7 +7,7 @@ import * as typescriptEslint from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 
 export default defineConfig([
-    { ignores: ['build/*.js'] },
+    { ignores: ['build', 'dist'] },
     { files: ['**/*.{js,mjs,cjs}'] },
     {
         files: ['**/*.{js,mjs,cjs}'],
