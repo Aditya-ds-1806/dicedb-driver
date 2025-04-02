@@ -1,14 +1,14 @@
 {
   "name": "dice-js",
   "version": "1.0.0",
-  "main": "./build/cjs/index.js",
-  "module": "./build/esm/index.js",
+  "main": "./build/index.cjs",
+  "module": "./build/index.js",
   "scripts": {
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
     "build": "rm -rf build && npx tsup index.ts --dts --format esm,cjs --target node16 --external all",
     "compile": "protoc -I=./dicedb-protos --es_out=./generated dicedb-protos/cmd.proto",
-    "dev": "DEBUG=DiceDB* nodemon -r ts-node/register index.js",
+    "dev": "DEBUG=DiceDB* nodemon --ext ts --exec ts-node index.ts",
     "start": "nodemon -r ts-node/register index.js"
   },
   "keywords": [],
@@ -35,10 +35,9 @@
     "typescript": "^5.8.2"
   },
   "exports": {
-    ".": {
-      "require": "./build/cjs/index.js",
-      "import": "./build/esm/index.js"
-    }
+    "import": "./build/index.js",
+    "require": "./build/index.cjs",
+    "types": "./build/index.d.ts"
   },
   "repository": {
     "type": "git",
@@ -52,6 +51,5 @@
   "engines": {
     "node": ">=16.0.0"
   },
-  "type": "module",
-  "types": "index.d.ts"
+  "type": "module"
 }
