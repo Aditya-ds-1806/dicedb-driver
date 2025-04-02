@@ -7,7 +7,7 @@
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
     "build": "rm -rf build && npx tsup index.ts --dts --format esm,cjs --target node16 --external all",
-    "compile": "protoc -I=./dicedb-protos --es_out=./generated dicedb-protos/cmd.proto",
+    "compile": "protoc -I=./dicedb-protos --es_out=target=ts:./generated dicedb-protos/cmd.proto",
     "dev": "DEBUG=DiceDB* nodemon --ext ts --exec ts-node index.ts",
     "start": "nodemon -r ts-node/register index.js"
   },

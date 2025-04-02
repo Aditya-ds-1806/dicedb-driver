@@ -2,7 +2,7 @@ import { Readable } from 'stream';
 import EventEmitter from 'events';
 import { create, fromBinary, toBinary } from '@bufbuild/protobuf';
 
-import { CommandSchema, ResponseSchema } from '../generated/cmd_pb.js';
+import { CommandSchema, ResponseSchema } from '../generated/cmd_pb';
 import { uuid } from '../utils/index';
 import { DiceDBCommandError } from './Errors';
 import { responseParser } from './Parsers';
