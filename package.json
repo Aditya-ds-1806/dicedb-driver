@@ -36,8 +36,7 @@
   },
   "exports": {
     "import": "./dist/index.js",
-    "require": "./dist/index.cjs",
-    "types": "./dist/index.d.ts"
+    "require": "./dist/index.cjs"
   },
   "repository": {
     "type": "git",
@@ -51,5 +50,6 @@
   "engines": {
     "node": ">=16.0.0"
   },
-  "type": "module"
+  "type": "module",
+  "types": "./dist/index.d.ts"
 }
