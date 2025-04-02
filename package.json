@@ -1,8 +1,8 @@
 {
   "name": "dice-js",
   "version": "1.0.0",
-  "main": "./build/index.cjs",
-  "module": "./build/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "scripts": {
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
@@ -35,16 +35,16 @@
     "typescript": "^5.8.2"
   },
   "exports": {
-    "import": "./build/index.js",
-    "require": "./build/index.cjs",
-    "types": "./build/index.d.ts"
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs",
+    "types": "./dist/index.d.ts"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Aditya-ds-1806/dicedb-js.git"
   },
   "files": [
-    "build/",
+    "dist/",
     "README.md",
     "LICENSE"
   ],
