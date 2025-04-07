@@ -1,7 +1,5 @@
-import path from 'node:path';
-
 import { ConnectionPool } from '../lib/ConnectionPool';
-import CommandRegistry from '../lib/CommandRegistry';
+import CommandRegistry from './registry';
 import Logger from '../utils/Logger';
 import {
     COMMAND_TO_COMMAND_NAME,
@@ -15,10 +13,6 @@ import {
     DiceDBConnectionError,
 } from '../lib/Errors';
 import { uuid } from '../utils/index';
-import Command from '../lib/Command';
-import { ParsedResponse } from '../lib/Parsers';
-import { Readable } from 'node:stream';
-import { fileURLToPath } from 'node:url';
 
 export interface DiceDBOptions {
     host: string;
@@ -38,8 +32,6 @@ export default class DiceDB {
     private client_id!: string;
     private connectionPool!: ConnectionPool;
     private logger!: Logger;
-
-    private static commandsAttached: boolean = false;
 
     constructor(opts: DiceDBOptions) {
         this.init(opts);
@@ -120,7 +112,6 @@ export default class DiceDB {
 
     async connect(): Promise<void> {
         try {
-            await DiceDB.attachCommands();
             await this.connectionPool.connect();
         } catch (err: any) {
             this.logger.error(err);
@@ -129,15 +120,23 @@ export default class DiceDB {
     }
 
     async execCommand(
-        CommandClass: typeof Command,
+        command: keyof typeof COMMAND_TO_COMMAND_NAME,
         ...args: any[]
-    ): Promise<ParsedResponse | Readable> {
+    ) {
+        if (!CommandRegistry.has(command)) {
+            throw new DiceDBCommandError({
+                message: `unknown command "${command}"`
+            })
+        }
+
+        const Command = CommandRegistry.get(command)!;
+
         try {
             const conn = await this.connectionPool.acquireConnection({
-                watchable: CommandClass.watchable,
+                watchable: Command.watchable,
             });
 
-            const cmd = new CommandClass({
+            const cmd = new Command({
                 conn,
                 client_id: this.client_id,
             });
@@ -159,34 +158,5 @@ export default class DiceDB {
                 throw err;
             }
         }
-    }
-
-    private static async attachCommands(): Promise<void> {
-        if (DiceDB.commandsAttached) {
-            return;
-        }
-
-        const dirName = (typeof __dirname !== 'undefined') ? __dirname : path.dirname(fileURLToPath(import.meta.url));
-
-        await CommandRegistry.loadCommands(
-            path.resolve(dirName, '../src/commands'),
-        );
-
-        CommandRegistry.list().forEach((command) => {
-            const commandName = COMMAND_TO_COMMAND_NAME[command];
-            const Command = CommandRegistry.get(command);
-
-            if (Command.is_private) {
-                return;
-            }
-
-            (DiceDB as any).prototype[commandName] = async function (
-                ...args: any[]
-            ) {
-                return this.execCommand(Command, ...args);
-            };
-        });
-
-        DiceDB.commandsAttached = true;
     }
 }

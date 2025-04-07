@@ -6,10 +6,11 @@
   "scripts": {
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
-    "build": "rm -rf build && npx tsup index.ts --dts --format esm,cjs --target node16 --external all",
+    "build": "rm -rf build && npx tsup index.ts --dts --format esm,cjs --target node18 --external all",
     "compile": "protoc -I=./dicedb-protos --es_out=target=ts:./generated dicedb-protos/cmd.proto",
     "dev": "DEBUG=DiceDB* nodemon --ext ts --exec ts-node index.ts",
-    "start": "nodemon -r ts-node/register index.js"
+    "start": "nodemon -r ts-node/register index.js",
+    "prebuild": "node --loader ts-node/esm scripts/build.ts"
   },
   "keywords": [],
   "author": "Aditya DS",
@@ -30,6 +31,7 @@
     "eslint-plugin-prettier": "^5.2.3",
     "globals": "^16.0.0",
     "nodemon": "^3.1.9",
+    "ts-morph": "^25.0.1",
     "ts-node": "^10.9.2",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2"

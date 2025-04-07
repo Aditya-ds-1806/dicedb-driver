@@ -4,7 +4,7 @@ import { EventEmitter } from 'node:events';
 import Logger from '../utils/Logger';
 import { DiceDBConnectionError, DiceDBTimeoutError } from './Errors';
 import { timeout, uuid } from '../utils/index';
-import CommandRegistry from './CommandRegistry';
+import CommandRegistry from '../src/registry';
 import {
     COMMANDS,
     CONN_TIMEOUT_MS,
@@ -267,7 +267,7 @@ export class DiceDBSocket extends EventEmitter {
             return { result: 'OK' };
         }
 
-        const HandshakeCommand = CommandRegistry.get(COMMANDS.HANDSHAKE);
+        const HandshakeCommand = CommandRegistry.get(COMMANDS.HANDSHAKE)!;
 
         const handshake = new HandshakeCommand({
             conn: this,

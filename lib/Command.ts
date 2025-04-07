@@ -15,7 +15,7 @@ export interface CommandOptions {
     client_id: string;
 }
 
-export default class Command extends EventEmitter {
+export default class Command<T = ParsedResponse> extends EventEmitter {
     protected conn!: DiceDBSocket;
     protected client_id!: string;
     protected query_id!: string;
@@ -69,7 +69,7 @@ export default class Command extends EventEmitter {
         return '';
     }
 
-    async exec(...args: any[]): Promise<ParsedResponse | Readable> {
+    async exec(...args: any[]): Promise<T> {
         const cmdArgs = args
             .filter((arg) => arg !== null && arg !== undefined)
             .map(String);
@@ -94,11 +94,11 @@ export default class Command extends EventEmitter {
             socket_id: this.conn.socket_id,
         });
 
-        return response;
+        return response as T;
     }
 }
 
-export class WatchableCommand extends Command {
+export class WatchableCommand extends Command<Readable> {
     static get watchable(): boolean {
         return true;
     }

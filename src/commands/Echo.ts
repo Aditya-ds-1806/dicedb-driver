@@ -6,7 +6,7 @@ export default class EchoCommand extends Command {
         return COMMANDS.ECHO;
     }
 
-    async exec(message: string) {
+    async exec(message: string = '') {
         return super.exec(message);
     }
 }

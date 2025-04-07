@@ -7,7 +7,7 @@ import {
 
 import { COMMANDS } from '../constants/commands';
 
-interface GetAndSetExpiryCommandOptions {
+export interface GetAndSetExpiryCommandOptions {
     ex?: number;
     px?: number;
     ex_at?: number;

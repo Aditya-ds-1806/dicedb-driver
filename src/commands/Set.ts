@@ -7,7 +7,7 @@ import {
 } from '../../lib/Validators';
 import { COMMANDS } from '../constants/commands';
 
-interface SetCommandOptions {
+export interface SetCommandOptions {
     ex?: number;
     px?: number;
     ex_at?: number;
