@@ -1,5 +1,8 @@
 # DiceJS
 
+[![Build CI](https://github.com/Aditya-ds-1806/dicedb-js/actions/workflows/build.yml/badge.svg)](https://github.com/Aditya-ds-1806/dicedb-js/actions/workflows/build.yml)
+[![Tests CI](https://github.com/Aditya-ds-1806/dicedb-js/actions/workflows/test.yml/badge.svg)](https://github.com/Aditya-ds-1806/dicedb-js/actions/workflows/test.yml)
+
 DiceJS is an easy to use, promise-based database client for [DiceDB](https://dicedb.io/), that supports connection pooling for optimal performance.
 
 ## Command Parity
