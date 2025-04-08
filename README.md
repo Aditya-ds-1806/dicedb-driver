@@ -5,6 +5,77 @@
 
 DiceJS is an easy to use, promise-based database client for [DiceDB](https://dicedb.io/), that supports connection pooling for optimal performance.
 
+## Installation
+
+### Node.js
+
+Install DiceJS using npm or yarn:
+
+```bash
+npm install dice-js
+# or
+yarn add dice-js
+```
+
+### Deno
+
+Import DiceJS directly from a CDN like [esm.sh](https://esm.sh):
+
+```typescript
+import DiceDB from "https://esm.sh/dice-js";
+```
+
+## Usage
+
+### Node.js
+
+#### ES Modules
+
+```typescript
+import DiceDB from "dice-js";
+
+const client = new DiceDB({ host: "localhost", port: 7379 });
+
+await client.connect();
+const result = await client.ping();
+
+console.log(result);
+
+await client.disconnect();
+```
+
+#### CommonJS
+
+```javascript
+const DiceDB = require("dice-js");
+
+const client = new DiceDB({ host: "localhost", port: 7379 });
+
+(async () => {
+  await client.connect();
+  const result = await client.ping();
+
+  console.log(result);
+
+  await client.disconnect();
+})();
+```
+
+### Deno
+
+```typescript
+import DiceDB from "https://esm.sh/dice-js";
+
+const client = new DiceDB({ host: "localhost", port: 7379 });
+
+await client.connect();
+const result = await client.ping();
+
+console.log(result);
+
+await client.disconnect();
+```
+
 ## Command Parity
 
 DiceJS supports a wide range of DiceDB commands. Below is the list of currently supported commands:
