@@ -68,7 +68,7 @@ describe('DiceDB test cases', () => {
     });
 
     after(async () => {
-        await db.disconnect();
-        process.exit(0);
+        const success = await db.disconnect();
+        process.exit(success ? 0 : 1);
     });
 });
