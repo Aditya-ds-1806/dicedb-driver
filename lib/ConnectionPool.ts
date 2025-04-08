@@ -183,6 +183,13 @@ export class ConnectionPool {
         ]);
     }
 
+    async disconnect() {
+        const result = await Promise.all(this.pool.map(socket => socket.close()));
+        this.pool = [];
+
+        return result;
+    }
+
     removeSocket(socket: DiceDBSocket): void {
         const idx = this.pool.findIndex(
             (s) => s.socket_id === socket.socket_id,
@@ -201,6 +208,5 @@ export class ConnectionPool {
     }
 
     set timeout(ms: number) {
-        this.conn_timeout_ms = ms;
     }
 }

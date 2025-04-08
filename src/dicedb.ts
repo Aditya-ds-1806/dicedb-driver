@@ -159,4 +159,9 @@ export default class DiceDB {
             }
         }
     }
+
+    async disconnect(): Promise<boolean> {
+        const result = await this.connectionPool.disconnect();
+        return result.every(res => res);
+    }
 }
