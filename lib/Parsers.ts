@@ -1,4 +1,4 @@
-import type { Response } from '../generated/cmd_pb.d.ts';
+import type { Response } from '../proto/cmd_pb';
 
 export interface DiceDBResponse {
     success: boolean;
