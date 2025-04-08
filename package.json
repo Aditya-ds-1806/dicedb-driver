@@ -10,7 +10,8 @@
     "compile": "protoc -I=./dicedb-protos --es_out=target=ts:./proto dicedb-protos/cmd.proto",
     "dev": "DEBUG=DiceDB* nodemon --ext ts --exec ts-node index.ts",
     "start": "nodemon -r ts-node/register index.js",
-    "codegen": "node --loader ts-node/esm scripts/codegen.ts"
+    "codegen": "node --loader ts-node/esm scripts/codegen.ts",
+    "test": "mocha tests/index.test.js"
   },
   "keywords": [],
   "author": "Aditya DS",
@@ -26,10 +27,12 @@
     "@types/node": "^22.13.17",
     "@typescript-eslint/eslint-plugin": "^8.29.0",
     "@typescript-eslint/parser": "^8.29.0",
+    "chai": "^5.2.0",
     "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
     "globals": "^16.0.0",
+    "mocha": "^11.1.0",
     "nodemon": "^3.1.9",
     "ts-morph": "^25.0.1",
     "ts-node": "^10.9.2",
