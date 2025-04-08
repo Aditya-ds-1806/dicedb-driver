@@ -8,14 +8,14 @@ import { DiceDBCommandError } from './Errors';
 import { responseParser } from './Parsers';
 import { DiceDBSocket } from './DiceDBSocket';
 
-import type { ParsedResponse } from './Parsers';
+import type { DiceDBResponse } from './Parsers';
 
 export interface CommandOptions {
     conn: DiceDBSocket;
     client_id: string;
 }
 
-export default class Command<T = ParsedResponse> extends EventEmitter {
+export default class Command<T = DiceDBResponse> extends EventEmitter {
     protected conn!: DiceDBSocket;
     protected client_id!: string;
     protected query_id!: string;

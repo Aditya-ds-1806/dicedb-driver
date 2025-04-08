@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-08T16:14:22.867Z
+ * Date: 2025-04-08T17:02:07.829Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -11,7 +11,7 @@
  */
 
 import Command, { WatchableCommand } from "../lib/Command";
-import { ParsedResponse } from "../lib/Parsers";
+import { DiceDBResponse } from "../lib/Parsers";
 import { COMMANDS } from "./constants/commands";
 
 import DecrementCommand from './commands/Decrement';
@@ -38,7 +38,7 @@ import UnwatchCommand from './commands/Unwatch';
 
 type ValueOf<T> = T[keyof T];
 
-const commandRegistry = new Map<ValueOf<typeof COMMANDS>, typeof Command<ParsedResponse> | typeof WatchableCommand>();
+const commandRegistry = new Map<ValueOf<typeof COMMANDS>, typeof Command<DiceDBResponse> | typeof WatchableCommand>();
 
 commandRegistry.set(DecrementCommand.command, DecrementCommand);
 commandRegistry.set(DecrementByCommand.command, DecrementByCommand);

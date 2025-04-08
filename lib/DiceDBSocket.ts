@@ -12,7 +12,7 @@ import {
     QUERY_TIMEOUT_MS,
 } from '../src/constants/commands';
 
-import type { ParsedResponse } from './Parsers';
+import type { DiceDBResponse } from './Parsers';
 
 export interface DiceDBSocketOpts {
     host: string;
@@ -276,7 +276,7 @@ export class DiceDBSocket extends EventEmitter {
 
         const { data } = (await handshake.exec(
             this.watchable ? 'watch' : 'command',
-        )) as ParsedResponse;
+        )) as DiceDBResponse;
 
         return data;
     }

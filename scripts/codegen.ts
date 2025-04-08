@@ -29,7 +29,7 @@ function buildIndexFileString() {
 
     let imports = 'import { Readable } from "stream";\n\n';
     imports += 'import DiceDBBase, { type DiceDBOptions } from "./src/dicedb";\n';
-    imports += 'import { ParsedResponse } from "./lib/Parsers";\n';
+    imports += 'import { DiceDBResponse } from "./lib/Parsers";\n';
     
     for (const file of files) {
         const fileName = file.replace('.ts', '');
@@ -66,7 +66,7 @@ function buildIndexFileString() {
 
     diceDBString += '}\n';
 
-    const exports = 'export { DiceDB as default, type DiceDBOptions };'
+    const exports = 'export { DiceDB as default, type DiceDBOptions, type DiceDBResponse };'
     const indexFileString = `${header}\n\n${imports}\n${diceDBString}\n${exports}`
 
     return indexFileString;
@@ -89,10 +89,10 @@ function buildRegistryFileString() {
     let cmdRegistry = `type ValueOf<T> = T[keyof T];\n\n`;
     let imports = 'import Command, { WatchableCommand } from "../lib/Command";\n';
     
-    imports += 'import { ParsedResponse } from "../lib/Parsers";\n';
+    imports += 'import { DiceDBResponse } from "../lib/Parsers";\n';
     imports += 'import { COMMANDS } from "./constants/commands";\n\n';
 
-    cmdRegistry += 'const commandRegistry = new Map<ValueOf<typeof COMMANDS>, typeof Command<ParsedResponse> | typeof WatchableCommand>();\n';
+    cmdRegistry += 'const commandRegistry = new Map<ValueOf<typeof COMMANDS>, typeof Command<DiceDBResponse> | typeof WatchableCommand>();\n';
 
     for (const file of files) {
         const fileName = file.replace('.ts', '');

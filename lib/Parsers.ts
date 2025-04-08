@@ -1,6 +1,6 @@
 import type { Response } from '../generated/cmd_pb.d.ts';
 
-export interface ParsedResponse {
+export interface DiceDBResponse {
     success: boolean;
     error: string | null;
     data: {
@@ -14,7 +14,7 @@ export interface ParsedResponse {
     };
 }
 
-export const responseParser = (response: Response): ParsedResponse => {
+export const responseParser = (response: Response): DiceDBResponse => {
     const {
         $typeName,
         err = '',
