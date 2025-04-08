@@ -19,6 +19,12 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: true
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v3
+    - name: Pull DiceDB image
+      run: docker pull dicedb/dicedb:latest
+    - name: Run DiceDB
+      run: docker run -d --name dicedb -p 7379:7379 --restart=always dicedb/dicedb:latest
     - name: Install protoc compiler
       run: sudo apt-get update && sudo apt install -y protobuf-compiler
     - name: Use Node.js ${{ matrix.node-version }}
