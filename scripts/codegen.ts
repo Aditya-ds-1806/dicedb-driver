@@ -1,15 +1,16 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import ts, { Project, SyntaxKind, Node } from 'ts-morph';
 import { COMMAND_TO_COMMAND_NAME } from '../src/constants/commands';
 
 const project = new Project({
-    tsConfigFilePath: './tsconfig.json'
+    tsConfigFilePath: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../tsconfig.json')
 });
 
-const COMMANDS_DIR = path.resolve(import.meta.dirname, '../src/commands');
-const INDEX_FILE_PATH = path.resolve(import.meta.dirname, '../index.ts');
-const REGISTRY_FILE_PATH = path.resolve(import.meta.dirname, '../src/registry.ts');
+const COMMANDS_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/commands');
+const INDEX_FILE_PATH = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../index.ts');
+const REGISTRY_FILE_PATH = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/registry.ts');
 
 const files = await fs.readdir(COMMANDS_DIR);
 
