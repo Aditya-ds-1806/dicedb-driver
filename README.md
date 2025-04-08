@@ -259,3 +259,9 @@ Unwatches a subscription via fingerprint. Issues the `UNWATCH` command.
 ### `execCommand(command: string, ...args: any[]): Promise<DiceDBResponse | Readable>`
 
 A generic method to executes a DiceDB command. All the above commands call this method internally. The `command` parameter must be a valid DiceDB command, and `args` are the arguments for the command.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
