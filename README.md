@@ -33,7 +33,31 @@ DiceJS supports a wide range of DiceDB commands. Below is the list of currently 
 | `TYPE`       | ✅            |
 | `UNWATCH`    | ✅            |
 
-## DiceDB Commands
+## DiceDB Client Methods
+
+### `connect(): Promise<void>`
+
+Establishes a connection to the DiceDB server. This method must be called before executing any commands.
+
+#### Options
+
+The `DiceDB` client accepts the following options during initialization:
+
+- `host` (string, required): The hostname of the DiceDB server.
+- `port` (number, required): The port number of the DiceDB server.
+- `client_id` (string, optional): A unique identifier for the client. Defaults to a generated UUID.
+- `max_pool_size` (number, optional): The maximum number of connections in the connection pool.
+- `query_timeout_ms` (number, optional): The timeout for queries in milliseconds. Defaults to `5000ms`.
+- `conn_timeout_ms` (number, optional): The timeout for establishing connections in milliseconds. Defaults to `5000ms`.
+- `idle_timeout_ms` (number, optional): The timeout for idle connections in milliseconds. After timeout, socket will be destroyed and removed from connection pool. Defaults to `60000ms`.
+
+---
+
+### `disconnect(): Promise<boolean>`
+
+Closes all connections in the connection pool and disconnects from the DiceDB server. Returns `true` if all connections were successfully closed.
+
+---
 
 ### `decrement(key: string): Promise<DiceDBResponse>`
 
@@ -158,3 +182,9 @@ Gets the type of a key. Issues the `TYPE` command.
 ### `unwatch(fingerprint: string): Promise<DiceDBResponse>`
 
 Unwatches a subscription via fingerprint. Issues the `UNWATCH` command.
+
+---
+
+### `execCommand(command: string, ...args: any[]): Promise<DiceDBResponse | Readable>`
+
+A generic method to executes a DiceDB command. All the above commands call this method internally. The `command` parameter must be a valid DiceDB command, and `args` are the arguments for the command.
