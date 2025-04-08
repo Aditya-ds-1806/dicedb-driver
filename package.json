@@ -10,7 +10,7 @@
     "compile": "protoc -I=./dicedb-protos --es_out=target=ts:./generated dicedb-protos/cmd.proto",
     "dev": "DEBUG=DiceDB* nodemon --ext ts --exec ts-node index.ts",
     "start": "nodemon -r ts-node/register index.js",
-    "prebuild": "node --loader ts-node/esm scripts/build.ts"
+    "codegen": "node --loader ts-node/esm scripts/codegen.ts"
   },
   "keywords": [],
   "author": "Aditya DS",

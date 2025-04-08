@@ -1,28 +1,40 @@
+/**
+ * @generated
+ * --------------------------------------------------------------
+ * This file was automatically generated.
+ * Source: build.ts
+ * Date: 2025-04-08T16:14:22.867Z
+ * 
+ * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
+ * Changes will be overwritten the next time it is built.
+ * --------------------------------------------------------------
+ */
+
 import Command, { WatchableCommand } from "../lib/Command";
 import { ParsedResponse } from "../lib/Parsers";
-
-import DecrementCommand from "./commands/Decrement";
-import DecrementByCommand from "./commands/DecrementBy";
-import DeleteCommand from "./commands/Delete";
-import EchoCommand from "./commands/Echo";
-import ExistsCommand from "./commands/Exists";
-import ExpireCommand from "./commands/Expire";
-import ExpireAtCommand from "./commands/ExpireAt";
-import ExpireTimeCommand from "./commands/ExpireTime";
-import FlushDBCommand from "./commands/FlushDB";
-import GetCommand from "./commands/Get";
-import GetAndDeleteCommand from "./commands/GetAndDelete";
-import GetAndSetExpiryCommand from "./commands/GetAndSetExpiry";
-import GetWatchCommand from "./commands/GetWatch";
-import HandshakeCommand from "./commands/Handshake";
-import IncrementCommand from "./commands/Increment";
-import IncrementByCommand from "./commands/IncrementBy";
-import PingCommand from "./commands/Ping";
-import SetCommand from "./commands/Set";
-import TTLCommand from "./commands/TTL";
-import TypeCommand from "./commands/Type";
-import UnwatchCommand from "./commands/Unwatch";
 import { COMMANDS } from "./constants/commands";
+
+import DecrementCommand from './commands/Decrement';
+import DecrementByCommand from './commands/DecrementBy';
+import DeleteCommand from './commands/Delete';
+import EchoCommand from './commands/Echo';
+import ExistsCommand from './commands/Exists';
+import ExpireCommand from './commands/Expire';
+import ExpireAtCommand from './commands/ExpireAt';
+import ExpireTimeCommand from './commands/ExpireTime';
+import FlushDBCommand from './commands/FlushDB';
+import GetCommand from './commands/Get';
+import GetAndDeleteCommand from './commands/GetAndDelete';
+import GetAndSetExpiryCommand from './commands/GetAndSetExpiry';
+import GetWatchCommand from './commands/GetWatch';
+import HandshakeCommand from './commands/Handshake';
+import IncrementCommand from './commands/Increment';
+import IncrementByCommand from './commands/IncrementBy';
+import PingCommand from './commands/Ping';
+import SetCommand from './commands/Set';
+import TTLCommand from './commands/TTL';
+import TypeCommand from './commands/Type';
+import UnwatchCommand from './commands/Unwatch';
 
 type ValueOf<T> = T[keyof T];
 
