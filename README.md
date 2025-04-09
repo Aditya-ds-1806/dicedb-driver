@@ -38,7 +38,7 @@ DiceJS supports a wide range of DiceDB commands. Below is the list of currently 
 
 ## Documentation
 
-You can find the documentation ![here](https://github.com/Aditya-ds-1806/dicedb-js/blob/main/docs/README.md) or on the website.
+You can find the documentation [here](https://github.com/Aditya-ds-1806/dicedb-js/blob/main/docs/README.md) or on the website.
 
 ## License
 
