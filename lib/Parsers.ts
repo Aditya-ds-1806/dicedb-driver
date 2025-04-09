@@ -4,9 +4,9 @@ export interface DiceDBResponse {
     success: boolean;
     error: string | null;
     data: {
-        result: unknown;
-        vList: unknown[];
-        attrs: Record<string, unknown>;
+        result: string | number | bigint | boolean | Uint8Array<ArrayBufferLike> | undefined;
+        vList: any[];
+        attrs: Record<string, any>;
         meta: {
             $typeName: string;
             valueCase: string | undefined;

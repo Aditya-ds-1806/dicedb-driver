@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiceDB JS Driver Documentation</title>
+    <link id="theme-style" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css">
+
+    <style>
+        .sidebar-toggle {
+            display: none !important;
+        }
+    </style>
+    
+    <script>
+        window.$docsify = {
+            name: 'DiceDB Driver',
+            repo: 'https://github.com/Aditya-ds-1806/dicedb-js',
+            loadSidebar: false,
+            coverpage: false,
+            subMaxLevel: 2,
+            auto2top: true,
+        };
+    </script>
+
+    <script>
+        const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const themeStyle = document.getElementById('theme-style');
+        if (prefersDarkMode) {
+            themeStyle.href = 'https://cdn.jsdelivr.net/npm/docsify/lib/themes/dark.css';
+        }
+    </script>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script src="https://cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+</body>
+
+</html>

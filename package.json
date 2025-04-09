@@ -1,5 +1,5 @@
 {
-  "name": "dice-js",
+  "name": "dicedb-driver",
   "version": "1.0.0",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -16,7 +16,7 @@
   "keywords": [],
   "author": "Aditya DS",
   "license": "MIT",
-  "description": "DiceJS is an easy to use, promise-based database client for DiceDB, that supports connection pooling for optimal performance.",
+  "description": "DiceDB Driver is a lightweight, promise-based database driver for DiceDB with built-in connection pooling.",
   "dependencies": {
     "@bufbuild/protobuf": "^2.2.5",
     "debug": "^4.4.0"
