@@ -1,4 +1,6 @@
 # DiceDB Node.js Driver
+> A fast, promise-based Node.js driver for DiceDB, built for performance and developer joy.
+
 
 <p align="center">
     <img src="docs/dicedb.png" width="500" />
@@ -7,6 +9,62 @@
     <img src="https://github.com/Aditya-ds-1806/dicedb-js/actions/workflows/test.yml/badge.svg"/>
 
 DiceDB Node.js Driver is a lightweight, promise-based database driver for DiceDB with built-in connection pooling. Designed for performance and simplicity, it lets you interact with DiceDB using a clean, modern API.
+
+## Installation
+
+### Node.js
+
+Install DiceDB Driver using npm or yarn:
+
+```shell
+npm install dicedb-driver
+# or
+yarn add dicedb-driver
+```
+
+### Deno
+
+Import DiceDB directly from a CDN like [esm.sh](https://esm.sh):
+
+```javascript
+import DiceDBClient from "https://esm.sh/dicedb-driver";
+```
+
+## Usage
+
+DiceDB Driver ships with support for both CJS and ESM modules.
+
+### ESM
+
+```javascript
+import DiceDBClient from "dicedb-driver";
+
+const client = new DiceDBClient({ host: "localhost", port: 7379 });
+
+await client.connect();
+const result = await client.ping();
+
+console.log(result);
+
+await client.disconnect();
+```
+
+### CommonJS
+
+```javascript
+const DiceDBClient = require("dicedb-driver");
+
+const client = new DiceDB({ host: "localhost", port: 7379 });
+
+(async () => {
+  await client.connect();
+  const result = await client.ping();
+
+  console.log(result);
+
+  await client.disconnect();
+})();
+```
 
 ## Command Parity
 

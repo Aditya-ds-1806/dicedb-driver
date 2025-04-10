@@ -13,7 +13,9 @@
     "codegen": "node --loader ts-node/esm scripts/codegen.ts",
     "test": "mocha tests/index.test.js"
   },
-  "keywords": [],
+  "keywords": [
+    "Database", "DiceDB", "Database driver", "Redis", "Key-value store", "In-memory database", "js-driver", "client", "kv-store"
+  ],
   "author": "Aditya DS",
   "license": "MIT",
   "description": "DiceDB Driver is a lightweight, promise-based database driver for DiceDB with built-in connection pooling.",

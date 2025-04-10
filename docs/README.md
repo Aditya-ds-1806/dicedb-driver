@@ -34,10 +34,10 @@ yarn add dicedb-driver
 
 ### Deno
 
-Import DiceDB directly from a CDN like [esm.sh](https://esm.sh):
+Import DiceDB Client directly from a CDN like [esm.sh](https://esm.sh):
 
 ```javascript
-import DiceDB from "https://esm.sh/dicedb-driver";
+import DiceDBClient from "https://esm.sh/dicedb-driver";
 ```
 
 ## Usage
@@ -62,7 +62,7 @@ await client.disconnect();
 ### CommonJS
 
 ```javascript
-const DiceDB = require("dicedb-driver");
+const DiceDBClient = require("dicedb-driver");
 
 const client = new DiceDB({ host: "localhost", port: 7379 });
 
