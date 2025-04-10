@@ -56,7 +56,7 @@ await client.disconnect();
 ### CommonJS
 
 ```javascript
-const DiceDBClient = require("dicedb-driver");
+const DiceDBClient = require("dicedb-driver").default;
 
 const client = new DiceDB({ host: "localhost", port: 7379 });
 

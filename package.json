@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
-    "build": "rm -rf build && npx tsup index.ts --dts --format esm,cjs --target node18 --external all",
+    "build": "rm -rf dist && npx tsup index.ts --dts --format esm,cjs --target node18 --external all",
     "compile": "protoc -I=./dicedb-protos --es_out=target=ts:./proto dicedb-protos/cmd.proto",
     "dev": "DEBUG=DiceDB* nodemon --ext ts --exec ts-node index.ts",
     "start": "nodemon -r ts-node/register index.js",
