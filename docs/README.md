@@ -84,7 +84,7 @@ Debugging can be enabled using the standard Node.js `DEBUG` environment variable
 
 ### `connect()`
 
-**Signature**: `client.disconnect(): Promise<void>`
+**Signature**: `client.connect(): Promise<void>`
 
 Connects to the DiceDB server. This method must be called before executing any commands.
 

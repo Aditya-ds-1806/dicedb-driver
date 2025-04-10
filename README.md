@@ -1,7 +1,6 @@
 # DiceDB Node.js Driver
 > A fast, promise-based Node.js driver for DiceDB, built for performance and developer joy.
 
-
 <p align="center">
     <img src="docs/dicedb.png" width="500" />
     <br />
