@@ -1,6 +1,6 @@
 {
   "name": "dicedb-driver",
-  "version": "1.0.0",
+  "version": "1.0.1-0",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "scripts": {
@@ -14,7 +14,15 @@
     "test": "mocha tests/index.test.js"
   },
   "keywords": [
-    "Database", "DiceDB", "Database driver", "Redis", "Key-value store", "In-memory database", "js-driver", "client", "kv-store"
+    "Database",
+    "DiceDB",
+    "Database driver",
+    "Redis",
+    "Key-value store",
+    "In-memory database",
+    "js-driver",
+    "client",
+    "kv-store"
   ],
   "author": "Aditya DS",
   "license": "MIT",
