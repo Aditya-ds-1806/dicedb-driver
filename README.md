@@ -1,4 +1,5 @@
 # DiceDB Node.js Driver
+
 > A fast, promise-based Node.js driver for DiceDB, built for performance and developer joy.
 
 <p align="center">
@@ -6,6 +7,10 @@
     <br />
     <img src="https://github.com/Aditya-ds-1806/dicedb-js/actions/workflows/build.yml/badge.svg"/>
     <img src="https://github.com/Aditya-ds-1806/dicedb-js/actions/workflows/test.yml/badge.svg"/>
+    <img src="https://img.shields.io/npm/v/dicedb-driver" />
+    <img src="https://img.shields.io/node/v/dicedb-driver" />
+    <img src="https://img.shields.io/npm/types/dicedb-driver" />
+</p>
 
 DiceDB Node.js Driver is a lightweight, promise-based database driver for DiceDB with built-in connection pooling. Designed for performance and simplicity, it lets you interact with DiceDB using a clean, modern API.
 
@@ -95,7 +100,7 @@ DiceJS supports a wide range of DiceDB commands. Below is the list of currently 
 
 ## Documentation
 
-You can find the documentation [here](https://github.com/Aditya-ds-1806/dicedb-js/blob/main/docs/README.md) or on the website.
+Check out the documentation on [GitHub](https://github.com/Aditya-ds-1806/dicedb-driver/blob/main/docs/README.md) or explore it on the [docs website](https://aditya-ds-1806.github.io/dicedb-driver) for a nicer reading experience.
 
 ## License
 

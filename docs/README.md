@@ -6,6 +6,9 @@
 <p align="center">
     <img src="https://github.com/Aditya-ds-1806/dicedb-js/actions/workflows/build.yml/badge.svg"/>
     <img src="https://github.com/Aditya-ds-1806/dicedb-js/actions/workflows/test.yml/badge.svg"/>
+    <img src="https://img.shields.io/npm/v/dicedb-driver" />
+    <img src="https://img.shields.io/node/v/dicedb-driver" />
+    <img src="https://img.shields.io/npm/types/dicedb-driver" />
 </p>
 
 DiceDB Driver is a lightweight, promise-based database driver for DiceDB with built-in connection pooling. Designed for performance and simplicity, it lets you interact with DiceDB using a clean, modern API.
