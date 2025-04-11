@@ -57,6 +57,7 @@
     "type": "git",
     "url": "git+https://github.com/Aditya-ds-1806/dicedb-js.git"
   },
+  "homepage": "https://aditya-ds-1806.github.io/dicedb-driver",
   "files": [
     "dist/",
     "README.md",
