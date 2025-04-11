@@ -8,6 +8,12 @@ export default class DecrementCommand extends Command {
         return COMMANDS.DECR;
     }
 
+    /**
+     * Executes the DECR command to decrement the value of the specified key by 1.
+     *
+     * @param {string} key - The key whose value will be decremented.
+     * @returns A promise that resolves with the result of the command.
+     */
     async exec(key: string) {
         validateKey(key);
 

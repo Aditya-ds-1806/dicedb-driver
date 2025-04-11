@@ -7,6 +7,12 @@ export default class GetAndDeleteCommand extends Command {
         return COMMANDS.GETDEL;
     }
 
+    /**
+     * Executes the GETDEL command to retrieve and delete the value of a key.
+     *
+     * @param {string} key - The key whose value will be retrieved and deleted.
+     * @returns A promise that resolves with the value of the key before deletion.
+     */
     async exec(key: string) {
         validateKey(key);
 

@@ -7,6 +7,13 @@ export default class DecrementByCommand extends Command {
         return COMMANDS.DECRBY;
     }
 
+    /**
+     * Executes the DECRBY command to decrement the value of the specified key by a given delta.
+     *
+     * @param {string} key - The key whose value will be decremented.
+     * @param {number} delta - The amount by which the key's value will be decremented.
+     * @returns A promise that resolves with the result of the command.
+     */
     async exec(key: string, delta: number) {
         validateKey(key);
         validateInteger(delta);

@@ -53,7 +53,9 @@ function buildIndexFileString() {
 
         const commandName = commandGetter?.getType()?.getText()?.replaceAll('"', '') as keyof typeof COMMAND_TO_COMMAND_NAME;
         const execReturnType = execMethod?.getReturnType()?.getText(undefined, ts.TypeFormatFlags.None);
+        const jsDoc = execMethod?.getJsDocs()?.at(0)?.getText();
 
+        diceDBString += `\n\t${jsDoc}\n`;
         diceDBString += `\tasync ${COMMAND_TO_COMMAND_NAME[commandName]}(${paramsWithType}) {\n`;
         diceDBString += `\t\treturn this.execCommand('${commandName}', ${params.join(', ')}) as ${execReturnType};\n`;
         diceDBString += `\t}\n\n`;
@@ -67,8 +69,9 @@ function buildIndexFileString() {
 
     diceDBString += '}\n';
 
+    const diceDBClassJsDoc = project.getSourceFileOrThrow('src/dicedb.ts')?.getClass('DiceDB')?.getJsDocs()?.at(0)?.getText();
     const exports = 'export { DiceDB as default, type DiceDBOptions, type DiceDBResponse };'
-    const indexFileString = `${header}\n\n${imports}\n${diceDBString}\n${exports}`
+    const indexFileString = `${header}\n\n${imports}\n\n${diceDBClassJsDoc}\n${diceDBString}\n${exports}`
 
     return indexFileString;
 }

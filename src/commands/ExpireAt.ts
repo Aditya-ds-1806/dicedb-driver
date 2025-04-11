@@ -9,6 +9,14 @@ export default class ExpireAtCommand extends Command {
         return COMMANDS.EXPIREAT;
     }
 
+    /**
+     * Executes the EXPIREAT command to set a timeout on a key at a specific timestamp.
+     *
+     * @param {string} key - The key to set the timeout on.
+     * @param {number} timestamp - The Unix timestamp at which the key will expire.
+     * @param condition - The condition for setting the timeout.
+     * @returns A promise that resolves with the result of the command.
+     */
     async exec(
         key: string,
         timestamp: number,

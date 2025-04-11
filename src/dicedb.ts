@@ -24,6 +24,18 @@ export interface DiceDBOptions {
     idle_timeout_ms?: number;
 }
 
+/**
+ * The DiceDB class provides an interface to interact with the DiceDB server.
+ * It manages the connection pool, command execution, and client configuration.
+ *
+ * Usage:
+ * ```typescript
+ * const db = new DiceDB({ host: 'localhost', port: 6379 });
+ * await db.connect();
+ * await db.set('name', 'Aditya');
+ * await db.get('name'); // Aditya
+ * ```
+ */
 export default class DiceDB {
     private queryTimeoutMS: number = QUERY_TIMEOUT_MS;
     private connTimeoutMS: number = CONN_TIMEOUT_MS;
@@ -110,6 +122,10 @@ export default class DiceDB {
         this.logger.info(`Initialized DiceDB client ${this.client_id}`);
     }
 
+    /**
+     * Connects to the DiceDB server using the connection pool.
+     * @returns A promise that resolves when the connection is established.
+     */
     async connect(): Promise<void> {
         try {
             await this.connectionPool.connect();
@@ -119,6 +135,13 @@ export default class DiceDB {
         }
     }
 
+    /**
+     * Executes a command on the DiceDB server.
+     * @param command - The command to execute.
+     * @param args - The arguments for the command.
+     * @returns The result of the command execution.
+     * @throws DiceDBError if the command execution fails.
+     */
     async execCommand(
         command: keyof typeof COMMAND_TO_COMMAND_NAME,
         ...args: any[]
@@ -160,6 +183,10 @@ export default class DiceDB {
         }
     }
 
+    /**
+     * Disconnects from the DiceDB server and releases all connections.
+     * @returns A promise that resolves to true if all connections are successfully released.
+     */
     async disconnect(): Promise<boolean> {
         const result = await this.connectionPool.disconnect();
         return result.every(res => res);

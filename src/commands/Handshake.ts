@@ -11,6 +11,12 @@ export default class HandshakeCommand extends Command {
         return true;
     }
 
+    /**
+     * Executes the HANDSHAKE command to establish a connection with the server.
+     *
+     * @param {'command' | 'watch'} execMode - The execution mode for the handshake.
+     * @returns A promise that resolves when the handshake is successful.
+     */
     async exec(execMode: 'command' | 'watch') {
         if (execMode !== 'command' && execMode !== 'watch') {
             const err = new DiceDBCommandError({

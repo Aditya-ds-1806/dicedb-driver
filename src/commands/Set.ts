@@ -22,6 +22,14 @@ export default class SetCommand extends Command {
         return COMMANDS.SET;
     }
 
+    /**
+     * Executes the SET command to set the value of a key with optional expiry options.
+     *
+     * @param {string} key - The key to set the value for.
+     * @param {string | number} value - The value to set for the key.
+     * @param opts - The options for setting the key, such as expiry time.
+     * @returns A promise that resolves when the key is set successfully.
+     */
     async exec(
         key: string,
         value: string | number,

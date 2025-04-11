@@ -20,6 +20,13 @@ export default class GetAndSetExpiryCommand extends Command {
         return COMMANDS.GETEX;
     }
 
+    /**
+     * Executes the GETEX command to retrieve the value of a key and set its expiry options.
+     *
+     * @param {string} key - The key whose value will be retrieved.
+     * @param opts - The options for setting the expiry.
+     * @returns A promise that resolves with the value of the key.
+     */
     async exec(key: string, opts: GetAndSetExpiryCommandOptions = {}) {
         validateKey(key);
 

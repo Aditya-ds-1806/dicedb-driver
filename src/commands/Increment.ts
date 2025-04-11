@@ -7,6 +7,12 @@ export default class IncrementCommand extends Command {
         return COMMANDS.INCR;
     }
 
+    /**
+     * Executes the INCR command to increment the value of a key by 1.
+     *
+     * @param {string} key - The key whose value will be incremented.
+     * @returns A promise that resolves with the new value of the key.
+     */
     async exec(key: string) {
         validateKey(key);
 

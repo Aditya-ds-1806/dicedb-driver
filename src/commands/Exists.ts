@@ -7,6 +7,12 @@ export default class ExistsCommand extends Command {
         return COMMANDS.EXISTS;
     }
 
+    /**
+     * Executes the EXISTS command to check if one or more keys exist.
+     *
+     * @param {...string} keys - The keys to check for existence.
+     * @returns A promise that resolves with the number of keys that exist.
+     */
     async exec(...keys: string[]) {
         validateKeys(keys);
         const uniqueKeys = new Set(keys.map(String));

@@ -6,6 +6,12 @@ export default class UnwatchCommand extends Command {
         return COMMANDS.UNWATCH;
     }
 
+    /**
+     * Executes the UNWATCH command to remove all watched keys for the current connection.
+     *
+     * @param {string} fingerprint - The unique identifier for the connection.
+     * @returns A promise that resolves when the keys are unwatched.
+     */
     async exec(fingerprint: string) {
         return super.exec(fingerprint);
     }
