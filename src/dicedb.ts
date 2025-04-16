@@ -58,7 +58,7 @@ export default class DiceDB {
             query_timeout_ms: queryTimeoutMS,
             conn_timeout_ms: connTimeoutMS,
             idle_timeout_ms: idleTimeoutMS,
-        } = opts;
+        } = opts ?? {};
 
         this.logger = new Logger('DiceDB');
 
