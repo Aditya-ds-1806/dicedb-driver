@@ -12,7 +12,7 @@ import type { JsonObject, Message } from "@bufbuild/protobuf";
  * Describes the file cmd.proto.
  */
 export const file_cmd: GenFile = /*@__PURE__*/
-  fileDesc("CgljbWQucHJvdG8SBHdpcmUiJAoHQ29tbWFuZBILCgNjbWQYASABKAkSDAoEYXJncxgCIAMoCSLJAQoIUmVzcG9uc2USCwoDZXJyGAEgASgJEg8KBXZfbmlsGAIgASgISAASDwoFdl9pbnQYAyABKANIABIPCgV2X3N0chgEIAEoCUgAEhEKB3ZfZmxvYXQYBSABKAFIABIRCgd2X2J5dGVzGAYgASgMSAASJgoFYXR0cnMYByABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0EiYKBnZfbGlzdBgIIAMoCzIWLmdvb2dsZS5wcm90b2J1Zi5WYWx1ZUIHCgV2YWx1ZUIIWgYuL3dpcmViBnByb3RvMw", [file_google_protobuf_struct]);
+  fileDesc("CgljbWQucHJvdG8SBHdpcmUiJAoHQ29tbWFuZBILCgNjbWQYASABKAkSDAoEYXJncxgCIAMoCSKmAgoIUmVzcG9uc2USCwoDZXJyGAEgASgJEg8KBXZfbmlsGAIgASgISAASDwoFdl9pbnQYAyABKANIABIPCgV2X3N0chgEIAEoCUgAEhEKB3ZfZmxvYXQYBSABKAFIABIRCgd2X2J5dGVzGAYgASgMSAASJgoFYXR0cnMYByABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0EiYKBnZfbGlzdBgIIAMoCzIWLmdvb2dsZS5wcm90b2J1Zi5WYWx1ZRIsCgh2X3NzX21hcBgJIAMoCzIaLndpcmUuUmVzcG9uc2UuVlNzTWFwRW50cnkaLQoLVlNzTWFwRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4AUIHCgV2YWx1ZUIIWgYuL3dpcmViBnByb3RvMw", [file_google_protobuf_struct]);
 
 /**
  * @generated from message wire.Command
@@ -89,6 +89,11 @@ export type Response = Message<"wire.Response"> & {
    * @generated from field: repeated google.protobuf.Value v_list = 8;
    */
   vList: Value[];
+
+  /**
+   * @generated from field: map<string, string> v_ss_map = 9;
+   */
+  vSsMap: { [key: string]: string };
 };
 
 /**

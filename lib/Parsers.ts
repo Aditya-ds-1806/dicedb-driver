@@ -1,11 +1,10 @@
-import type { Response } from '../proto/cmd_pb';
+import { Result, Status } from '../proto/res_pb';
 
 export interface DiceDBResponse {
     success: boolean;
     error: string | null;
     data: {
-        result: string | number | bigint | boolean | Uint8Array<ArrayBufferLike> | undefined;
-        vList: any[];
+        result: Result['response']['value'];
         attrs: Record<string, any>;
         meta: {
             $typeName: string;
@@ -14,21 +13,19 @@ export interface DiceDBResponse {
     };
 }
 
-export const responseParser = (response: Response): DiceDBResponse => {
+export const responseParser = (response: Result): DiceDBResponse => {
     const {
         $typeName,
-        err = '',
-        value: { case: valueCase, value },
-        vList = [],
+        status,
+        response: { case: valueCase, value },
         attrs = {},
     } = response;
 
     return {
-        success: err === '',
-        error: err === '' ? null : err,
+        success: status === Status.OK,
+        error: status === Status.OK ? null : response.message,
         data: {
             result: value,
-            vList,
             attrs,
             meta: {
                 $typeName,

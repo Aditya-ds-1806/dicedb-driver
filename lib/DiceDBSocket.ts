@@ -119,7 +119,7 @@ export class DiceDBSocket extends EventEmitter {
                 try {
                     const data = await this.performHandshake();
 
-                    if (data.result !== 'OK') {
+                    if (!data.success) {
                         throw new DiceDBConnectionError({
                             message: `Connection established but server handshake failed for socket_id: ${this.socket_id}`,
                         });
@@ -264,7 +264,7 @@ export class DiceDBSocket extends EventEmitter {
          * sockets on destroying non watchable sockets.
          */
         if (!this.watchable) {
-            return { result: 'OK' };
+            return { success: true } as DiceDBResponse;
         }
 
         const HandshakeCommand = CommandRegistry.get(COMMANDS.HANDSHAKE)!;
@@ -274,9 +274,9 @@ export class DiceDBSocket extends EventEmitter {
             client_id: this.client_id,
         });
 
-        const { data } = (await handshake.exec(
+        const data = await handshake.exec(
             this.watchable ? 'watch' : 'command',
-        )) as DiceDBResponse;
+        ) as DiceDBResponse;
 
         return data;
     }

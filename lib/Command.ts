@@ -2,7 +2,8 @@ import { Readable } from 'stream';
 import EventEmitter from 'events';
 import { create, fromBinary, toBinary } from '@bufbuild/protobuf';
 
-import { CommandSchema, ResponseSchema } from '../proto/cmd_pb';
+import { CommandSchema } from '../proto/cmd_pb';
+import { ResultSchema } from '../proto/res_pb';
 import { uuid } from '../utils/index';
 import { DiceDBCommandError } from './Errors';
 import { responseParser } from './Parsers';
@@ -83,7 +84,7 @@ export default class Command<T = DiceDBResponse> extends EventEmitter {
         );
 
         const data = await this.conn.write(msg);
-        const response = responseParser(fromBinary(ResponseSchema, data));
+        const response = responseParser(fromBinary(ResultSchema, data));
 
         Object.assign(response.data.meta, {
             watch: (this.constructor as typeof Command).watchable,
@@ -128,7 +129,7 @@ export class WatchableCommand extends Command<Readable> {
         socket.on('error', (err) => readable.destroy(err));
         socket.on('data', (data) => {
             const decodedData = responseParser(
-                fromBinary(ResponseSchema, data),
+                fromBinary(ResultSchema, data),
             );
 
             Object.assign(decodedData.data.meta, {
