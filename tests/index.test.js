@@ -21,11 +21,12 @@ describe('DiceDB test cases', () => {
     });
 
     it('should run all commands without error', async () => {
-        const data = await Promise.all([
+        const data = await Promise.allSettled([
             db.ping(),
             db.ping('Hey there!'),
             db.get('Hey'),
             db.get('Welcomes'),
+            db.getSet('Hey', 'Hello'),
             db.decrement('test'),
             db.decrementBy('testing', -20),
             db.delete('delete', 'assas', 'sasa'),
@@ -51,10 +52,14 @@ describe('DiceDB test cases', () => {
             db.set('age', 29, { xx: true }),
             db.set('age', 302, { nx: true }),
             db.set('age', 302, { ex: 10 }),
+            db.hashSet('aditya', {
+                name: 'Aditya',
+                age: 25,
+            }),
             db.flushDB(),
         ]);
 
-        expect(data.every((d) => d.success)).to.be.true;
+        expect(data.every((d) => d.value.success)).to.be.true;
     });
 
     it('should run GET.WATCH command', async () => {

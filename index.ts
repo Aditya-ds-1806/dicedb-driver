@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-17T16:22:56.833Z
+ * Date: 2025-04-17T19:53:13.673Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -170,11 +170,11 @@ class DiceDB extends DiceDBBase {
 
 
 	/**
-     * Executes the GETSET command to retrieve the value of a key.
+     * Executes the GETSET command to set and get the old value of a key.
      *
-     * @param {string} key - The key whose value will be retrieved.
+     * @param {string} key - The key whose old value will be retrieved.
      * @param {number | string} value - The value to set.
-     * @returns A promise that resolves with the value of the key.
+     * @returns A promise that resolves with the old value of the key.
      */
 	async getSet(key: string, value: string | number) {
 		return this.execCommand('GETSET', key, value) as Promise<DiceDBResponse>;
@@ -200,6 +200,18 @@ class DiceDB extends DiceDBBase {
      */
 	async handshake(execMode: "command" | "watch") {
 		return this.execCommand('HANDSHAKE', execMode) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the GETSET command to set and get the old value of a key.
+     *
+     * @param {string} key - The key whose old value will be retrieved.
+     * @param {Object} map - The value to set.
+     * @returns A promise that resolves with the old value of the key.
+     */
+	async hashSet(key: string, map: Record<string, string | number>) {
+		return this.execCommand('HSET', key, map) as Promise<DiceDBResponse>;
 	}
 
 
