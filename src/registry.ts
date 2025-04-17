@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-11T15:46:58.195Z
+ * Date: 2025-04-17T16:22:57.207Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -26,6 +26,7 @@ import FlushDBCommand from './commands/FlushDB';
 import GetCommand from './commands/Get';
 import GetAndDeleteCommand from './commands/GetAndDelete';
 import GetAndSetExpiryCommand from './commands/GetAndSetExpiry';
+import GetSetCommand from './commands/GetSet';
 import GetWatchCommand from './commands/GetWatch';
 import HandshakeCommand from './commands/Handshake';
 import IncrementCommand from './commands/Increment';
@@ -52,6 +53,7 @@ commandRegistry.set(FlushDBCommand.command, FlushDBCommand);
 commandRegistry.set(GetCommand.command, GetCommand);
 commandRegistry.set(GetAndDeleteCommand.command, GetAndDeleteCommand);
 commandRegistry.set(GetAndSetExpiryCommand.command, GetAndSetExpiryCommand);
+commandRegistry.set(GetSetCommand.command, GetSetCommand);
 commandRegistry.set(GetWatchCommand.command, GetWatchCommand);
 commandRegistry.set(HandshakeCommand.command, HandshakeCommand);
 commandRegistry.set(IncrementCommand.command, IncrementCommand);

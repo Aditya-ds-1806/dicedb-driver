@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-11T15:46:57.818Z
+ * Date: 2025-04-17T16:22:56.833Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -166,6 +166,18 @@ class DiceDB extends DiceDBBase {
      */
 	async getAndSetExpiry(key: string, opts: GetAndSetExpiryCommandOptions) {
 		return this.execCommand('GETEX', key, opts) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the GETSET command to retrieve the value of a key.
+     *
+     * @param {string} key - The key whose value will be retrieved.
+     * @param {number | string} value - The value to set.
+     * @returns A promise that resolves with the value of the key.
+     */
+	async getSet(key: string, value: string | number) {
+		return this.execCommand('GETSET', key, value) as Promise<DiceDBResponse>;
 	}
 
 

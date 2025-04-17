@@ -5,7 +5,6 @@ export interface DiceDBResponse {
     error: string | null;
     data: {
         result: Result['response']['value'];
-        attrs: Record<string, any>;
         meta: {
             $typeName: string;
             valueCase: string | undefined;
@@ -18,7 +17,6 @@ export const responseParser = (response: Result): DiceDBResponse => {
         $typeName,
         status,
         response: { case: valueCase, value },
-        attrs = {},
     } = response;
 
     return {
@@ -26,7 +24,6 @@ export const responseParser = (response: Result): DiceDBResponse => {
         error: status === Status.OK ? null : response.message,
         data: {
             result: value,
-            attrs,
             meta: {
                 $typeName,
                 valueCase,
