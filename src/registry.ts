@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-17T19:53:13.989Z
+ * Date: 2025-04-17T20:00:53.382Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -28,8 +28,8 @@ import GetAndDeleteCommand from './commands/GetAndDelete';
 import GetAndSetExpiryCommand from './commands/GetAndSetExpiry';
 import GetSetCommand from './commands/GetSet';
 import GetWatchCommand from './commands/GetWatch';
+import HSetCommand from './commands/HSet';
 import HandshakeCommand from './commands/Handshake';
-import HashSetCommand from './commands/HashSet';
 import IncrementCommand from './commands/Increment';
 import IncrementByCommand from './commands/IncrementBy';
 import PingCommand from './commands/Ping';
@@ -56,8 +56,8 @@ commandRegistry.set(GetAndDeleteCommand.command, GetAndDeleteCommand);
 commandRegistry.set(GetAndSetExpiryCommand.command, GetAndSetExpiryCommand);
 commandRegistry.set(GetSetCommand.command, GetSetCommand);
 commandRegistry.set(GetWatchCommand.command, GetWatchCommand);
+commandRegistry.set(HSetCommand.command, HSetCommand);
 commandRegistry.set(HandshakeCommand.command, HandshakeCommand);
-commandRegistry.set(HashSetCommand.command, HashSetCommand);
 commandRegistry.set(IncrementCommand.command, IncrementCommand);
 commandRegistry.set(IncrementByCommand.command, IncrementByCommand);
 commandRegistry.set(PingCommand.command, PingCommand);

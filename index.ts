@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-17T19:53:13.673Z
+ * Date: 2025-04-17T20:00:53.082Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -193,6 +193,18 @@ class DiceDB extends DiceDBBase {
 
 
 	/**
+     * Executes the HSET command to set the value of a field in a hash stored at key.
+     *
+     * @param {string} key - The key of the hash.
+     * @param {Record<string, number | string>} map - An object representing field-value pairs to set in the hash.
+     * @returns A promise that resolves with the result of the command execution.
+     */
+	async hSet(key: string, map: Record<string, string | number>) {
+		return this.execCommand('HSET', key, map) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
      * Executes the HANDSHAKE command to establish a connection with the server.
      *
      * @param {'command' | 'watch'} execMode - The execution mode for the handshake.
@@ -200,18 +212,6 @@ class DiceDB extends DiceDBBase {
      */
 	async handshake(execMode: "command" | "watch") {
 		return this.execCommand('HANDSHAKE', execMode) as Promise<DiceDBResponse>;
-	}
-
-
-	/**
-     * Executes the GETSET command to set and get the old value of a key.
-     *
-     * @param {string} key - The key whose old value will be retrieved.
-     * @param {Object} map - The value to set.
-     * @returns A promise that resolves with the old value of the key.
-     */
-	async hashSet(key: string, map: Record<string, string | number>) {
-		return this.execCommand('HSET', key, map) as Promise<DiceDBResponse>;
 	}
 
 

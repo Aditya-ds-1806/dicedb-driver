@@ -52,7 +52,7 @@ describe('DiceDB test cases', () => {
             db.set('age', 29, { xx: true }),
             db.set('age', 302, { nx: true }),
             db.set('age', 302, { ex: 10 }),
-            db.hashSet('aditya', {
+            db.hSet('aditya', {
                 name: 'Aditya',
                 age: 25,
             }),

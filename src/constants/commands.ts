@@ -40,7 +40,7 @@ export const COMMAND_TO_COMMAND_NAME = Object.freeze({
     [COMMANDS.GETEX]: 'getAndSetExpiry',
     [COMMANDS.GET_WATCH]: 'getWatch',
     [COMMANDS.HANDSHAKE]: 'handshake',
-    [COMMANDS.HSET]: 'hashSet',
+    [COMMANDS.HSET]: 'hSet',
     [COMMANDS.INCR]: 'increment',
     [COMMANDS.INCRBY]: 'incrementBy',
     [COMMANDS.PING]: 'ping',
