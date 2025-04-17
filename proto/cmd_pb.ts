@@ -4,15 +4,13 @@
 
 import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv1";
 import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv1";
-import type { Value } from "@bufbuild/protobuf/wkt";
-import { file_google_protobuf_struct } from "@bufbuild/protobuf/wkt";
-import type { JsonObject, Message } from "@bufbuild/protobuf";
+import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file cmd.proto.
  */
 export const file_cmd: GenFile = /*@__PURE__*/
-  fileDesc("CgljbWQucHJvdG8SBHdpcmUiJAoHQ29tbWFuZBILCgNjbWQYASABKAkSDAoEYXJncxgCIAMoCSKmAgoIUmVzcG9uc2USCwoDZXJyGAEgASgJEg8KBXZfbmlsGAIgASgISAASDwoFdl9pbnQYAyABKANIABIPCgV2X3N0chgEIAEoCUgAEhEKB3ZfZmxvYXQYBSABKAFIABIRCgd2X2J5dGVzGAYgASgMSAASJgoFYXR0cnMYByABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0EiYKBnZfbGlzdBgIIAMoCzIWLmdvb2dsZS5wcm90b2J1Zi5WYWx1ZRIsCgh2X3NzX21hcBgJIAMoCzIaLndpcmUuUmVzcG9uc2UuVlNzTWFwRW50cnkaLQoLVlNzTWFwRW50cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4AUIHCgV2YWx1ZUIIWgYuL3dpcmViBnByb3RvMw", [file_google_protobuf_struct]);
+  fileDesc("CgljbWQucHJvdG8SBHdpcmUiJAoHQ29tbWFuZBILCgNjbWQYASABKAkSDAoEYXJncxgCIAMoCUIIWgYuL3dpcmViBnByb3RvMw");
 
 /**
  * @generated from message wire.Command
@@ -35,71 +33,4 @@ export type Command = Message<"wire.Command"> & {
  */
 export const CommandSchema: GenMessage<Command> = /*@__PURE__*/
   messageDesc(file_cmd, 0);
-
-/**
- * @generated from message wire.Response
- */
-export type Response = Message<"wire.Response"> & {
-  /**
-   * @generated from field: string err = 1;
-   */
-  err: string;
-
-  /**
-   * @generated from oneof wire.Response.value
-   */
-  value: {
-    /**
-     * @generated from field: bool v_nil = 2;
-     */
-    value: boolean;
-    case: "vNil";
-  } | {
-    /**
-     * @generated from field: int64 v_int = 3;
-     */
-    value: bigint;
-    case: "vInt";
-  } | {
-    /**
-     * @generated from field: string v_str = 4;
-     */
-    value: string;
-    case: "vStr";
-  } | {
-    /**
-     * @generated from field: double v_float = 5;
-     */
-    value: number;
-    case: "vFloat";
-  } | {
-    /**
-     * @generated from field: bytes v_bytes = 6;
-     */
-    value: Uint8Array;
-    case: "vBytes";
-  } | { case: undefined; value?: undefined };
-
-  /**
-   * @generated from field: google.protobuf.Struct attrs = 7;
-   */
-  attrs?: JsonObject;
-
-  /**
-   * @generated from field: repeated google.protobuf.Value v_list = 8;
-   */
-  vList: Value[];
-
-  /**
-   * @generated from field: map<string, string> v_ss_map = 9;
-   */
-  vSsMap: { [key: string]: string };
-};
-
-/**
- * Describes the message wire.Response.
- * Use `create(ResponseSchema)` to create a new message.
- */
-export const ResponseSchema: GenMessage<Response> = /*@__PURE__*/
-  messageDesc(file_cmd, 1);
 
