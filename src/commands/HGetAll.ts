@@ -1,22 +1,30 @@
 import Command from '../../lib/Command';
 import { validateKey } from '../../lib/Validators';
+import { HElement } from '../../proto/res_pb';
 import { COMMANDS } from '../constants/commands';
 
-export default class HGetCommand extends Command {
+export default class HGetAllCommand extends Command {
     static get command() {
-        return COMMANDS.HGET;
+        return COMMANDS.HGETALL;
     }
 
     /**
      * Executes the HGET command to retrieve the value of a field in a hash stored at a key.
      *
      * @param {string} key - The key of the hash.
-     * @param {string} fieldName - The field name whose value will be retrieved.
      * @returns A promise that resolves with the value of the field, or null if the field does not exist.
      */
-    async exec(key: string, fieldName: string) {
+    async exec(key: string) {
         validateKey(key);
 
-        return super.exec(key, fieldName);
+        const response = await super.exec(key);
+
+        response.data.result = response.data.result.reduce((map: Record<string, string>, entry: HElement) => {
+            map[entry.key] = entry.value;
+
+            return map;
+        }, {});
+
+        return response;
     }
 }

@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-17T20:20:19.807Z
+ * Date: 2025-04-18T07:53:22.024Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -29,6 +29,7 @@ import GetAndSetExpiryCommand from './commands/GetAndSetExpiry';
 import GetSetCommand from './commands/GetSet';
 import GetWatchCommand from './commands/GetWatch';
 import HGetCommand from './commands/HGet';
+import HGetAllCommand from './commands/HGetAll';
 import HSetCommand from './commands/HSet';
 import HandshakeCommand from './commands/Handshake';
 import IncrementCommand from './commands/Increment';
@@ -58,6 +59,7 @@ commandRegistry.set(GetAndSetExpiryCommand.command, GetAndSetExpiryCommand);
 commandRegistry.set(GetSetCommand.command, GetSetCommand);
 commandRegistry.set(GetWatchCommand.command, GetWatchCommand);
 commandRegistry.set(HGetCommand.command, HGetCommand);
+commandRegistry.set(HGetAllCommand.command, HGetAllCommand);
 commandRegistry.set(HSetCommand.command, HSetCommand);
 commandRegistry.set(HandshakeCommand.command, HandshakeCommand);
 commandRegistry.set(IncrementCommand.command, IncrementCommand);

@@ -88,11 +88,22 @@ describe('DiceDB test cases', () => {
 
         expect(data1.success).to.be.true;
         expect(data1.error).to.be.null;
-        expect(data1.data.result.value).to.equal('Aditya');
+        expect(data1.data.result).to.equal('Aditya');
 
         expect(data2.success).to.be.true;
         expect(data2.error).to.be.null;
-        expect(data2.data.result.value).to.equal('25');
+        expect(data2.data.result).to.equal('25');
+    });
+
+    it('should run HGETALL command', async () => {
+        const data = await db.hGetAll('testingg');
+
+        expect(data.success).to.be.true;
+        expect(data.error).to.be.null;
+        expect(data.data.result).to.deep.equal({
+            name: 'Aditya',
+            age: '25',
+        });
     });
 
     after(async () => {
