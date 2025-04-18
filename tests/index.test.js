@@ -755,6 +755,54 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('HGetAllCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('hashKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return all fields and values of a hash', async () => {
+            const key = 'hashKey';
+            const hash = {
+                name: 'testName',
+                age: '25',
+                city: 'testCity',
+            };
+            await db.hSet(key, hash);
+
+            const response = await db.hGetAll(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(hash);
+        });
+
+        it('should return empty object for non-existent key', async () => {
+            const key = 'nonexistentHash';
+            const response = await db.hGetAll(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal({});
+        });
+
+        it('should handle numeric values correctly', async () => {
+            const key = 'hashKey';
+            await db.hSet(key, {
+                int: 42,
+                float: 3.14,
+                string: 'text',
+            });
+
+            const response = await db.hGetAll(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal({
+                int: '42',
+                float: '3.14',
+                string: 'text',
+            });
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
