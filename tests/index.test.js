@@ -342,6 +342,43 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('ExpireTimeCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('testKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return timestamp when key has expiry set', async () => {
+            const key = 'testKey';
+            await db.set(key, 'value');
+            const expireAt = Math.floor(Date.now() / 1000) + 100;
+            await db.expireAt(key, expireAt);
+
+            const response = await db.expireTime(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(BigInt(expireAt));
+        });
+
+        it('should return -1n when key exists but has no expiry', async () => {
+            const key = 'testKey';
+            await db.set(key, 'value');
+
+            const response = await db.expireTime(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(-1n);
+        });
+
+        it('should return -2n when key does not exist', async () => {
+            const key = 'nonExistentKey';
+            const response = await db.expireTime(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(-2n);
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
