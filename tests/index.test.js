@@ -694,6 +694,67 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('HGetCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('hashKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return the value of an existing hash field', async () => {
+            const key = 'hashKey';
+            const field = 'name';
+            const value = 'testValue';
+            await db.hSet(key, { [field]: value });
+
+            const response = await db.hGet(key, field);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(value);
+        });
+
+        it('should return empty string for a non-existent field', async () => {
+            const key = 'hashKey';
+            const field = 'nonexistent';
+            await db.hSet(key, { otherField: 'value' });
+
+            const response = await db.hGet(key, field);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('');
+        });
+
+        it('should return empty string for a non-existent key', async () => {
+            const key = 'nonexistentHash';
+            const field = 'someField';
+
+            const response = await db.hGet(key, field);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('');
+        });
+
+        it('should handle numeric values correctly', async () => {
+            const key = 'hashKey';
+            const field = 'age';
+            const value = 42;
+            await db.hSet(key, { [field]: value });
+
+            const response = await db.hGet(key, field);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('42');
+        });
+
+        it('should return error for wrong type operation', async () => {
+            const key = 'stringKey';
+            const field = 'someField';
+            await db.set(key, 'string value');
+
+            const response = await db.hGet(key, field);
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
