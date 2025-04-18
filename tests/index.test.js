@@ -176,6 +176,65 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('ExpireCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('testKey');
+                await db.delete('expireKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should set expiry on key and return true', async () => {
+            const key = 'testKey';
+            await db.set(key, 'value');
+            const response = await db.expire(key, 100);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(true);
+        });
+
+        it('should return false when key does not exist', async () => {
+            const key = 'nonExistentKey';
+            const response = await db.expire(key, 100);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(false);
+        });
+
+        it('should set expiry only when key has no expiry with NX condition', async () => {
+            const key = 'expireKey';
+            await db.set(key, 'value');
+
+            // First expire should succeed
+            const response1 = await db.expire(key, 100, 'NX');
+            expect(response1.success).to.be.true;
+            expect(response1.data.result).to.equal(true);
+
+            // Second expire with NX should fail since key already has expiry
+            const response2 = await db.expire(key, 200, 'NX');
+            expect(response2.success).to.be.true;
+            expect(response2.data.result).to.equal(false);
+        });
+
+        it('should set expiry only when key has existing expiry with XX condition', async () => {
+            const key = 'expireKey';
+            await db.set(key, 'value');
+
+            // First expire with XX should fail since key has no expiry
+            const response1 = await db.expire(key, 100, 'XX');
+            expect(response1.success).to.be.true;
+            expect(response1.data.result).to.equal(false);
+
+            // Set initial expiry
+            await db.expire(key, 100);
+
+            // Second expire with XX should succeed since key has expiry
+            const response2 = await db.expire(key, 200, 'XX');
+            expect(response2.success).to.be.true;
+            expect(response2.data.result).to.equal(true);
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
