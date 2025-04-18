@@ -452,6 +452,51 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('GetAndDeleteCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('testKey', 'nonExistentKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should get and delete the value of an existing key', async () => {
+            const key = 'testKey';
+            const value = 'testValue';
+            await db.set(key, value);
+
+            const response = await db.getAndDelete(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(value);
+
+            // Verify key was deleted
+            const exists = await db.exists(key);
+            expect(exists.data.result).to.equal(0n);
+        });
+
+        it('should return empty string for a non-existent key', async () => {
+            const key = 'nonExistentKey';
+            const response = await db.getAndDelete(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('');
+        });
+
+        it('should retrieve and delete numeric values as strings', async () => {
+            const key = 'testKey';
+            const value = 42;
+            await db.set(key, value);
+
+            const response = await db.getAndDelete(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('42');
+
+            // Verify key was deleted
+            const exists = await db.exists(key);
+            expect(exists.data.result).to.equal(0n);
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
