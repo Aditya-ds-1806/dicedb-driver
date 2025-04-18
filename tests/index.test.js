@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import { describe, before, it, after, beforeEach } from 'mocha';
 
 import DiceDB from '../dist/index.js';
+import { Readable } from 'stream';
 
 describe('DiceDB test cases', () => {
     let db;
@@ -637,6 +638,59 @@ describe('DiceDB test cases', () => {
             // Verify new value was set
             const get = await db.get(key);
             expect(get.data.result).to.equal('84');
+        });
+    });
+
+    describe('GetWatchCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('testKey', 'nonExistentKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return a stream when watching a key', async () => {
+            const key = 'testKey';
+            const stream = await db.getWatch(key);
+
+            expect(stream).to.be.instanceOf(Readable);
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+
+        it('should receive updates through the stream', async () => {
+            const key = 'testKey';
+            const stream = await db.getWatch(key);
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // wait for newValue to be returned from server and then resolve
+                    if (data.data.result === 'newValue') {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                db.set(key, 'newValue').catch(reject);
+            });
         });
     });
 
