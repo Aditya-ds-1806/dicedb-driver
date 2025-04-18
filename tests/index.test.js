@@ -803,6 +803,73 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('HSetCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('hashKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should set multiple fields in a hash and return count of new fields', async () => {
+            const key = 'hashKey';
+            const hash = {
+                name: 'testName',
+                age: 25,
+                city: 'testCity',
+            };
+
+            const response = await db.hSet(key, hash);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n);
+
+            // Verify fields were set correctly
+            const getResponse = await db.hGetAll(key);
+            expect(getResponse.data.result).to.deep.equal({
+                name: 'testName',
+                age: '25',
+                city: 'testCity',
+            });
+        });
+
+        it('should update existing fields and return count of new fields only', async () => {
+            const key = 'hashKey';
+            // First set
+            await db.hSet(key, {
+                name: 'testName',
+                age: 25,
+            });
+
+            // Update existing and add new
+            const response = await db.hSet(key, {
+                name: 'newName', // update existing
+                age: 30, // update existing
+                city: 'testCity', // new field
+            });
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n); // only one new field
+
+            // Verify all fields
+            const getResponse = await db.hGetAll(key);
+            expect(getResponse.data.result).to.deep.equal({
+                name: 'newName',
+                age: '30',
+                city: 'testCity',
+            });
+        });
+
+        it('should return error for wrong type operation', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'string value');
+
+            const response = await db.hSet(key, { field: 'value' });
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
