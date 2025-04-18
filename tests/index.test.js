@@ -146,4 +146,40 @@ describe('DiceDB test cases', () => {
             expect(response.data.result).to.equal('');
         });
     });
+
+    describe('ExistsCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('testKey', 'key1', 'key2', 'key3');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return 1 if key exists', async () => {
+            const key = 'testKey';
+            await db.set(key, 'value');
+            const response = await db.exists(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n);
+        });
+
+        it('should return 0 if key does not exist', async () => {
+            const key = 'nonExistentKey';
+            const response = await db.exists(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n);
+        });
+
+        it('should return count of existing keys when checking multiple keys', async () => {
+            const keys = ['key1', 'key2', 'key3'];
+            // Set only first two keys
+            await db.set(keys[0], 'value1');
+            await db.set(keys[1], 'value2');
+            
+            const response = await db.exists(...keys);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(2n);
+        });
+    });
 });
