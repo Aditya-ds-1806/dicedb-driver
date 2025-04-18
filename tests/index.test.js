@@ -94,4 +94,41 @@ describe('DiceDB test cases', () => {
             expect(response.error).to.include('wrongtype operation');
         });
     });
+
+    describe('DeleteCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('testKey', 'key1', 'key2', 'key3');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should delete an existing key and return count as BigInt', async () => {
+            const key = 'testKey';
+            await db.set(key, 'value');
+            const response = await db.delete(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n);
+        });
+
+        it('should return 0n when trying to delete non-existent key', async () => {
+            const key = 'nonExistentKey';
+            const response = await db.delete(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n);
+        });
+
+        it('should delete multiple keys and return count of deleted keys as BigInt', async () => {
+            const keys = ['key1', 'key2', 'key3'];
+            // Set multiple keys
+            for (const key of keys) {
+                await db.set(key, 'value');
+            }
+
+            const response = await db.delete(...keys);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n);
+        });
+    });
 });
