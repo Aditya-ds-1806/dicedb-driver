@@ -870,6 +870,41 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('IncrementCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('testKey', 'nonExistentKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should increment the value of a key by 1', async () => {
+            const key = 'testKey';
+            await db.set(key, 10);
+
+            const response = await db.increment(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(11n);
+        });
+
+        it('should initialize to 1 if key does not exist', async () => {
+            const key = 'nonExistentKey';
+            const response = await db.increment(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n);
+        });
+
+        it('should return error for wrong type operation', async () => {
+            const key = 'testKey';
+            await db.set(key, 'not-a-number');
+
+            const response = await db.increment(key);
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
