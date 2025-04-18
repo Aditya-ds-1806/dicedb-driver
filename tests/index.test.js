@@ -235,6 +235,113 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('ExpireAtCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('testKey');
+                await db.delete('expireAtKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should set expiry at timestamp and return true', async () => {
+            const key = 'testKey';
+            await db.set(key, 'value');
+            const timestamp = Math.floor(Date.now() / 1000) + 100; // 100 seconds from now
+            const response = await db.expireAt(key, timestamp);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(true);
+        });
+
+        it('should return false when key does not exist', async () => {
+            const key = 'nonExistentKey';
+            const timestamp = Math.floor(Date.now() / 1000) + 100;
+            const response = await db.expireAt(key, timestamp);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(false);
+        });
+
+        it('should set expiry only when key has no expiry with NX condition', async () => {
+            const key = 'expireAtKey';
+            const timestamp = Math.floor(Date.now() / 1000) + 100;
+            const futureTimestamp = Math.floor(Date.now() / 1000) + 200;
+            await db.set(key, 'value');
+
+            // First expireAt should succeed
+            const response1 = await db.expireAt(key, timestamp, 'NX');
+            expect(response1.success).to.be.true;
+            expect(response1.data.result).to.equal(true);
+
+            // Second expireAt with NX should fail since key already has expiry
+            const response2 = await db.expireAt(key, futureTimestamp, 'NX');
+            expect(response2.success).to.be.true;
+            expect(response2.data.result).to.equal(false);
+        });
+
+        it('should set expiry only when key has existing expiry with XX condition', async () => {
+            const key = 'expireAtKey';
+            const timestamp = Math.floor(Date.now() / 1000) + 100;
+            const futureTimestamp = Math.floor(Date.now() / 1000) + 200;
+            await db.set(key, 'value');
+
+            // First expireAt with XX should fail since key has no expiry
+            const response1 = await db.expireAt(key, timestamp, 'XX');
+            expect(response1.success).to.be.true;
+            expect(response1.data.result).to.equal(false);
+
+            // Set initial expiry
+            await db.expireAt(key, timestamp);
+
+            // Second expireAt with XX should succeed since key has expiry
+            const response2 = await db.expireAt(key, futureTimestamp, 'XX');
+            expect(response2.success).to.be.true;
+            expect(response2.data.result).to.equal(true);
+        });
+
+        it('should set expiry only when new expiry is greater with GT condition', async () => {
+            const key = 'expireAtKey';
+            const timestamp = Math.floor(Date.now() / 1000) + 100;
+            const earlierTimestamp = Math.floor(Date.now() / 1000) + 50;
+            const laterTimestamp = Math.floor(Date.now() / 1000) + 150;
+            await db.set(key, 'value');
+
+            // Set initial expiry
+            await db.expireAt(key, timestamp);
+
+            // Earlier timestamp with GT should fail
+            const response1 = await db.expireAt(key, earlierTimestamp, 'GT');
+            expect(response1.success).to.be.true;
+            expect(response1.data.result).to.equal(false);
+
+            // Later timestamp with GT should succeed
+            const response2 = await db.expireAt(key, laterTimestamp, 'GT');
+            expect(response2.success).to.be.true;
+            expect(response2.data.result).to.equal(true);
+        });
+
+        it('should set expiry only when new expiry is less with LT condition', async () => {
+            const key = 'expireAtKey';
+            const timestamp = Math.floor(Date.now() / 1000) + 100;
+            const earlierTimestamp = Math.floor(Date.now() / 1000) + 50;
+            const laterTimestamp = Math.floor(Date.now() / 1000) + 150;
+            await db.set(key, 'value');
+
+            // Set initial expiry
+            await db.expireAt(key, timestamp);
+
+            // Later timestamp with LT should fail
+            const response1 = await db.expireAt(key, laterTimestamp, 'LT');
+            expect(response1.success).to.be.true;
+            expect(response1.data.result).to.equal(false);
+
+            // Earlier timestamp with LT should succeed
+            const response2 = await db.expireAt(key, earlierTimestamp, 'LT');
+            expect(response2.success).to.be.true;
+            expect(response2.data.result).to.equal(true);
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
