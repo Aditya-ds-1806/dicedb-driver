@@ -131,4 +131,19 @@ describe('DiceDB test cases', () => {
             expect(response.data.result).to.equal(3n);
         });
     });
+
+    describe('EchoCommand', () => {
+        it('should echo back the provided message', async () => {
+            const message = 'Hello DiceDB!';
+            const response = await db.echo(message);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(message);
+        });
+
+        it('should echo back an empty string when no message is provided', async () => {
+            const response = await db.echo();
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('');
+        });
+    });
 });
