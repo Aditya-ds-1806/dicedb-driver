@@ -415,6 +415,43 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('GetCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('testKey', 'nonExistentKey', 'hashKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return the value of an existing key', async () => {
+            const key = 'testKey';
+            const value = 'testValue';
+            await db.set(key, value);
+
+            const response = await db.get(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(value);
+        });
+
+        it('should return empty string for a non-existent key', async () => {
+            const key = 'nonExistentKey';
+            const response = await db.get(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('');
+        });
+
+        it('should handle numeric values correctly', async () => {
+            const key = 'testKey';
+            const value = 42;
+            await db.set(key, value);
+
+            const response = await db.get(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(String(value));
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
