@@ -949,6 +949,21 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('PingCommand', () => {
+        it('should return PONG when no message is provided', async () => {
+            const response = await db.ping();
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('PONG');
+        });
+
+        it('should echo back the provided message with a PONG', async () => {
+            const message = 'Hello DiceDB!';
+            const response = await db.ping(message);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(`PONG ${message}`);
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),

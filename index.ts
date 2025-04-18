@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-18T13:31:13.233Z
+ * Date: 2025-04-18T16:25:27.267Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -267,7 +267,7 @@ class DiceDB extends DiceDBBase {
      * @param {string} [message] - An optional message to send with the PING command.
      * @returns A promise that resolves with the server's response.
      */
-	async ping(message: string) {
+	async ping(message: string | undefined) {
 		return this.execCommand('PING', message) as Promise<DiceDBResponse>;
 	}
 

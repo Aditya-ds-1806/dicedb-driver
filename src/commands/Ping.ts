@@ -12,11 +12,7 @@ export default class PingCommand extends Command {
      * @param {string} [message] - An optional message to send with the PING command.
      * @returns A promise that resolves with the server's response.
      */
-    async exec(message: string) {
-        if (message) {
-            return super.exec(message);
-        }
-
-        return super.exec();
+    async exec(message?: string) {
+        return super.exec(message);
     }
 }
