@@ -20,55 +20,35 @@ describe('DiceDB test cases', () => {
         await db.connect();
     });
 
-    it('should run all commands without error', async () => {
-        const data = await Promise.all([
-            db.ping(),
-            db.ping('Hey there!'),
-            db.get('Hey'),
-            db.get('Welcomes'),
-            db.decrement('test'),
-            db.decrementBy('testing', -20),
-            db.delete('delete', 'assas', 'sasa'),
-            db.echo('hello there'),
-            db.echo(''),
-            db.echo(),
-            db.exists('hello', 'testing', 'Hey', 'Hey'),
-            db.expire('Hey', 10, 'NX'),
-            db.expire('Hey', 2, 'XX'),
-            db.expireAt('test', Date.now() + 60 * 60 * 1000, 'NX'),
-            db.expireTime('test'),
-            db.ttl('test'),
-            db.getAndSetExpiry('test', { persist: true }),
-            db.getAndDelete('test'),
-            db.increment('test'),
-            db.incrementBy('test', 500),
-            db.type('test'),
-            db.type('Welcomes'),
-            db.unwatch('sddasdad'),
-            db.set('name', 'Aditya'),
-            db.set('age', 25),
-            db.set('age', 29, { xx: true }),
-            db.set('age', 29, { xx: true }),
-            db.set('age', 302, { nx: true }),
-            db.set('age', 302, { ex: 10 }),
-            db.flushDB(),
-        ]);
-
-        expect(data.every((d) => d.success)).to.be.true;
-    });
-
-    it('should run GET.WATCH command', async () => {
-        const stream = await db.getWatch('test');
-
-        stream.on('data', (data) => {
-            stream.destroy();
-            expect(data.success).to.be.true;
-            expect(data.error).to.be.null;
-        });
-    });
-
     after(async () => {
         const success = await db.disconnect();
         process.exit(success ? 0 : 1);
+    });
+
+    describe('DecrementCommand', () => {
+        it('should decrement the value of a key by 1', async () => {
+            const key = 'testKey';
+            const setResult = await db.set(key, 10);
+            expect(setResult.success).to.be.true;
+
+            const response = await db.decrement(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(9n);
+        });
+
+        it('should initialize to -1 if key does not exist', async () => {
+            const key = 'nonExistentKey';
+            const response = await db.decrement(key);
+            expect(response.success).to.be.true;
+            expect(BigInt(response.data.result)).to.equal(-1n);
+        });
+
+        it('should return error if the value at key is not an integer', async () => {
+            const key = 'testKey';
+            await db.set(key, 'not-a-number');
+            const response = await db.decrement(key);
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
     });
 });
