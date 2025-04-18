@@ -497,6 +497,97 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('GetAndSetExpiryCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('testKey', 'nonExistentKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should get value and set expiry in seconds', async () => {
+            const key = 'testKey';
+            const value = 'testValue';
+            await db.set(key, value);
+
+            const response = await db.getAndSetExpiry(key, { ex: 100 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(value);
+
+            // Verify expiry was set
+            const expireTime = await db.expireTime(key);
+            expect(expireTime.data.result).to.be.greaterThan(0n);
+        });
+
+        it('should get value and set expiry in milliseconds', async () => {
+            const key = 'testKey';
+            const value = 'testValue';
+            await db.set(key, value);
+
+            const response = await db.getAndSetExpiry(key, { px: 100000 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(value);
+
+            // Verify expiry was set
+            const expireTime = await db.expireTime(key);
+            expect(expireTime.data.result).to.be.greaterThan(0n);
+        });
+
+        it('should get value and set expiry at timestamp', async () => {
+            const key = 'testKey';
+            const value = 'testValue';
+            await db.set(key, value);
+            const futureTimestamp = Math.floor(Date.now() / 1000) + 100;
+
+            const response = await db.getAndSetExpiry(key, {
+                ex_at: futureTimestamp,
+            });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(value);
+
+            // Verify expiry was set
+            const expireTime = await db.expireTime(key);
+            expect(expireTime.data.result).to.equal(BigInt(futureTimestamp));
+        });
+
+        it('should get value and remove expiry with persist option', async () => {
+            const key = 'testKey';
+            const value = 'testValue';
+            await db.set(key, value);
+            await db.expire(key, 100);
+
+            const response = await db.getAndSetExpiry(key, { persist: true });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(value);
+
+            // Verify expiry was removed
+            const expireTime = await db.expireTime(key);
+            expect(expireTime.data.result).to.equal(-1n);
+        });
+
+        it('should return empty string for non-existent key', async () => {
+            const key = 'nonExistentKey';
+            const response = await db.getAndSetExpiry(key, { ex: 100 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('');
+        });
+
+        it('should handle numeric values correctly', async () => {
+            const key = 'testKey';
+            const value = 42;
+            await db.set(key, value);
+
+            const response = await db.getAndSetExpiry(key, { ex: 100 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('42');
+
+            // Verify expiry was set
+            const expireTime = await db.expireTime(key);
+            expect(expireTime.data.result).to.be.greaterThan(0n);
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
