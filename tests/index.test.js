@@ -588,6 +588,58 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('GetSetCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('testKey', 'nonExistentKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should set new value and return old value', async () => {
+            const key = 'testKey';
+            const oldValue = 'oldValue';
+            const newValue = 'newValue';
+            await db.set(key, oldValue);
+
+            const response = await db.getSet(key, newValue);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(oldValue);
+
+            // Verify new value was set
+            const get = await db.get(key);
+            expect(get.data.result).to.equal(newValue);
+        });
+
+        it('should return empty string for non-existent key', async () => {
+            const key = 'nonExistentKey';
+            const value = 'newValue';
+            const response = await db.getSet(key, value);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('');
+
+            // Verify value was set
+            const get = await db.get(key);
+            expect(get.data.result).to.equal(value);
+        });
+
+        it('should handle numeric values correctly', async () => {
+            const key = 'testKey';
+            const oldValue = 42;
+            const newValue = 84;
+            await db.set(key, oldValue);
+
+            const response = await db.getSet(key, newValue);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('42');
+
+            // Verify new value was set
+            const get = await db.get(key);
+            expect(get.data.result).to.equal('84');
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
