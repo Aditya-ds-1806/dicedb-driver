@@ -17,6 +17,7 @@ export const responseParser = (response: Result): DiceDBResponse => {
         $typeName,
         status,
         response: { case: valueCase, value },
+        message,
     } = response;
 
     let parsedValue = null
@@ -80,7 +81,7 @@ export const responseParser = (response: Result): DiceDBResponse => {
         case 'wire.SETRes':
         case 'wire.FLUSHDBRes':
         case 'wire.UNWATCHRes':
-            parsedValue = value.$unknown?.map(item => item.data) ?? [];
+            parsedValue = message;
             break;
         
         default:

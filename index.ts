@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-18T07:53:21.739Z
+ * Date: 2025-04-18T13:31:13.233Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -94,9 +94,9 @@ class DiceDB extends DiceDBBase {
      * @param {string} key - The key to set the timeout on.
      * @param {number} seconds - The timeout duration in seconds.
      * @param condition - The condition for setting the timeout.
-     * @returns A promise that resolves with the result of the command.
+     * @returns A promise that resolves with a boolean indicating if the timeout was set.
      */
-	async expire(key: string, seconds: number, condition: "NX" | "XX") {
+	async expire(key: string, seconds: number, condition: "NX" | "XX" | undefined) {
 		return this.execCommand('EXPIRE', key, seconds, condition) as Promise<DiceDBResponse>;
 	}
 
@@ -107,9 +107,9 @@ class DiceDB extends DiceDBBase {
      * @param {string} key - The key to set the timeout on.
      * @param {number} timestamp - The Unix timestamp at which the key will expire.
      * @param condition - The condition for setting the timeout.
-     * @returns A promise that resolves with the result of the command.
+     * @returns A promise that resolves with a boolean indicating if the timeout was set.
      */
-	async expireAt(key: string, timestamp: number, condition: "NX" | "XX" | "GT" | "LT") {
+	async expireAt(key: string, timestamp: number, condition: "NX" | "XX" | "GT" | "LT" | undefined) {
 		return this.execCommand('EXPIREAT', key, timestamp, condition) as Promise<DiceDBResponse>;
 	}
 

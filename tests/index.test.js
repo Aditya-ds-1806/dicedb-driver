@@ -379,6 +379,42 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('FlushDBCommand', () => {
+        beforeEach(async () => {
+            // Setup multiple keys to test flushing
+            await db.set('key1', 'value1');
+            await db.set('key2', 'value2');
+            await db.hSet('hash1', { field1: 'value1' });
+        });
+
+        it('should remove all keys from the database', async () => {
+            // First verify keys exist
+            const exists1 = await db.exists('key1', 'key2', 'hash1');
+            expect(exists1.success).to.be.true;
+            expect(exists1.data.result).to.equal(3n);
+
+            // Flush the database
+            const response = await db.flushDB();
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('OK');
+
+            // Verify all keys are gone
+            const exists2 = await db.exists('key1', 'key2', 'hash1');
+            expect(exists2.success).to.be.true;
+            expect(exists2.data.result).to.equal(0n);
+        });
+
+        it('should return OK even when database is empty', async () => {
+            // First flush to ensure DB is empty
+            await db.flushDB();
+
+            // Try flushing again
+            const response = await db.flushDB();
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('OK');
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
