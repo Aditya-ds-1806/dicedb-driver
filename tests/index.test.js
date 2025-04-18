@@ -964,6 +964,171 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('SetCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('testKey', 'existingKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should set a simple string value', async () => {
+            const key = 'testKey';
+            const value = 'testValue';
+
+            const response = await db.set(key, value);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('OK');
+
+            // Verify value was set
+            const get = await db.get(key);
+            expect(get.data.result).to.equal(value);
+        });
+
+        it('should set a numeric value', async () => {
+            const key = 'testKey';
+            const value = 42;
+
+            const response = await db.set(key, value);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('OK');
+
+            // Verify value was set
+            const get = await db.get(key);
+            expect(get.data.result).to.equal('42');
+        });
+
+        it('should set with expiry in seconds with EX', async () => {
+            const key = 'testKey';
+            const value = 'expiring';
+
+            const response = await db.set(key, value, { ex: 100 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('OK');
+
+            // Verify expiry was set
+            const ttl = await db.expireTime(key);
+            expect(ttl.data.result).to.be.greaterThan(0n);
+        });
+
+        it('should set with expiry in milliseconds with PX', async () => {
+            const key = 'testKey';
+            const value = 'expiring';
+
+            const response = await db.set(key, value, { px: 1000000 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('OK');
+
+            // Verify expiry was set
+            const ttl = await db.expireTime(key);
+            expect(ttl.data.result).to.be.greaterThan(0n);
+        });
+
+        it('should set with expiry at timestamp with EXAT', async () => {
+            const key = 'testKey';
+            const value = 'expiringAt';
+            const timestamp = Math.floor(Date.now() / 1000) + 100;
+
+            const response = await db.set(key, value, { ex_at: timestamp });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('OK');
+
+            // Verify expiry was set
+            const ttl = await db.expireTime(key);
+            expect(ttl.data.result).to.equal(BigInt(timestamp));
+        });
+
+        it('should set with expiry at timestamp with PXAT', async () => {
+            const key = 'testKey';
+            const value = 'expiringAt';
+            const timestamp = Date.now() + 10000;
+
+            const response = await db.set(key, value, { px_at: timestamp });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('OK');
+
+            // Verify expiry was set
+            const ttl = await db.expireTime(key);
+            expect(ttl.data.result).to.equal(
+                BigInt(Math.floor(timestamp / 1000)),
+            );
+        });
+
+        it('should not set if key exists with XX option', async () => {
+            const key = 'testKey';
+            const initialValue = 'initial';
+            const newValue = 'new';
+
+            // First set should succeed
+            await db.set(key, initialValue);
+
+            // Set with XX should succeed since key exists
+            const response1 = await db.set(key, newValue, { xx: true });
+            expect(response1.success).to.be.true;
+            expect(response1.data.result).to.equal('OK');
+
+            // Get value to verify it was updated
+            const get1 = await db.get(key);
+            expect(get1.data.result).to.equal(newValue);
+
+            // Try setting non-existent key with XX
+            const response2 = await db.set('nonexistentKey', 'value', {
+                xx: true,
+            });
+            expect(response2.success).to.be.true;
+
+            // Verify key wasn't set
+            const get2 = await db.get('nonexistentKey');
+            expect(get2.data.result).to.equal('');
+        });
+
+        it('should not set if key does not exist with NX option', async () => {
+            const key = 'testKey';
+            const initialValue = 'initial';
+            const newValue = 'new';
+
+            // Set with NX should succeed since key doesn't exist
+            const response1 = await db.set(key, initialValue, { nx: true });
+            expect(response1.success).to.be.true;
+            expect(response1.data.result).to.equal('OK');
+
+            // Get value to verify it was set
+            const get1 = await db.get(key);
+            expect(get1.data.result).to.equal(initialValue);
+
+            // Second set with NX should fail since key exists
+            const response2 = await db.set(key, newValue, { nx: true });
+            expect(response2.success).to.be.true;
+
+            // Verify value wasn't changed
+            const get2 = await db.get(key);
+            expect(get2.data.result).to.equal(initialValue);
+        });
+
+        it('should keep existing TTL with keepTTL option even with expiry', async () => {
+            const key = 'testKey';
+            const initialValue = 'initial';
+            const newValue = 'new';
+
+            // Set with expiry
+            await db.set(key, initialValue, { ex: 100 });
+            const initialTTL = await db.expireTime(key);
+
+            // Update value keeping TTL
+            const response = await db.set(key, newValue, {
+                keepTTL: true,
+                ex: 10000,
+            });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('OK');
+
+            // Verify TTL is unchanged
+            const currentTTL = await db.expireTime(key);
+            expect(currentTTL.data.result).to.equal(initialTTL.data.result);
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
