@@ -8,6 +8,7 @@ export interface DiceDBResponse {
         meta: {
             $typeName: string;
             valueCase: string | undefined;
+            fingerprint: bigint;
         };
     };
 }
@@ -18,6 +19,7 @@ export const responseParser = (response: Result): DiceDBResponse => {
         status,
         response: { case: valueCase, value },
         message,
+        fingerprint64,
     } = response;
 
     let parsedValue = null
@@ -97,6 +99,7 @@ export const responseParser = (response: Result): DiceDBResponse => {
             meta: {
                 $typeName: value?.$typeName || $typeName,
                 valueCase,
+                fingerprint: fingerprint64,
             },
         },
     };

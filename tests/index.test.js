@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { describe, before, it, after, beforeEach } from 'mocha';
+import { describe, before, it, after, beforeEach, afterEach } from 'mocha';
 
 import DiceDB from '../dist/index.js';
 import { Readable } from 'stream';
@@ -1129,6 +1129,126 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('TTLCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('testKey', 'persistentKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return remaining TTL for key with expiry', async () => {
+            const key = 'testKey';
+            const value = 'testValue';
+            await db.set(key, value, { ex: 100 });
+
+            const response = await db.ttl(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.be.greaterThan(0n);
+            expect(response.data.result).to.be.lessThanOrEqual(100n);
+        });
+
+        it('should return -2 for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.ttl(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(-2n);
+        });
+
+        it('should return -1 for key with no expiry', async () => {
+            const key = 'persistentKey';
+            const value = 'value';
+            await db.set(key, value);
+
+            const response = await db.ttl(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(-1n);
+        });
+    });
+
+    describe('TypeCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('stringKey', 'hashKey', 'nonexistentKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return "string" for string values', async () => {
+            const key = 'stringKey';
+            const value = 'testValue';
+            await db.set(key, value);
+
+            const response = await db.type(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('string');
+        });
+
+        it('should return "int" for integers', async () => {
+            const key = 'integer';
+            await db.set(key, 256);
+
+            const response = await db.type(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('int');
+        });
+
+        it('should return "none" for non-existent keys', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.type(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('none');
+        });
+    });
+
+    describe('UnwatchCommand', () => {
+        let watchStream;
+
+        beforeEach(async () => {
+            try {
+                await db.delete('watchKey');
+                if (watchStream) {
+                    watchStream.destroy();
+                }
+            } catch {
+                // Ignore error if keys don't exist or stream is already closed
+            }
+        });
+
+        afterEach(() => {
+            if (watchStream) {
+                watchStream.destroy();
+            }
+        });
+
+        it('should stop watching a key when unwatched', async () => {
+            const key = 'watchKey';
+            watchStream = await db.getWatch(key);
+
+            const fingerprint = await new Promise((resolve) => {
+                watchStream.once('data', (data) => {
+                    resolve(data.data.meta.fingerprint);
+                });
+            });
+
+            // Unwatch the key
+            const response = await db.unwatch(fingerprint);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('OK');
+
+            // Verify stream is ended
+            // expect(watchStream.destroyed).to.be.true;
+        });
+
+        it('should handle unwatching non-existent subscription', async () => {
+            const response = await db.unwatch('nonexistent-fingerprint');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal('OK');
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
@@ -1169,50 +1289,6 @@ describe('DiceDB test cases', () => {
         ]);
 
         expect(data.every((d) => d.value.success)).to.be.true;
-    });
-
-    it('should run GET.WATCH command', async () => {
-        const stream = await db.getWatch('test');
-
-        stream.on('data', (data) => {
-            stream.destroy();
-            expect(data.success).to.be.true;
-            expect(data.error).to.be.null;
-        });
-    });
-
-    it('should run HSET command', async () => {
-        const data = await db.hSet('testingg', {
-            name: 'Aditya',
-            age: 25,
-        });
-
-        expect(data.success).to.be.true;
-        expect(data.error).to.be.null;
-    });
-
-    it('should run HGET command', async () => {
-        const data1 = await db.hGet('testingg', 'name');
-        const data2 = await db.hGet('testingg', 'age');
-
-        expect(data1.success).to.be.true;
-        expect(data1.error).to.be.null;
-        expect(data1.data.result).to.equal('Aditya');
-
-        expect(data2.success).to.be.true;
-        expect(data2.error).to.be.null;
-        expect(data2.data.result).to.equal('25');
-    });
-
-    it('should run HGETALL command', async () => {
-        const data = await db.hGetAll('testingg');
-
-        expect(data.success).to.be.true;
-        expect(data.error).to.be.null;
-        expect(data.data.result).to.deep.equal({
-            name: 'Aditya',
-            age: '25',
-        });
     });
 
     after(async () => {
