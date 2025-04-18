@@ -20,7 +20,7 @@ describe('DiceDB test cases', () => {
         await db.connect();
     });
 
-    it('should run all commands without error', async () => {
+    it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
             db.ping('Hey there!'),
@@ -70,6 +70,29 @@ describe('DiceDB test cases', () => {
             expect(data.success).to.be.true;
             expect(data.error).to.be.null;
         });
+    });
+
+    it('should run HSET command', async () => {
+        const data = await db.hSet('testingg', {
+            name: 'Aditya',
+            age: 25,
+        });
+
+        expect(data.success).to.be.true;
+        expect(data.error).to.be.null;
+    });
+
+    it('should run HGET command', async () => {
+        const data1 = await db.hGet('testingg', 'name');
+        const data2 = await db.hGet('testingg', 'age');
+
+        expect(data1.success).to.be.true;
+        expect(data1.error).to.be.null;
+        expect(data1.data.result.value).to.equal('Aditya');
+
+        expect(data2.success).to.be.true;
+        expect(data2.error).to.be.null;
+        expect(data2.data.result.value).to.equal('25');
     });
 
     after(async () => {

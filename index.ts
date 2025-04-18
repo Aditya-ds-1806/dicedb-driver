@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-17T20:00:53.082Z
+ * Date: 2025-04-17T20:20:19.499Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -189,6 +189,18 @@ class DiceDB extends DiceDBBase {
      */
 	async getWatch(key: string) {
 		return this.execCommand('GET.WATCH', key) as Promise<Readable>;
+	}
+
+
+	/**
+     * Executes the HGET command to retrieve the value of a field in a hash stored at a key.
+     *
+     * @param {string} key - The key of the hash.
+     * @param {string} fieldName - The field name whose value will be retrieved.
+     * @returns A promise that resolves with the value of the field, or null if the field does not exist.
+     */
+	async hGet(key: string, fieldName: string) {
+		return this.execCommand('HGET', key, fieldName) as Promise<DiceDBResponse>;
 	}
 
 
