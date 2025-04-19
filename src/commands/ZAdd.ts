@@ -42,7 +42,7 @@ export default class ZAddCommand extends Command {
      * options for adding elements.
      *
      * @param {string} key - The key of the sorted set.
-     * @param {Record<string, number | string>} map - A map of members and their scores.
+     * @param {Record<string, number | string> | Map<string, number | string>} map - A map of members and their scores.
      * @param opts - The options for adding elements to the sorted set.
      * @returns A promise that resolves when the elements are added successfully.
      */
