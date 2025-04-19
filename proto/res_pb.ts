@@ -4,14 +4,13 @@
 
 import type { GenEnum, GenFile, GenMessage } from "@bufbuild/protobuf/codegenv1";
 import { enumDesc, fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv1";
-import { file_google_protobuf_struct } from "@bufbuild/protobuf/wkt";
-import type { JsonObject, Message } from "@bufbuild/protobuf";
+import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file res.proto.
  */
 export const file_res: GenFile = /*@__PURE__*/
-  fileDesc("CglyZXMucHJvdG8SBHdpcmUi9QkKBlJlc3VsdBIcCgZzdGF0dXMYASABKA4yDC53aXJlLlN0YXR1cxIPCgdtZXNzYWdlGAIgASgJEiYKBWF0dHJzGAMgASgLMhcuZ29vZ2xlLnByb3RvYnVmLlN0cnVjdBIgCgdUWVBFUmVzGAQgASgLMg0ud2lyZS5UWVBFUmVzSAASIAoHUElOR1JlcxgIIAEoCzINLndpcmUuUElOR1Jlc0gAEiAKB0VDSE9SZXMYCSABKAsyDS53aXJlLkVDSE9SZXNIABIqCgxIQU5EU0hBS0VSZXMYCiABKAsyEi53aXJlLkhBTkRTSEFLRVJlc0gAEiQKCUVYSVNUU1JlcxgLIAEoCzIPLndpcmUuRVhJU1RTUmVzSAASHgoGR0VUUmVzGAwgASgLMgwud2lyZS5HRVRSZXNIABIeCgZTRVRSZXMYDSABKAsyDC53aXJlLlNFVFJlc0gAEh4KBkRFTFJlcxgOIAEoCzIMLndpcmUuREVMUmVzSAASIAoHS0VZU1JlcxgPIAEoCzINLndpcmUuS0VZU1Jlc0gAEiQKCUdFVERFTFJlcxgQIAEoCzIPLndpcmUuR0VUREVMUmVzSAASIgoIR0VURVhSZXMYESABKAsyDi53aXJlLkdFVEVYUmVzSAASJAoJR0VUU0VUUmVzGBIgASgLMg8ud2lyZS5HRVRTRVRSZXNIABIgCgdJTkNSUmVzGBMgASgLMg0ud2lyZS5JTkNSUmVzSAASIAoHREVDUlJlcxgUIAEoCzINLndpcmUuREVDUlJlc0gAEiQKCUlOQ1JCWVJlcxgVIAEoCzIPLndpcmUuSU5DUkJZUmVzSAASJAoJREVDUkJZUmVzGBYgASgLMg8ud2lyZS5ERUNSQllSZXNIABImCgpGTFVTSERCUmVzGBcgASgLMhAud2lyZS5GTFVTSERCUmVzSAASJAoJRVhQSVJFUmVzGBggASgLMg8ud2lyZS5FWFBJUkVSZXNIABIoCgtFWFBJUkVBVFJlcxgZIAEoCzIRLndpcmUuRVhQSVJFQVRSZXNIABIsCg1FWFBJUkVUSU1FUmVzGBogASgLMhMud2lyZS5FWFBJUkVUSU1FUmVzSAASHgoGVFRMUmVzGBsgASgLMgwud2lyZS5UVExSZXNIABIoCgtHRVRXQVRDSFJlcxgcIAEoCzIRLndpcmUuR0VUV0FUQ0hSZXNIABImCgpVTldBVENIUmVzGB0gASgLMhAud2lyZS5VTldBVENIUmVzSAASIAoHSEdFVFJlcxgeIAEoCzINLndpcmUuSEdFVFJlc0gAEiAKB0hTRVRSZXMYHyABKAsyDS53aXJlLkhTRVRSZXNIABImCgpIR0VUQUxMUmVzGCAgASgLMhAud2lyZS5IR0VUQUxMUmVzSAASKgoMSEdFVFdBVENIUmVzGCEgASgLMhIud2lyZS5IR0VUV0FUQ0hSZXNIABIwCg9IR0VUQUxMV0FUQ0hSZXMYIiABKAsyFS53aXJlLkhHRVRBTExXQVRDSFJlc0gAEiAKB1pBRERSZXMYIyABKAsyDS53aXJlLlpBRERSZXNIABIkCglaQ09VTlRSZXMYJCABKAsyDy53aXJlLlpDT1VOVFJlc0gAEiQKCVpSQU5HRVJlcxglIAEoCzIPLndpcmUuWlJBTkdFUmVzSABCCgoIcmVzcG9uc2UiDgoMSEdFVFdBVENIUmVzIhEKD0hHRVRBTExXQVRDSFJlcyINCgtHRVRXQVRDSFJlcyIMCgpVTldBVENIUmVzIhgKB1pBRERSZXMSDQoFY291bnQYASABKAMiGgoJWkNPVU5UUmVzEg0KBWNvdW50GAEgASgDIhcKB1RZUEVSZXMSDAoEdHlwZRgBIAEoCSIaCgdQSU5HUmVzEg8KB21lc3NhZ2UYASABKAkiGAoHSEdFVFJlcxINCgV2YWx1ZRgBIAEoCSIYCgdIU0VUUmVzEg0KBWNvdW50GAEgASgDIiYKCEhFbGVtZW50EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCSIuCgpIR0VUQUxMUmVzEiAKCGVsZW1lbnRzGAEgAygLMg4ud2lyZS5IRWxlbWVudCIZCgZUVExSZXMSDwoHc2Vjb25kcxgBIAEoAyIfCglFWFBJUkVSZXMSEgoKaXNfY2hhbmdlZBgBIAEoCCIhCgtFWFBJUkVBVFJlcxISCgppc19jaGFuZ2VkGAEgASgIIiEKDUVYUElSRVRJTUVSZXMSEAoIdW5peF9zZWMYASABKAMiGgoHRUNIT1JlcxIPCgdtZXNzYWdlGAEgASgJIhoKCUVYSVNUU1JlcxINCgVjb3VudBgBIAEoAyIOCgxIQU5EU0hBS0VSZXMiFwoGR0VUUmVzEg0KBXZhbHVlGAEgASgJIhkKCEdFVEVYUmVzEg0KBXZhbHVlGAEgASgJIhoKCUdFVFNFVFJlcxINCgV2YWx1ZRgBIAEoCSIaCglHRVRERUxSZXMSDQoFdmFsdWUYASABKAkiCAoGU0VUUmVzIhcKBkRFTFJlcxINCgVjb3VudBgBIAEoAyIMCgpGTFVTSERCUmVzIhcKB0tFWVNSZXMSDAoEa2V5cxgBIAMoCSIYCgdJTkNSUmVzEg0KBXZhbHVlGAEgASgDIhgKB0RFQ1JSZXMSDQoFdmFsdWUYASABKAMiGgoJSU5DUkJZUmVzEg0KBXZhbHVlGAEgASgDIhoKCURFQ1JCWVJlcxINCgV2YWx1ZRgBIAEoAyIpCghaRWxlbWVudBINCgVzY29yZRgBIAEoAxIOCgZtZW1iZXIYAiABKAkiLQoJWlJBTkdFUmVzEiAKCGVsZW1lbnRzGAEgAygLMg4ud2lyZS5aRWxlbWVudCoZCgZTdGF0dXMSBgoCT0sQABIHCgNFUlIQAUIIWgYuL3dpcmViBnByb3RvMw", [file_google_protobuf_struct]);
+  fileDesc("CglyZXMucHJvdG8SBHdpcmUi2gwKBlJlc3VsdBIcCgZzdGF0dXMYASABKA4yDC53aXJlLlN0YXR1cxIPCgdtZXNzYWdlGAIgASgJEhUKDWZpbmdlcnByaW50NjQYAyABKAQSIAoHVFlQRVJlcxgLIAEoCzINLndpcmUuVFlQRVJlc0gAEiAKB1BJTkdSZXMYDCABKAsyDS53aXJlLlBJTkdSZXNIABIgCgdFQ0hPUmVzGA0gASgLMg0ud2lyZS5FQ0hPUmVzSAASKgoMSEFORFNIQUtFUmVzGA4gASgLMhIud2lyZS5IQU5EU0hBS0VSZXNIABIkCglFWElTVFNSZXMYDyABKAsyDy53aXJlLkVYSVNUU1Jlc0gAEh4KBkdFVFJlcxgQIAEoCzIMLndpcmUuR0VUUmVzSAASHgoGU0VUUmVzGBEgASgLMgwud2lyZS5TRVRSZXNIABIeCgZERUxSZXMYEiABKAsyDC53aXJlLkRFTFJlc0gAEiAKB0tFWVNSZXMYEyABKAsyDS53aXJlLktFWVNSZXNIABIkCglHRVRERUxSZXMYFCABKAsyDy53aXJlLkdFVERFTFJlc0gAEiIKCEdFVEVYUmVzGBUgASgLMg4ud2lyZS5HRVRFWFJlc0gAEiQKCUdFVFNFVFJlcxgWIAEoCzIPLndpcmUuR0VUU0VUUmVzSAASIAoHSU5DUlJlcxgXIAEoCzINLndpcmUuSU5DUlJlc0gAEiAKB0RFQ1JSZXMYGCABKAsyDS53aXJlLkRFQ1JSZXNIABIkCglJTkNSQllSZXMYGSABKAsyDy53aXJlLklOQ1JCWVJlc0gAEiQKCURFQ1JCWVJlcxgaIAEoCzIPLndpcmUuREVDUkJZUmVzSAASJgoKRkxVU0hEQlJlcxgbIAEoCzIQLndpcmUuRkxVU0hEQlJlc0gAEiQKCUVYUElSRVJlcxgcIAEoCzIPLndpcmUuRVhQSVJFUmVzSAASKAoLRVhQSVJFQVRSZXMYHSABKAsyES53aXJlLkVYUElSRUFUUmVzSAASLAoNRVhQSVJFVElNRVJlcxgeIAEoCzITLndpcmUuRVhQSVJFVElNRVJlc0gAEh4KBlRUTFJlcxgfIAEoCzIMLndpcmUuVFRMUmVzSAASKAoLR0VUV0FUQ0hSZXMYICABKAsyES53aXJlLkdFVFdBVENIUmVzSAASJgoKVU5XQVRDSFJlcxghIAEoCzIQLndpcmUuVU5XQVRDSFJlc0gAEiAKB0hHRVRSZXMYIiABKAsyDS53aXJlLkhHRVRSZXNIABIgCgdIU0VUUmVzGCMgASgLMg0ud2lyZS5IU0VUUmVzSAASJgoKSEdFVEFMTFJlcxgkIAEoCzIQLndpcmUuSEdFVEFMTFJlc0gAEioKDEhHRVRXQVRDSFJlcxglIAEoCzISLndpcmUuSEdFVFdBVENIUmVzSAASMAoPSEdFVEFMTFdBVENIUmVzGCYgASgLMhUud2lyZS5IR0VUQUxMV0FUQ0hSZXNIABIgCgdaQUREUmVzGCcgASgLMg0ud2lyZS5aQUREUmVzSAASJAoJWkNPVU5UUmVzGCggASgLMg8ud2lyZS5aQ09VTlRSZXNIABIkCglaUkFOR0VSZXMYKSABKAsyDy53aXJlLlpSQU5HRVJlc0gAEiYKClpQT1BNQVhSZXMYKiABKAsyEC53aXJlLlpQT1BNQVhSZXNIABIgCgdaUkVNUmVzGCsgASgLMg0ud2lyZS5aUkVNUmVzSAASJgoKWlBPUE1JTlJlcxgsIAEoCzIQLndpcmUuWlBPUE1JTlJlc0gAEiIKCFpSQU5LUmVzGC0gASgLMg4ud2lyZS5aUkFOS1Jlc0gAEiIKCFpDQVJEUmVzGC4gASgLMg4ud2lyZS5aQ0FSRFJlc0gAEi4KDlpSQU5HRVdBVENIUmVzGC8gASgLMhQud2lyZS5aUkFOR0VXQVRDSFJlc0gAEi4KDlpDT1VOVFdBVENIUmVzGDAgASgLMhQud2lyZS5aQ09VTlRXQVRDSFJlc0gAEiwKDVpDQVJEV0FUQ0hSZXMYMSABKAsyEy53aXJlLlpDQVJEV0FUQ0hSZXNIABIsCg1aUkFOS1dBVENIUmVzGDIgASgLMhMud2lyZS5aUkFOS1dBVENIUmVzSABCCgoIcmVzcG9uc2UiDwoNWlJBTktXQVRDSFJlcyIOCgxIR0VUV0FUQ0hSZXMiEQoPSEdFVEFMTFdBVENIUmVzIg0KC0dFVFdBVENIUmVzIgwKClVOV0FUQ0hSZXMiGAoHWkFERFJlcxINCgVjb3VudBgBIAEoAyIaCglaQ09VTlRSZXMSDQoFY291bnQYASABKAMiFwoHVFlQRVJlcxIMCgR0eXBlGAEgASgJIhoKB1BJTkdSZXMSDwoHbWVzc2FnZRgBIAEoCSIYCgdIR0VUUmVzEg0KBXZhbHVlGAEgASgJIhgKB0hTRVRSZXMSDQoFY291bnQYASABKAMiJgoISEVsZW1lbnQSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJIi4KCkhHRVRBTExSZXMSIAoIZWxlbWVudHMYASADKAsyDi53aXJlLkhFbGVtZW50IhkKBlRUTFJlcxIPCgdzZWNvbmRzGAEgASgDIh8KCUVYUElSRVJlcxISCgppc19jaGFuZ2VkGAEgASgIIiEKC0VYUElSRUFUUmVzEhIKCmlzX2NoYW5nZWQYASABKAgiIQoNRVhQSVJFVElNRVJlcxIQCgh1bml4X3NlYxgBIAEoAyIaCgdFQ0hPUmVzEg8KB21lc3NhZ2UYASABKAkiGgoJRVhJU1RTUmVzEg0KBWNvdW50GAEgASgDIg4KDEhBTkRTSEFLRVJlcyIXCgZHRVRSZXMSDQoFdmFsdWUYASABKAkiGQoIR0VURVhSZXMSDQoFdmFsdWUYASABKAkiGgoJR0VUU0VUUmVzEg0KBXZhbHVlGAEgASgJIhoKCUdFVERFTFJlcxINCgV2YWx1ZRgBIAEoCSIICgZTRVRSZXMiFwoGREVMUmVzEg0KBWNvdW50GAEgASgDIgwKCkZMVVNIREJSZXMiFwoHS0VZU1JlcxIMCgRrZXlzGAEgAygJIhgKB0lOQ1JSZXMSDQoFdmFsdWUYASABKAMiGAoHREVDUlJlcxINCgV2YWx1ZRgBIAEoAyIaCglJTkNSQllSZXMSDQoFdmFsdWUYASABKAMiGgoJREVDUkJZUmVzEg0KBXZhbHVlGAEgASgDIikKCFpFbGVtZW50Eg0KBXNjb3JlGAEgASgDEg4KBm1lbWJlchgCIAEoCSItCglaUkFOR0VSZXMSIAoIZWxlbWVudHMYASADKAsyDi53aXJlLlpFbGVtZW50Ii4KClpQT1BNQVhSZXMSIAoIZWxlbWVudHMYASADKAsyDi53aXJlLlpFbGVtZW50IhgKB1pSRU1SZXMSDQoFY291bnQYASABKAMiLgoKWlBPUE1JTlJlcxIgCghlbGVtZW50cxgBIAMoCzIOLndpcmUuWkVsZW1lbnQiOQoIWlJBTktSZXMSDAoEcmFuaxgBIAEoAxIfCgdlbGVtZW50GAIgASgLMg4ud2lyZS5aRWxlbWVudCIZCghaQ0FSRFJlcxINCgVjb3VudBgBIAEoAyIQCg5aUkFOR0VXQVRDSFJlcyIQCg5aQ09VTlRXQVRDSFJlcyIPCg1aQ0FSRFdBVENIUmVzKhkKBlN0YXR1cxIGCgJPSxAAEgcKA0VSUhABQghaBi4vd2lyZWIGcHJvdG8z");
 
 /**
  * @generated from message wire.Result
@@ -28,199 +27,253 @@ export type Result = Message<"wire.Result"> & {
   message: string;
 
   /**
-   * @generated from field: google.protobuf.Struct attrs = 3;
+   * @generated from field: uint64 fingerprint64 = 3;
    */
-  attrs?: JsonObject;
+  fingerprint64: bigint;
 
   /**
    * @generated from oneof wire.Result.response
    */
   response: {
     /**
-     * @generated from field: wire.TYPERes TYPERes = 4;
+     * @generated from field: wire.TYPERes TYPERes = 11;
      */
     value: TYPERes;
     case: "TYPERes";
   } | {
     /**
-     * @generated from field: wire.PINGRes PINGRes = 8;
+     * @generated from field: wire.PINGRes PINGRes = 12;
      */
     value: PINGRes;
     case: "PINGRes";
   } | {
     /**
-     * @generated from field: wire.ECHORes ECHORes = 9;
+     * @generated from field: wire.ECHORes ECHORes = 13;
      */
     value: ECHORes;
     case: "ECHORes";
   } | {
     /**
-     * @generated from field: wire.HANDSHAKERes HANDSHAKERes = 10;
+     * @generated from field: wire.HANDSHAKERes HANDSHAKERes = 14;
      */
     value: HANDSHAKERes;
     case: "HANDSHAKERes";
   } | {
     /**
-     * @generated from field: wire.EXISTSRes EXISTSRes = 11;
+     * @generated from field: wire.EXISTSRes EXISTSRes = 15;
      */
     value: EXISTSRes;
     case: "EXISTSRes";
   } | {
     /**
-     * @generated from field: wire.GETRes GETRes = 12;
+     * @generated from field: wire.GETRes GETRes = 16;
      */
     value: GETRes;
     case: "GETRes";
   } | {
     /**
-     * @generated from field: wire.SETRes SETRes = 13;
+     * @generated from field: wire.SETRes SETRes = 17;
      */
     value: SETRes;
     case: "SETRes";
   } | {
     /**
-     * @generated from field: wire.DELRes DELRes = 14;
+     * @generated from field: wire.DELRes DELRes = 18;
      */
     value: DELRes;
     case: "DELRes";
   } | {
     /**
-     * @generated from field: wire.KEYSRes KEYSRes = 15;
+     * @generated from field: wire.KEYSRes KEYSRes = 19;
      */
     value: KEYSRes;
     case: "KEYSRes";
   } | {
     /**
-     * @generated from field: wire.GETDELRes GETDELRes = 16;
+     * @generated from field: wire.GETDELRes GETDELRes = 20;
      */
     value: GETDELRes;
     case: "GETDELRes";
   } | {
     /**
-     * @generated from field: wire.GETEXRes GETEXRes = 17;
+     * @generated from field: wire.GETEXRes GETEXRes = 21;
      */
     value: GETEXRes;
     case: "GETEXRes";
   } | {
     /**
-     * @generated from field: wire.GETSETRes GETSETRes = 18;
+     * @generated from field: wire.GETSETRes GETSETRes = 22;
      */
     value: GETSETRes;
     case: "GETSETRes";
   } | {
     /**
-     * @generated from field: wire.INCRRes INCRRes = 19;
+     * @generated from field: wire.INCRRes INCRRes = 23;
      */
     value: INCRRes;
     case: "INCRRes";
   } | {
     /**
-     * @generated from field: wire.DECRRes DECRRes = 20;
+     * @generated from field: wire.DECRRes DECRRes = 24;
      */
     value: DECRRes;
     case: "DECRRes";
   } | {
     /**
-     * @generated from field: wire.INCRBYRes INCRBYRes = 21;
+     * @generated from field: wire.INCRBYRes INCRBYRes = 25;
      */
     value: INCRBYRes;
     case: "INCRBYRes";
   } | {
     /**
-     * @generated from field: wire.DECRBYRes DECRBYRes = 22;
+     * @generated from field: wire.DECRBYRes DECRBYRes = 26;
      */
     value: DECRBYRes;
     case: "DECRBYRes";
   } | {
     /**
-     * @generated from field: wire.FLUSHDBRes FLUSHDBRes = 23;
+     * @generated from field: wire.FLUSHDBRes FLUSHDBRes = 27;
      */
     value: FLUSHDBRes;
     case: "FLUSHDBRes";
   } | {
     /**
-     * @generated from field: wire.EXPIRERes EXPIRERes = 24;
+     * @generated from field: wire.EXPIRERes EXPIRERes = 28;
      */
     value: EXPIRERes;
     case: "EXPIRERes";
   } | {
     /**
-     * @generated from field: wire.EXPIREATRes EXPIREATRes = 25;
+     * @generated from field: wire.EXPIREATRes EXPIREATRes = 29;
      */
     value: EXPIREATRes;
     case: "EXPIREATRes";
   } | {
     /**
-     * @generated from field: wire.EXPIRETIMERes EXPIRETIMERes = 26;
+     * @generated from field: wire.EXPIRETIMERes EXPIRETIMERes = 30;
      */
     value: EXPIRETIMERes;
     case: "EXPIRETIMERes";
   } | {
     /**
-     * @generated from field: wire.TTLRes TTLRes = 27;
+     * @generated from field: wire.TTLRes TTLRes = 31;
      */
     value: TTLRes;
     case: "TTLRes";
   } | {
     /**
-     * @generated from field: wire.GETWATCHRes GETWATCHRes = 28;
+     * @generated from field: wire.GETWATCHRes GETWATCHRes = 32;
      */
     value: GETWATCHRes;
     case: "GETWATCHRes";
   } | {
     /**
-     * @generated from field: wire.UNWATCHRes UNWATCHRes = 29;
+     * @generated from field: wire.UNWATCHRes UNWATCHRes = 33;
      */
     value: UNWATCHRes;
     case: "UNWATCHRes";
   } | {
     /**
-     * @generated from field: wire.HGETRes HGETRes = 30;
+     * @generated from field: wire.HGETRes HGETRes = 34;
      */
     value: HGETRes;
     case: "HGETRes";
   } | {
     /**
-     * @generated from field: wire.HSETRes HSETRes = 31;
+     * @generated from field: wire.HSETRes HSETRes = 35;
      */
     value: HSETRes;
     case: "HSETRes";
   } | {
     /**
-     * @generated from field: wire.HGETALLRes HGETALLRes = 32;
+     * @generated from field: wire.HGETALLRes HGETALLRes = 36;
      */
     value: HGETALLRes;
     case: "HGETALLRes";
   } | {
     /**
-     * @generated from field: wire.HGETWATCHRes HGETWATCHRes = 33;
+     * @generated from field: wire.HGETWATCHRes HGETWATCHRes = 37;
      */
     value: HGETWATCHRes;
     case: "HGETWATCHRes";
   } | {
     /**
-     * @generated from field: wire.HGETALLWATCHRes HGETALLWATCHRes = 34;
+     * @generated from field: wire.HGETALLWATCHRes HGETALLWATCHRes = 38;
      */
     value: HGETALLWATCHRes;
     case: "HGETALLWATCHRes";
   } | {
     /**
-     * @generated from field: wire.ZADDRes ZADDRes = 35;
+     * @generated from field: wire.ZADDRes ZADDRes = 39;
      */
     value: ZADDRes;
     case: "ZADDRes";
   } | {
     /**
-     * @generated from field: wire.ZCOUNTRes ZCOUNTRes = 36;
+     * @generated from field: wire.ZCOUNTRes ZCOUNTRes = 40;
      */
     value: ZCOUNTRes;
     case: "ZCOUNTRes";
   } | {
     /**
-     * @generated from field: wire.ZRANGERes ZRANGERes = 37;
+     * @generated from field: wire.ZRANGERes ZRANGERes = 41;
      */
     value: ZRANGERes;
     case: "ZRANGERes";
+  } | {
+    /**
+     * @generated from field: wire.ZPOPMAXRes ZPOPMAXRes = 42;
+     */
+    value: ZPOPMAXRes;
+    case: "ZPOPMAXRes";
+  } | {
+    /**
+     * @generated from field: wire.ZREMRes ZREMRes = 43;
+     */
+    value: ZREMRes;
+    case: "ZREMRes";
+  } | {
+    /**
+     * @generated from field: wire.ZPOPMINRes ZPOPMINRes = 44;
+     */
+    value: ZPOPMINRes;
+    case: "ZPOPMINRes";
+  } | {
+    /**
+     * @generated from field: wire.ZRANKRes ZRANKRes = 45;
+     */
+    value: ZRANKRes;
+    case: "ZRANKRes";
+  } | {
+    /**
+     * @generated from field: wire.ZCARDRes ZCARDRes = 46;
+     */
+    value: ZCARDRes;
+    case: "ZCARDRes";
+  } | {
+    /**
+     * @generated from field: wire.ZRANGEWATCHRes ZRANGEWATCHRes = 47;
+     */
+    value: ZRANGEWATCHRes;
+    case: "ZRANGEWATCHRes";
+  } | {
+    /**
+     * @generated from field: wire.ZCOUNTWATCHRes ZCOUNTWATCHRes = 48;
+     */
+    value: ZCOUNTWATCHRes;
+    case: "ZCOUNTWATCHRes";
+  } | {
+    /**
+     * @generated from field: wire.ZCARDWATCHRes ZCARDWATCHRes = 49;
+     */
+    value: ZCARDWATCHRes;
+    case: "ZCARDWATCHRes";
+  } | {
+    /**
+     * @generated from field: wire.ZRANKWATCHRes ZRANKWATCHRes = 50;
+     */
+    value: ZRANKWATCHRes;
+    case: "ZRANKWATCHRes";
   } | { case: undefined; value?: undefined };
 };
 
@@ -230,6 +283,19 @@ export type Result = Message<"wire.Result"> & {
  */
 export const ResultSchema: GenMessage<Result> = /*@__PURE__*/
   messageDesc(file_res, 0);
+
+/**
+ * @generated from message wire.ZRANKWATCHRes
+ */
+export type ZRANKWATCHRes = Message<"wire.ZRANKWATCHRes"> & {
+};
+
+/**
+ * Describes the message wire.ZRANKWATCHRes.
+ * Use `create(ZRANKWATCHResSchema)` to create a new message.
+ */
+export const ZRANKWATCHResSchema: GenMessage<ZRANKWATCHRes> = /*@__PURE__*/
+  messageDesc(file_res, 1);
 
 /**
  * @generated from message wire.HGETWATCHRes
@@ -242,7 +308,7 @@ export type HGETWATCHRes = Message<"wire.HGETWATCHRes"> & {
  * Use `create(HGETWATCHResSchema)` to create a new message.
  */
 export const HGETWATCHResSchema: GenMessage<HGETWATCHRes> = /*@__PURE__*/
-  messageDesc(file_res, 1);
+  messageDesc(file_res, 2);
 
 /**
  * @generated from message wire.HGETALLWATCHRes
@@ -255,7 +321,7 @@ export type HGETALLWATCHRes = Message<"wire.HGETALLWATCHRes"> & {
  * Use `create(HGETALLWATCHResSchema)` to create a new message.
  */
 export const HGETALLWATCHResSchema: GenMessage<HGETALLWATCHRes> = /*@__PURE__*/
-  messageDesc(file_res, 2);
+  messageDesc(file_res, 3);
 
 /**
  * @generated from message wire.GETWATCHRes
@@ -268,7 +334,7 @@ export type GETWATCHRes = Message<"wire.GETWATCHRes"> & {
  * Use `create(GETWATCHResSchema)` to create a new message.
  */
 export const GETWATCHResSchema: GenMessage<GETWATCHRes> = /*@__PURE__*/
-  messageDesc(file_res, 3);
+  messageDesc(file_res, 4);
 
 /**
  * @generated from message wire.UNWATCHRes
@@ -281,7 +347,7 @@ export type UNWATCHRes = Message<"wire.UNWATCHRes"> & {
  * Use `create(UNWATCHResSchema)` to create a new message.
  */
 export const UNWATCHResSchema: GenMessage<UNWATCHRes> = /*@__PURE__*/
-  messageDesc(file_res, 4);
+  messageDesc(file_res, 5);
 
 /**
  * @generated from message wire.ZADDRes
@@ -298,7 +364,7 @@ export type ZADDRes = Message<"wire.ZADDRes"> & {
  * Use `create(ZADDResSchema)` to create a new message.
  */
 export const ZADDResSchema: GenMessage<ZADDRes> = /*@__PURE__*/
-  messageDesc(file_res, 5);
+  messageDesc(file_res, 6);
 
 /**
  * @generated from message wire.ZCOUNTRes
@@ -315,7 +381,7 @@ export type ZCOUNTRes = Message<"wire.ZCOUNTRes"> & {
  * Use `create(ZCOUNTResSchema)` to create a new message.
  */
 export const ZCOUNTResSchema: GenMessage<ZCOUNTRes> = /*@__PURE__*/
-  messageDesc(file_res, 6);
+  messageDesc(file_res, 7);
 
 /**
  * @generated from message wire.TYPERes
@@ -332,7 +398,7 @@ export type TYPERes = Message<"wire.TYPERes"> & {
  * Use `create(TYPEResSchema)` to create a new message.
  */
 export const TYPEResSchema: GenMessage<TYPERes> = /*@__PURE__*/
-  messageDesc(file_res, 7);
+  messageDesc(file_res, 8);
 
 /**
  * @generated from message wire.PINGRes
@@ -349,7 +415,7 @@ export type PINGRes = Message<"wire.PINGRes"> & {
  * Use `create(PINGResSchema)` to create a new message.
  */
 export const PINGResSchema: GenMessage<PINGRes> = /*@__PURE__*/
-  messageDesc(file_res, 8);
+  messageDesc(file_res, 9);
 
 /**
  * @generated from message wire.HGETRes
@@ -366,7 +432,7 @@ export type HGETRes = Message<"wire.HGETRes"> & {
  * Use `create(HGETResSchema)` to create a new message.
  */
 export const HGETResSchema: GenMessage<HGETRes> = /*@__PURE__*/
-  messageDesc(file_res, 9);
+  messageDesc(file_res, 10);
 
 /**
  * @generated from message wire.HSETRes
@@ -383,7 +449,7 @@ export type HSETRes = Message<"wire.HSETRes"> & {
  * Use `create(HSETResSchema)` to create a new message.
  */
 export const HSETResSchema: GenMessage<HSETRes> = /*@__PURE__*/
-  messageDesc(file_res, 10);
+  messageDesc(file_res, 11);
 
 /**
  * @generated from message wire.HElement
@@ -405,7 +471,7 @@ export type HElement = Message<"wire.HElement"> & {
  * Use `create(HElementSchema)` to create a new message.
  */
 export const HElementSchema: GenMessage<HElement> = /*@__PURE__*/
-  messageDesc(file_res, 11);
+  messageDesc(file_res, 12);
 
 /**
  * @generated from message wire.HGETALLRes
@@ -422,7 +488,7 @@ export type HGETALLRes = Message<"wire.HGETALLRes"> & {
  * Use `create(HGETALLResSchema)` to create a new message.
  */
 export const HGETALLResSchema: GenMessage<HGETALLRes> = /*@__PURE__*/
-  messageDesc(file_res, 12);
+  messageDesc(file_res, 13);
 
 /**
  * @generated from message wire.TTLRes
@@ -439,7 +505,7 @@ export type TTLRes = Message<"wire.TTLRes"> & {
  * Use `create(TTLResSchema)` to create a new message.
  */
 export const TTLResSchema: GenMessage<TTLRes> = /*@__PURE__*/
-  messageDesc(file_res, 13);
+  messageDesc(file_res, 14);
 
 /**
  * @generated from message wire.EXPIRERes
@@ -456,7 +522,7 @@ export type EXPIRERes = Message<"wire.EXPIRERes"> & {
  * Use `create(EXPIREResSchema)` to create a new message.
  */
 export const EXPIREResSchema: GenMessage<EXPIRERes> = /*@__PURE__*/
-  messageDesc(file_res, 14);
+  messageDesc(file_res, 15);
 
 /**
  * @generated from message wire.EXPIREATRes
@@ -473,7 +539,7 @@ export type EXPIREATRes = Message<"wire.EXPIREATRes"> & {
  * Use `create(EXPIREATResSchema)` to create a new message.
  */
 export const EXPIREATResSchema: GenMessage<EXPIREATRes> = /*@__PURE__*/
-  messageDesc(file_res, 15);
+  messageDesc(file_res, 16);
 
 /**
  * @generated from message wire.EXPIRETIMERes
@@ -490,7 +556,7 @@ export type EXPIRETIMERes = Message<"wire.EXPIRETIMERes"> & {
  * Use `create(EXPIRETIMEResSchema)` to create a new message.
  */
 export const EXPIRETIMEResSchema: GenMessage<EXPIRETIMERes> = /*@__PURE__*/
-  messageDesc(file_res, 16);
+  messageDesc(file_res, 17);
 
 /**
  * @generated from message wire.ECHORes
@@ -507,7 +573,7 @@ export type ECHORes = Message<"wire.ECHORes"> & {
  * Use `create(ECHOResSchema)` to create a new message.
  */
 export const ECHOResSchema: GenMessage<ECHORes> = /*@__PURE__*/
-  messageDesc(file_res, 17);
+  messageDesc(file_res, 18);
 
 /**
  * @generated from message wire.EXISTSRes
@@ -524,7 +590,7 @@ export type EXISTSRes = Message<"wire.EXISTSRes"> & {
  * Use `create(EXISTSResSchema)` to create a new message.
  */
 export const EXISTSResSchema: GenMessage<EXISTSRes> = /*@__PURE__*/
-  messageDesc(file_res, 18);
+  messageDesc(file_res, 19);
 
 /**
  * @generated from message wire.HANDSHAKERes
@@ -537,7 +603,7 @@ export type HANDSHAKERes = Message<"wire.HANDSHAKERes"> & {
  * Use `create(HANDSHAKEResSchema)` to create a new message.
  */
 export const HANDSHAKEResSchema: GenMessage<HANDSHAKERes> = /*@__PURE__*/
-  messageDesc(file_res, 19);
+  messageDesc(file_res, 20);
 
 /**
  * @generated from message wire.GETRes
@@ -554,7 +620,7 @@ export type GETRes = Message<"wire.GETRes"> & {
  * Use `create(GETResSchema)` to create a new message.
  */
 export const GETResSchema: GenMessage<GETRes> = /*@__PURE__*/
-  messageDesc(file_res, 20);
+  messageDesc(file_res, 21);
 
 /**
  * @generated from message wire.GETEXRes
@@ -571,7 +637,7 @@ export type GETEXRes = Message<"wire.GETEXRes"> & {
  * Use `create(GETEXResSchema)` to create a new message.
  */
 export const GETEXResSchema: GenMessage<GETEXRes> = /*@__PURE__*/
-  messageDesc(file_res, 21);
+  messageDesc(file_res, 22);
 
 /**
  * @generated from message wire.GETSETRes
@@ -588,7 +654,7 @@ export type GETSETRes = Message<"wire.GETSETRes"> & {
  * Use `create(GETSETResSchema)` to create a new message.
  */
 export const GETSETResSchema: GenMessage<GETSETRes> = /*@__PURE__*/
-  messageDesc(file_res, 22);
+  messageDesc(file_res, 23);
 
 /**
  * @generated from message wire.GETDELRes
@@ -605,7 +671,7 @@ export type GETDELRes = Message<"wire.GETDELRes"> & {
  * Use `create(GETDELResSchema)` to create a new message.
  */
 export const GETDELResSchema: GenMessage<GETDELRes> = /*@__PURE__*/
-  messageDesc(file_res, 23);
+  messageDesc(file_res, 24);
 
 /**
  * @generated from message wire.SETRes
@@ -618,7 +684,7 @@ export type SETRes = Message<"wire.SETRes"> & {
  * Use `create(SETResSchema)` to create a new message.
  */
 export const SETResSchema: GenMessage<SETRes> = /*@__PURE__*/
-  messageDesc(file_res, 24);
+  messageDesc(file_res, 25);
 
 /**
  * @generated from message wire.DELRes
@@ -635,7 +701,7 @@ export type DELRes = Message<"wire.DELRes"> & {
  * Use `create(DELResSchema)` to create a new message.
  */
 export const DELResSchema: GenMessage<DELRes> = /*@__PURE__*/
-  messageDesc(file_res, 25);
+  messageDesc(file_res, 26);
 
 /**
  * @generated from message wire.FLUSHDBRes
@@ -648,7 +714,7 @@ export type FLUSHDBRes = Message<"wire.FLUSHDBRes"> & {
  * Use `create(FLUSHDBResSchema)` to create a new message.
  */
 export const FLUSHDBResSchema: GenMessage<FLUSHDBRes> = /*@__PURE__*/
-  messageDesc(file_res, 26);
+  messageDesc(file_res, 27);
 
 /**
  * @generated from message wire.KEYSRes
@@ -665,7 +731,7 @@ export type KEYSRes = Message<"wire.KEYSRes"> & {
  * Use `create(KEYSResSchema)` to create a new message.
  */
 export const KEYSResSchema: GenMessage<KEYSRes> = /*@__PURE__*/
-  messageDesc(file_res, 27);
+  messageDesc(file_res, 28);
 
 /**
  * @generated from message wire.INCRRes
@@ -682,7 +748,7 @@ export type INCRRes = Message<"wire.INCRRes"> & {
  * Use `create(INCRResSchema)` to create a new message.
  */
 export const INCRResSchema: GenMessage<INCRRes> = /*@__PURE__*/
-  messageDesc(file_res, 28);
+  messageDesc(file_res, 29);
 
 /**
  * @generated from message wire.DECRRes
@@ -699,7 +765,7 @@ export type DECRRes = Message<"wire.DECRRes"> & {
  * Use `create(DECRResSchema)` to create a new message.
  */
 export const DECRResSchema: GenMessage<DECRRes> = /*@__PURE__*/
-  messageDesc(file_res, 29);
+  messageDesc(file_res, 30);
 
 /**
  * @generated from message wire.INCRBYRes
@@ -716,7 +782,7 @@ export type INCRBYRes = Message<"wire.INCRBYRes"> & {
  * Use `create(INCRBYResSchema)` to create a new message.
  */
 export const INCRBYResSchema: GenMessage<INCRBYRes> = /*@__PURE__*/
-  messageDesc(file_res, 30);
+  messageDesc(file_res, 31);
 
 /**
  * @generated from message wire.DECRBYRes
@@ -733,7 +799,7 @@ export type DECRBYRes = Message<"wire.DECRBYRes"> & {
  * Use `create(DECRBYResSchema)` to create a new message.
  */
 export const DECRBYResSchema: GenMessage<DECRBYRes> = /*@__PURE__*/
-  messageDesc(file_res, 31);
+  messageDesc(file_res, 32);
 
 /**
  * @generated from message wire.ZElement
@@ -755,7 +821,7 @@ export type ZElement = Message<"wire.ZElement"> & {
  * Use `create(ZElementSchema)` to create a new message.
  */
 export const ZElementSchema: GenMessage<ZElement> = /*@__PURE__*/
-  messageDesc(file_res, 32);
+  messageDesc(file_res, 33);
 
 /**
  * @generated from message wire.ZRANGERes
@@ -772,7 +838,136 @@ export type ZRANGERes = Message<"wire.ZRANGERes"> & {
  * Use `create(ZRANGEResSchema)` to create a new message.
  */
 export const ZRANGEResSchema: GenMessage<ZRANGERes> = /*@__PURE__*/
-  messageDesc(file_res, 33);
+  messageDesc(file_res, 34);
+
+/**
+ * @generated from message wire.ZPOPMAXRes
+ */
+export type ZPOPMAXRes = Message<"wire.ZPOPMAXRes"> & {
+  /**
+   * @generated from field: repeated wire.ZElement elements = 1;
+   */
+  elements: ZElement[];
+};
+
+/**
+ * Describes the message wire.ZPOPMAXRes.
+ * Use `create(ZPOPMAXResSchema)` to create a new message.
+ */
+export const ZPOPMAXResSchema: GenMessage<ZPOPMAXRes> = /*@__PURE__*/
+  messageDesc(file_res, 35);
+
+/**
+ * @generated from message wire.ZREMRes
+ */
+export type ZREMRes = Message<"wire.ZREMRes"> & {
+  /**
+   * @generated from field: int64 count = 1;
+   */
+  count: bigint;
+};
+
+/**
+ * Describes the message wire.ZREMRes.
+ * Use `create(ZREMResSchema)` to create a new message.
+ */
+export const ZREMResSchema: GenMessage<ZREMRes> = /*@__PURE__*/
+  messageDesc(file_res, 36);
+
+/**
+ * @generated from message wire.ZPOPMINRes
+ */
+export type ZPOPMINRes = Message<"wire.ZPOPMINRes"> & {
+  /**
+   * @generated from field: repeated wire.ZElement elements = 1;
+   */
+  elements: ZElement[];
+};
+
+/**
+ * Describes the message wire.ZPOPMINRes.
+ * Use `create(ZPOPMINResSchema)` to create a new message.
+ */
+export const ZPOPMINResSchema: GenMessage<ZPOPMINRes> = /*@__PURE__*/
+  messageDesc(file_res, 37);
+
+/**
+ * @generated from message wire.ZRANKRes
+ */
+export type ZRANKRes = Message<"wire.ZRANKRes"> & {
+  /**
+   * @generated from field: int64 rank = 1;
+   */
+  rank: bigint;
+
+  /**
+   * @generated from field: wire.ZElement element = 2;
+   */
+  element?: ZElement;
+};
+
+/**
+ * Describes the message wire.ZRANKRes.
+ * Use `create(ZRANKResSchema)` to create a new message.
+ */
+export const ZRANKResSchema: GenMessage<ZRANKRes> = /*@__PURE__*/
+  messageDesc(file_res, 38);
+
+/**
+ * @generated from message wire.ZCARDRes
+ */
+export type ZCARDRes = Message<"wire.ZCARDRes"> & {
+  /**
+   * @generated from field: int64 count = 1;
+   */
+  count: bigint;
+};
+
+/**
+ * Describes the message wire.ZCARDRes.
+ * Use `create(ZCARDResSchema)` to create a new message.
+ */
+export const ZCARDResSchema: GenMessage<ZCARDRes> = /*@__PURE__*/
+  messageDesc(file_res, 39);
+
+/**
+ * @generated from message wire.ZRANGEWATCHRes
+ */
+export type ZRANGEWATCHRes = Message<"wire.ZRANGEWATCHRes"> & {
+};
+
+/**
+ * Describes the message wire.ZRANGEWATCHRes.
+ * Use `create(ZRANGEWATCHResSchema)` to create a new message.
+ */
+export const ZRANGEWATCHResSchema: GenMessage<ZRANGEWATCHRes> = /*@__PURE__*/
+  messageDesc(file_res, 40);
+
+/**
+ * @generated from message wire.ZCOUNTWATCHRes
+ */
+export type ZCOUNTWATCHRes = Message<"wire.ZCOUNTWATCHRes"> & {
+};
+
+/**
+ * Describes the message wire.ZCOUNTWATCHRes.
+ * Use `create(ZCOUNTWATCHResSchema)` to create a new message.
+ */
+export const ZCOUNTWATCHResSchema: GenMessage<ZCOUNTWATCHRes> = /*@__PURE__*/
+  messageDesc(file_res, 41);
+
+/**
+ * @generated from message wire.ZCARDWATCHRes
+ */
+export type ZCARDWATCHRes = Message<"wire.ZCARDWATCHRes"> & {
+};
+
+/**
+ * Describes the message wire.ZCARDWATCHRes.
+ * Use `create(ZCARDWATCHResSchema)` to create a new message.
+ */
+export const ZCARDWATCHResSchema: GenMessage<ZCARDWATCHRes> = /*@__PURE__*/
+  messageDesc(file_res, 42);
 
 /**
  * @generated from enum wire.Status

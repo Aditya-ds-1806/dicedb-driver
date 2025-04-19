@@ -14,20 +14,22 @@ export default class ExpireCommand extends Command {
      * @param {string} key - The key to set the timeout on.
      * @param {number} seconds - The timeout duration in seconds.
      * @param condition - The condition for setting the timeout.
-     * @returns A promise that resolves with the result of the command.
+     * @returns A promise that resolves with a boolean indicating if the timeout was set.
      */
-    async exec(key: string, seconds: number, condition: 'NX' | 'XX') {
+    async exec(key: string, seconds: number, condition?: 'NX' | 'XX') {
         validateKey(key);
         validateTime(seconds);
 
-        const allowedConditions = ['NX', 'XX'];
+        const args = [key, seconds];
 
-        if (!allowedConditions.includes(condition)) {
-            const err = new DiceDBCommandError({
-                message: `${this.command} condition must be one of ${allowedConditions.join(', ')}!`,
-            });
-
-            throw err;
+        if (condition !== undefined) {
+            const allowedConditions = ['NX', 'XX'];
+            if (!allowedConditions.includes(condition)) {
+                throw new DiceDBCommandError({
+                    message: `${this.command} condition must be one of ${allowedConditions.join(', ')}!`,
+                });
+            }
+            args.push(condition);
         }
 
         return super.exec(key, seconds, condition);

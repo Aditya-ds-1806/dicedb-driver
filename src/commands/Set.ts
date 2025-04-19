@@ -58,7 +58,10 @@ export default class SetCommand extends Command {
             cmdArgs.push('EXAT', String(exAt));
         } else if (pxAt !== undefined && pxAt >= 0 && validateTimestamp(pxAt)) {
             cmdArgs.push('PXAT', String(pxAt));
-        } else if (keepTTL) {
+        }
+        
+        if (keepTTL) {
+            cmdArgs.splice(-2, 2);
             cmdArgs.push('KEEPTTL');
         }
 
@@ -66,6 +69,10 @@ export default class SetCommand extends Command {
             cmdArgs.push('XX');
         } else if (typeof nx === 'boolean' && nx) {
             cmdArgs.push('NX');
+        }
+
+        if (keepTTL) {
+            cmdArgs.push('KEEPTTL');
         }
 
         return super.exec(...cmdArgs);

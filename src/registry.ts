@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-11T15:46:58.195Z
+ * Date: 2025-04-19T08:37:23.464Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -26,7 +26,13 @@ import FlushDBCommand from './commands/FlushDB';
 import GetCommand from './commands/Get';
 import GetAndDeleteCommand from './commands/GetAndDelete';
 import GetAndSetExpiryCommand from './commands/GetAndSetExpiry';
+import GetSetCommand from './commands/GetSet';
 import GetWatchCommand from './commands/GetWatch';
+import HGetCommand from './commands/HGet';
+import HGetAllCommand from './commands/HGetAll';
+import HGetAllWatchCommand from './commands/HGetAllWatch';
+import HGetWatchCommand from './commands/HGetWatch';
+import HSetCommand from './commands/HSet';
 import HandshakeCommand from './commands/Handshake';
 import IncrementCommand from './commands/Increment';
 import IncrementByCommand from './commands/IncrementBy';
@@ -52,7 +58,13 @@ commandRegistry.set(FlushDBCommand.command, FlushDBCommand);
 commandRegistry.set(GetCommand.command, GetCommand);
 commandRegistry.set(GetAndDeleteCommand.command, GetAndDeleteCommand);
 commandRegistry.set(GetAndSetExpiryCommand.command, GetAndSetExpiryCommand);
+commandRegistry.set(GetSetCommand.command, GetSetCommand);
 commandRegistry.set(GetWatchCommand.command, GetWatchCommand);
+commandRegistry.set(HGetCommand.command, HGetCommand);
+commandRegistry.set(HGetAllCommand.command, HGetAllCommand);
+commandRegistry.set(HGetAllWatchCommand.command, HGetAllWatchCommand);
+commandRegistry.set(HGetWatchCommand.command, HGetWatchCommand);
+commandRegistry.set(HSetCommand.command, HSetCommand);
 commandRegistry.set(HandshakeCommand.command, HandshakeCommand);
 commandRegistry.set(IncrementCommand.command, IncrementCommand);
 commandRegistry.set(IncrementByCommand.command, IncrementByCommand);

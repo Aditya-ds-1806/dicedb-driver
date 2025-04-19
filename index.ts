@@ -3,14 +3,14 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-11T15:46:57.818Z
+ * Date: 2025-04-19T08:37:23.158Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
  * --------------------------------------------------------------
  */
 
-import { Readable } from "stream";
+import { Readable, Transform } from "stream";
 
 import DiceDBBase, { type DiceDBOptions } from "./src/dicedb";
 import { DiceDBResponse } from "./lib/Parsers";
@@ -94,9 +94,9 @@ class DiceDB extends DiceDBBase {
      * @param {string} key - The key to set the timeout on.
      * @param {number} seconds - The timeout duration in seconds.
      * @param condition - The condition for setting the timeout.
-     * @returns A promise that resolves with the result of the command.
+     * @returns A promise that resolves with a boolean indicating if the timeout was set.
      */
-	async expire(key: string, seconds: number, condition: "NX" | "XX") {
+	async expire(key: string, seconds: number, condition: "NX" | "XX" | undefined) {
 		return this.execCommand('EXPIRE', key, seconds, condition) as Promise<DiceDBResponse>;
 	}
 
@@ -107,9 +107,9 @@ class DiceDB extends DiceDBBase {
      * @param {string} key - The key to set the timeout on.
      * @param {number} timestamp - The Unix timestamp at which the key will expire.
      * @param condition - The condition for setting the timeout.
-     * @returns A promise that resolves with the result of the command.
+     * @returns A promise that resolves with a boolean indicating if the timeout was set.
      */
-	async expireAt(key: string, timestamp: number, condition: "NX" | "XX" | "GT" | "LT") {
+	async expireAt(key: string, timestamp: number, condition: "NX" | "XX" | "GT" | "LT" | undefined) {
 		return this.execCommand('EXPIREAT', key, timestamp, condition) as Promise<DiceDBResponse>;
 	}
 
@@ -170,6 +170,18 @@ class DiceDB extends DiceDBBase {
 
 
 	/**
+     * Executes the GETSET command to set and get the old value of a key.
+     *
+     * @param {string} key - The key whose old value will be retrieved.
+     * @param {number | string} value - The value to set.
+     * @returns A promise that resolves with the old value of the key.
+     */
+	async getSet(key: string, value: string | number) {
+		return this.execCommand('GETSET', key, value) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
      * Executes the GET_WATCH command to retrieve the value of a key and watch it for changes.
      *
      * @param {string} key - The key to retrieve and watch.
@@ -177,6 +189,64 @@ class DiceDB extends DiceDBBase {
      */
 	async getWatch(key: string) {
 		return this.execCommand('GET.WATCH', key) as Promise<Readable>;
+	}
+
+
+	/**
+     * Executes the HGET command to retrieve the value of a field in a hash stored at a key.
+     *
+     * @param {string} key - The key of the hash.
+     * @param {string} fieldName - The field name whose value will be retrieved.
+     * @returns A promise that resolves with the value of the field, or null if the field does not exist.
+     */
+	async hGet(key: string, fieldName: string) {
+		return this.execCommand('HGET', key, fieldName) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the HGET command to retrieve the value of a field in a hash stored at a key.
+     *
+     * @param {string} key - The key of the hash.
+     * @returns A promise that resolves with the value of the field, or null if the field does not exist.
+     */
+	async hGetAll(key: string) {
+		return this.execCommand('HGETALL', key) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the HGETALL_WATCH command to retrieve all fields and values in a hash stored at a key and watch it for changes.
+     * 
+     * @param {string} key - The key of the hash.
+     * @returns A Transform stream that emits the result of the command.
+    */
+	async hGetAllWatch(key: string) {
+		return this.execCommand('HGETALL.WATCH', key) as Promise<Transform>;
+	}
+
+
+	/**
+     * Executes the HGET_WATCH command to retrieve the value of a field in a hash and watch it for changes.
+     *
+     * @param {string} key - The key of the hash.
+     * @param {string} field - The field to retrieve and watch.
+     * @returns A promise that resolves to a Node.js Readable Stream
+     */
+	async hGetWatch(key: string, field: string) {
+		return this.execCommand('HGET.WATCH', key, field) as Promise<Readable>;
+	}
+
+
+	/**
+     * Executes the HSET command to set the value of a field in a hash stored at key.
+     *
+     * @param {string} key - The key of the hash.
+     * @param {Record<string, number | string>} map - An object representing field-value pairs to set in the hash.
+     * @returns A promise that resolves with the result of the command execution.
+     */
+	async hSet(key: string, map: Record<string, string | number>) {
+		return this.execCommand('HSET', key, map) as Promise<DiceDBResponse>;
 	}
 
 
@@ -220,7 +290,7 @@ class DiceDB extends DiceDBBase {
      * @param {string} [message] - An optional message to send with the PING command.
      * @returns A promise that resolves with the server's response.
      */
-	async ping(message: string) {
+	async ping(message: string | undefined) {
 		return this.execCommand('PING', message) as Promise<DiceDBResponse>;
 	}
 
