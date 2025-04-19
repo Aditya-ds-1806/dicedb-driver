@@ -2654,7 +2654,7 @@ describe('DiceDB test cases', () => {
         });
 
         it('should handle non-existent sorted set', async () => {
-            const key = 'nonExistentKey';
+            const key = 'nonExistentKeyForZRankWatch';
             const stream = await db.zRankWatch(key, 'member1');
 
             return new Promise((resolve, reject) => {
