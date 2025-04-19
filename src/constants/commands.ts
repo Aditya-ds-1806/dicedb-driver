@@ -28,6 +28,7 @@ export const COMMANDS = Object.freeze({
     UNWATCH: 'UNWATCH',
     ZADD: 'ZADD',
     ZCARD: 'ZCARD',
+    ZCARD_WATCH: 'ZCARD.WATCH',
     ZCOUNT: 'ZCOUNT',
     ZPOPMAX: 'ZPOPMAX',
     ZPOPMIN: 'ZPOPMIN',
@@ -65,12 +66,12 @@ export const COMMAND_TO_COMMAND_NAME = Object.freeze({
     [COMMANDS.UNWATCH]: 'unwatch',
     [COMMANDS.ZADD]: 'zAdd',
     [COMMANDS.ZCARD]: 'zCard',
+    [COMMANDS.ZCARD_WATCH]: 'zCardWatch',
     [COMMANDS.ZCOUNT]: 'zCount',
     [COMMANDS.ZPOPMAX]: 'zPopMax',
     [COMMANDS.ZPOPMIN]: 'zPopMin',
     [COMMANDS.ZRANK]: 'zRank',
     [COMMANDS.ZREM]: 'zRem',
-
 });
 
 export const CONN_TIMEOUT_MS = 5000;

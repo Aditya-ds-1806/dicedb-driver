@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T19:16:34.202Z
+ * Date: 2025-04-19T19:46:43.627Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -184,7 +184,7 @@ class DiceDB extends DiceDBBase {
 
 
 	/**
-     * Executes the GET_WATCH command to retrieve the value of a key and watch it for changes.
+     * Executes the GET.WATCH command to retrieve the value of a key and watch it for changes.
      *
      * @param {string} key - The key to retrieve and watch.
      * @returns A promise that resolves to a Node.js Readable Stream
@@ -207,7 +207,7 @@ class DiceDB extends DiceDBBase {
 
 
 	/**
-     * Executes the HGET command to retrieve the value of a field in a hash stored at a key.
+     * Executes the HGETALL command to retrieve the value of a field in a hash stored at a key.
      *
      * @param {string} key - The key of the hash.
      * @returns A promise that resolves with the value of the field, or null if the field does not exist.
@@ -218,7 +218,7 @@ class DiceDB extends DiceDBBase {
 
 
 	/**
-     * Executes the HGETALL_WATCH command to retrieve all fields and values in a hash stored at a key and watch it for changes.
+     * Executes the HGETALL.WATCH command to retrieve all fields and values in a hash stored at a key and watch it for changes.
      * 
      * @param {string} key - The key of the hash.
      * @returns A Transform stream that emits the result of the command.
@@ -365,6 +365,17 @@ class DiceDB extends DiceDBBase {
      */
 	async zCard(key: string) {
 		return this.execCommand('ZCARD', key) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the ZCARD.WATCH command to retrieve the number of members in a sorted set.
+     * 
+     * @param {string} key - The key of the sorted set
+     * @returns The number of members in the sorted set
+     */
+	async zCardWatch(key: string) {
+		return this.execCommand('ZCARD.WATCH', key) as Promise<Readable>;
 	}
 
 

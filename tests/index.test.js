@@ -2189,6 +2189,105 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('ZCardWatchCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return a stream when watching a sorted set cardinality', async () => {
+            const key = 'zsetKey';
+            const stream = await db.zCardWatch(key);
+
+            expect(stream).to.be.instanceOf(Readable);
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.data.result).to.equal(0n); // Initial cardinality should be 0
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+
+        it('should receive updates through the stream when members are added', async () => {
+            const key = 'zsetKey';
+            const stream = await db.zCardWatch(key);
+            let cardinalityUpdates = [];
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    cardinalityUpdates.push(data.data.result);
+
+                    // After we see cardinality of 2, we're done
+                    if (data.data.result === 2n) {
+                        expect(cardinalityUpdates).to.deep.equal([0n, 1n, 2n]);
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Add members one by one to see cardinality updates
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 10 }))
+                    .then(() => db.zAdd(key, { member2: 20 }))
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates through the stream when members are removed', async () => {
+            const key = 'zsetKey';
+
+            // First add some members
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const stream = await db.zCardWatch(key);
+            let cardinalityUpdates = [];
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    cardinalityUpdates.push(data.data.result);
+
+                    // After we see cardinality of 1, we're done
+                    if (data.data.result === 1n) {
+                        expect(cardinalityUpdates).to.deep.equal([3n, 2n, 1n]);
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Remove members one by one to see cardinality updates
+                Promise.resolve()
+                    .then(() => db.zRem(key, 'member1'))
+                    .then(() => db.zRem(key, 'member2'))
+                    .catch(reject);
+            });
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
