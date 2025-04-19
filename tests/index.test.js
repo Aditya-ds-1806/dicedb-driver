@@ -755,6 +755,61 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('HGetWatchCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('hashKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return a stream when watching a hash field', async () => {
+            const key = 'hashKey';
+            const field = 'name';
+            const stream = await db.hGetWatch(key, field);
+
+            expect(stream).to.be.instanceOf(Readable);
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+
+        it('should receive updates through the stream', async () => {
+            const key = 'hashKey';
+            const field = 'name';
+            const stream = await db.hGetWatch(key, field);
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // wait for newValue to be returned from server and then resolve
+                    if (data.data.result === 'newValue') {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                db.hSet(key, { [field]: 'newValue' }).catch(reject);
+            });
+        });
+    });
+
     describe('HGetAllCommand', () => {
         beforeEach(async () => {
             try {
