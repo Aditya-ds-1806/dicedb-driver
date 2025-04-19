@@ -1989,6 +1989,88 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('ZRemCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should remove single member from sorted set', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zRem(key, 'member2');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n); // 1 member removed
+
+            // Verify member was removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(2n);
+        });
+
+        it('should remove multiple members from sorted set', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+                member4: 40,
+            });
+
+            const response = await db.zRem(
+                key,
+                'member1',
+                'member3',
+                'member4',
+            );
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n); // 3 members removed
+
+            // Verify members were removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(1n);
+        });
+
+        it('should return 0 for non-existent members', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+            });
+
+            const response = await db.zRem(key, 'nonexistent1', 'nonexistent2');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n);
+
+            // Verify no members were removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(2n);
+        });
+
+        it('should return 0 for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.zRem(key, 'member1');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n);
+        });
+
+        it('should return error for wrong type', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'value');
+
+            const response = await db.zRem(key, 'member1');
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),

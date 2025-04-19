@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T18:12:19.872Z
+ * Date: 2025-04-19T18:48:26.662Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -413,6 +413,18 @@ class DiceDB extends DiceDBBase {
      */
 	async zRank(key: string, member: string) {
 		return this.execCommand('ZRANK', key, member) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Remove members from a sorted set
+     * 
+     * @param {string} key - The key of the sorted set
+     * @param {string[]} members - The members to remove from the sorted set
+     * @returns The number of members removed from the sorted set
+     */
+	async zRem(key: string, ...members: string[]) {
+		return this.execCommand('ZREM', key, ...members) as Promise<DiceDBResponse>;
 	}
 
 }

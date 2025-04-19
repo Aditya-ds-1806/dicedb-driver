@@ -27,6 +27,5 @@ export default class ZRankCommand extends Command {
         }
 
         return response;
-
     }
 }
