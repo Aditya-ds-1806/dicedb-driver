@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T08:37:23.158Z
+ * Date: 2025-04-19T13:52:22.827Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -16,6 +16,7 @@ import DiceDBBase, { type DiceDBOptions } from "./src/dicedb";
 import { DiceDBResponse } from "./lib/Parsers";
 import { GetAndSetExpiryCommandOptions } from './src/commands/GetAndSetExpiry';
 import { SetCommandOptions } from './src/commands/Set';
+import { ZAddCommandOptions } from './src/commands/ZAdd';
 
 
 /**
@@ -338,6 +339,20 @@ class DiceDB extends DiceDBBase {
      */
 	async unwatch(fingerprint: string) {
 		return this.execCommand('UNWATCH', fingerprint) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the ZADD command to add elements to a sorted set with optional
+     * options for adding elements.
+     *
+     * @param {string} key - The key of the sorted set.
+     * @param {Record<string, number | string>} map - A map of members and their scores.
+     * @param opts - The options for adding elements to the sorted set.
+     * @returns A promise that resolves when the elements are added successfully.
+     */
+	async zAdd(key: string, map: Record<string, string | number>, opts: ZAddCommandOptions | undefined) {
+		return this.execCommand('ZADD', key, map, opts) as Promise<DiceDBResponse>;
 	}
 
 }

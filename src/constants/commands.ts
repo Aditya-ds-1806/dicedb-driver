@@ -26,6 +26,7 @@ export const COMMANDS = Object.freeze({
     TTL: 'TTL',
     TYPE: 'TYPE',
     UNWATCH: 'UNWATCH',
+    ZADD: 'ZADD',
 });
 
 export const COMMAND_TO_COMMAND_NAME = Object.freeze({
@@ -56,6 +57,7 @@ export const COMMAND_TO_COMMAND_NAME = Object.freeze({
     [COMMANDS.TTL]: 'ttl',
     [COMMANDS.TYPE]: 'type',
     [COMMANDS.UNWATCH]: 'unwatch',
+    [COMMANDS.ZADD]: 'zAdd',
 });
 
 export const CONN_TIMEOUT_MS = 5000;

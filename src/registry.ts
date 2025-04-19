@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T08:37:23.464Z
+ * Date: 2025-04-19T13:52:23.122Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -41,6 +41,7 @@ import SetCommand from './commands/Set';
 import TTLCommand from './commands/TTL';
 import TypeCommand from './commands/Type';
 import UnwatchCommand from './commands/Unwatch';
+import ZAddCommand from './commands/ZAdd';
 
 type ValueOf<T> = T[keyof T];
 
@@ -73,5 +74,6 @@ commandRegistry.set(SetCommand.command, SetCommand);
 commandRegistry.set(TTLCommand.command, TTLCommand);
 commandRegistry.set(TypeCommand.command, TypeCommand);
 commandRegistry.set(UnwatchCommand.command, UnwatchCommand);
+commandRegistry.set(ZAddCommand.command, ZAddCommand);
 
 export default commandRegistry;

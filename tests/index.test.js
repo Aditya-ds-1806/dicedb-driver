@@ -1363,6 +1363,189 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('ZAddCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should add new members to a sorted set', async () => {
+            const key = 'zsetKey';
+
+            const response = await db.zAdd(key, { member1: 100, member2: 200 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(2n); // Two new members added
+        });
+
+        it('should update scores of existing members', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100, member2: 200 });
+
+            // Update scores
+            const response = await db.zAdd(key, {
+                member1: 150, // Update
+                member2: 250, // Update
+                member3: 300, // New
+            });
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n); // Only one new member
+        });
+
+        it('should only add new members with NX option', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100, member2: 200 });
+
+            // Try adding new and updating existing with NX
+            const response = await db.zAdd(
+                key,
+                {
+                    member1: 150, // Should not update
+                    member2: 250, // Should not update
+                    member3: 300, // Should add
+                },
+                { nx: true },
+            );
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n); // Only one new member added
+        });
+
+        it('should only update existing members with XX option', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100, member2: 200 });
+
+            // Try adding new and updating existing with XX
+            const response = await db.zAdd(
+                key,
+                {
+                    member1: 150, // Should update
+                    member2: 250, // Should update
+                    member3: 300, // Should not add
+                },
+                { xx: true, ch: true },
+            );
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(2n); // Only two members updated
+        });
+
+        it('should update only if new score is greater with GT option', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100, member2: 200 });
+
+            // Try updating with GT
+            const response = await db.zAdd(
+                key,
+                {
+                    member1: 150, // Should update (150 > 100)
+                    member2: 150, // Should not update (150 < 200)
+                },
+                { gt: true, ch: true },
+            );
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n); // 1 updated member
+        });
+
+        it('should update only if new score is less with LT option', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100, member2: 200 });
+
+            // Try updating with LT
+            const response = await db.zAdd(
+                key,
+                {
+                    member1: 50, // Should update (50 < 100)
+                    member2: 250, // Should not update (250 > 200)
+                },
+                { lt: true, ch: true },
+            );
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n); // 1 updated member
+        });
+
+        it('should return count of changed elements with CH option', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100, member2: 200 });
+
+            // Update existing and add new with CH
+            const response = await db.zAdd(
+                key,
+                {
+                    member1: 150, // Changed
+                    member2: 250, // Changed
+                    member3: 300, // New
+                },
+                { ch: true },
+            );
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n); // 2 updates + 1 new
+        });
+
+        it('should increment score with INCR option', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100 });
+
+            // Increment score
+            const response = await db.zAdd(
+                key,
+                {
+                    member1: 50, // Add 50 to existing score
+                },
+                { incr: true },
+            );
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(150n); // New score after increment
+        });
+
+        it('should throw error when using INCR with multiple members', async () => {
+            const key = 'zsetKey';
+
+            try {
+                await db.zAdd(
+                    key,
+                    {
+                        member1: 50,
+                        member2: 100,
+                    },
+                    { incr: true },
+                );
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include(
+                    'INCR option can only be used with a single member',
+                );
+            }
+        });
+
+        it('should throw error when using INCR with GT/LT', async () => {
+            const key = 'zsetKey';
+
+            try {
+                await db.zAdd(key, { member1: 50 }, { incr: true, gt: true });
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include(
+                    'INCR option cannot be used with the GT or LT options',
+                );
+            }
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
