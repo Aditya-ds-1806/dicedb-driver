@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T21:44:44.059Z
+ * Date: 2025-04-19T22:01:56.519Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -36,6 +36,7 @@ import HSetCommand from './commands/HSet';
 import HandshakeCommand from './commands/Handshake';
 import IncrementCommand from './commands/Increment';
 import IncrementByCommand from './commands/IncrementBy';
+import KeysCommand from './commands/Keys';
 import PingCommand from './commands/Ping';
 import SetCommand from './commands/Set';
 import TTLCommand from './commands/TTL';
@@ -78,6 +79,7 @@ commandRegistry.set(HSetCommand.command, HSetCommand);
 commandRegistry.set(HandshakeCommand.command, HandshakeCommand);
 commandRegistry.set(IncrementCommand.command, IncrementCommand);
 commandRegistry.set(IncrementByCommand.command, IncrementByCommand);
+commandRegistry.set(KeysCommand.command, KeysCommand);
 commandRegistry.set(PingCommand.command, PingCommand);
 commandRegistry.set(SetCommand.command, SetCommand);
 commandRegistry.set(TTLCommand.command, TTLCommand);
