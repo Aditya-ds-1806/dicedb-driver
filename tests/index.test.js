@@ -1546,6 +1546,53 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('ZCardCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey', 'emptySet', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return the number of members in a sorted set', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 100,
+                member2: 200,
+                member3: 300,
+            });
+
+            const response = await db.zCard(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n);
+        });
+
+        it('should return 0 for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.zCard(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n);
+        });
+
+        it('should return 0 for empty sorted set', async () => {
+            const key = 'emptySet';
+            // An empty sorted set is the same as a non-existent key
+            const response = await db.zCard(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n);
+        });
+
+        it('should return error for wrong type', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'value');
+
+            const response = await db.zCard(key);
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),

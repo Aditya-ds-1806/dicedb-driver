@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T13:52:22.827Z
+ * Date: 2025-04-19T14:58:39.390Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -353,6 +353,17 @@ class DiceDB extends DiceDBBase {
      */
 	async zAdd(key: string, map: Record<string, string | number>, opts: ZAddCommandOptions | undefined) {
 		return this.execCommand('ZADD', key, map, opts) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Get the number of members in a sorted set
+     * 
+     * @param {string} key - The key of the sorted set
+     * @returns The number of members in the sorted set
+     */
+	async zCard(key: string) {
+		return this.execCommand('ZCARD', key) as Promise<DiceDBResponse>;
 	}
 
 }
