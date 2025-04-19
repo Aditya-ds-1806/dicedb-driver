@@ -959,6 +959,25 @@ describe('DiceDB test cases', () => {
             );
         });
 
+        it('should set multiple fields in a hash via map and return count of new fields', async () => {
+            const key = 'hashKey';
+            const hash = new Map(
+                Object.entries({
+                    name: 'testName',
+                    age: '25',
+                    city: 'testCity',
+                }),
+            );
+
+            const response = await db.hSet(key, hash);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n);
+
+            // Verify fields were set correctly
+            const getResponse = await db.hGetAll(key);
+            expect(getResponse.data.result).to.deep.equal(hash);
+        });
+
         it('should update existing fields and return count of new fields only', async () => {
             const key = 'hashKey';
             // First set

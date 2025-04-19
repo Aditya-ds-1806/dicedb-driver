@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T21:10:03.532Z
+ * Date: 2025-04-19T21:44:43.742Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -244,10 +244,10 @@ class DiceDB extends DiceDBBase {
      * Executes the HSET command to set the value of a field in a hash stored at key.
      *
      * @param {string} key - The key of the hash.
-     * @param {Record<string, number | string>} map - An object representing field-value pairs to set in the hash.
+     * @param {Record<string, number | string> | Map<string, number | string>} map - An object representing field-value pairs to set in the hash.
      * @returns A promise that resolves with the result of the command execution.
      */
-	async hSet(key: string, map: Record<string, string | number>) {
+	async hSet(key: string, map: Record<string, string | number> | Map<string, string | number>) {
 		return this.execCommand('HSET', key, map) as Promise<DiceDBResponse>;
 	}
 
