@@ -1795,6 +1795,122 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('ZPopMinCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should remove and return member with lowest score by default', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zPopMin(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(
+                new Map(Object.entries({ member1: 10n })),
+            );
+
+            // Verify member was removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(2n);
+        });
+
+        it('should remove and return multiple members when count specified', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+                member4: 40,
+                member5: 50,
+            });
+
+            const response = await db.zPopMin(key, 3);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        member1: 10n,
+                        member2: 20n,
+                        member3: 30n,
+                    }),
+                ),
+            );
+
+            // Verify members were removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(2n);
+        });
+
+        it('should return empty map for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.zPopMin(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(new Map());
+        });
+
+        it('should return all members when count exceeds set size', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zPopMin(key, 5);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        member1: 10n,
+                        member2: 20n,
+                        member3: 30n,
+                    }),
+                ),
+            );
+
+            // Verify all members were removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(0n);
+        });
+
+        it('should throw error for invalid count', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, { member1: 10 });
+
+            try {
+                await db.zPopMin(key, 0);
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include('count must be >= 1');
+            }
+
+            try {
+                await db.zPopMin(key, -1);
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include('count must be >= 1');
+            }
+        });
+
+        it('should return error for wrong type', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'value');
+
+            const response = await db.zPopMin(key);
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),

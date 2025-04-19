@@ -30,6 +30,7 @@ export const COMMANDS = Object.freeze({
     ZCARD: 'ZCARD',
     ZCOUNT: 'ZCOUNT',
     ZPOPMAX: 'ZPOPMAX',
+    ZPOPMIN: 'ZPOPMIN',
 });
 
 export const COMMAND_TO_COMMAND_NAME = Object.freeze({
@@ -64,6 +65,7 @@ export const COMMAND_TO_COMMAND_NAME = Object.freeze({
     [COMMANDS.ZCARD]: 'zCard',
     [COMMANDS.ZCOUNT]: 'zCount',
     [COMMANDS.ZPOPMAX]: 'zPopMax',
+    [COMMANDS.ZPOPMIN]: 'zPopMin',
 });
 
 export const CONN_TIMEOUT_MS = 5000;
