@@ -1911,6 +1911,84 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('ZRankCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return rank of member in sorted set', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+                member4: 40,
+            });
+
+            const response = await db.zRank(key, 'member2');
+            expect(response.success).to.be.true;
+            expect(response.data.result.rank).to.equal(2n);
+            expect(response.data.result.element).to.deep.equal(
+                new Map([['member2', 20n]]),
+            );
+        });
+
+        it('should return 0 rank and 0 score for non-existent member', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+            });
+
+            const response = await db.zRank(key, 'nonexistent');
+            expect(response.success).to.be.true;
+            expect(response.data.result.element.size).to.equal(1);
+            expect(response.data.result.rank).to.equal(0n); // Rank is 0 for non-existent member
+            expect(response.data.result.element.get('nonexistent')).to.equal(
+                0n, // Score is 0 for non-existent member
+            );
+        });
+
+        it('should return 0 score and undefined member for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.zRank(key, 'member1');
+            expect(response.success).to.be.true;
+            expect(response.data.result.rank).to.equal(0n); // Rank is 0 for non-existent member
+            expect(response.data.result.element).to.be.undefined; // No member found
+        });
+
+        it('should handle members with same score', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 20, // Same score as member2
+                member4: 30,
+            });
+
+            const response1 = await db.zRank(key, 'member2');
+            const response2 = await db.zRank(key, 'member3');
+            expect(response1.success).to.be.true;
+            expect(response2.success).to.be.true;
+            // With same scores, order is lexicographical by member name
+            expect(response1.data.result.rank).to.equal(2n);
+            expect(response2.data.result.rank).to.equal(3n);
+        });
+
+        it('should return error for wrong type', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'value');
+
+            const response = await db.zRank(key, 'member1');
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),

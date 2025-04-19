@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T16:35:34.307Z
+ * Date: 2025-04-19T18:12:19.872Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -401,6 +401,18 @@ class DiceDB extends DiceDBBase {
      */
 	async zPopMin(key: string, count: number | undefined) {
 		return this.execCommand('ZPOPMIN', key, count) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Get the rank of a member in a sorted set
+     * 
+     * @param {string} key - The key of the sorted set
+     * @param {string} member - The member whose rank to get
+     * @returns The rank of the member in the sorted set
+     */
+	async zRank(key: string, member: string) {
+		return this.execCommand('ZRANK', key, member) as Promise<DiceDBResponse>;
 	}
 
 }

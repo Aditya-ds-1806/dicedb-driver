@@ -61,6 +61,10 @@ export const responseParser = (response: Result): DiceDBResponse => {
             parsedValue = value.count;
             break;
 
+        case 'wire.ZRANKRes':
+            parsedValue = { element: value.element, rank: value.rank };
+            break;
+
         case 'wire.EXPIREATRes':
         case 'wire.EXPIRERes':
             parsedValue = value.isChanged;
