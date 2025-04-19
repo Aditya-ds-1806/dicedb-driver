@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T15:29:19.627Z
+ * Date: 2025-04-19T16:24:27.015Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -377,6 +377,18 @@ class DiceDB extends DiceDBBase {
      */
 	async zCount(key: string, opts: ZCountOptions | undefined) {
 		return this.execCommand('ZCOUNT', key, opts) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Remove and return the member with the highest score in a sorted set
+     * 
+     * @param {string} key - The key of the sorted set
+     * @param {number} count - Options specifying the number of elements to pop
+     * @returns The member with the highest score and its score
+     */
+	async zPopMax(key: string, count: number | undefined) {
+		return this.execCommand('ZPOPMAX', key, count) as Promise<DiceDBResponse>;
 	}
 
 }

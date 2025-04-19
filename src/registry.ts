@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T15:29:19.944Z
+ * Date: 2025-04-19T16:24:27.344Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -44,6 +44,7 @@ import UnwatchCommand from './commands/Unwatch';
 import ZAddCommand from './commands/ZAdd';
 import ZCardCommand from './commands/ZCard';
 import ZCountCommand from './commands/ZCount';
+import ZPopMaxCommand from './commands/ZPopMax';
 
 type ValueOf<T> = T[keyof T];
 
@@ -79,5 +80,6 @@ commandRegistry.set(UnwatchCommand.command, UnwatchCommand);
 commandRegistry.set(ZAddCommand.command, ZAddCommand);
 commandRegistry.set(ZCardCommand.command, ZCardCommand);
 commandRegistry.set(ZCountCommand.command, ZCountCommand);
+commandRegistry.set(ZPopMaxCommand.command, ZPopMaxCommand);
 
 export default commandRegistry;
