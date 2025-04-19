@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T21:44:43.742Z
+ * Date: 2025-04-19T22:01:56.203Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -287,6 +287,17 @@ class DiceDB extends DiceDBBase {
 
 
 	/**
+     * Get all keys matching a pattern
+     * 
+     * @param {string} pattern - The pattern to match keys against
+     * @returns A promise that resolves with the list of matching keys
+     */
+	async keys(pattern: string) {
+		return this.execCommand('KEYS', pattern) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
      * Executes the PING command to test the connection to the server.
      *
      * @param {string} [message] - An optional message to send with the PING command.
@@ -348,7 +359,7 @@ class DiceDB extends DiceDBBase {
      * options for adding elements.
      *
      * @param {string} key - The key of the sorted set.
-     * @param {Record<string, number | string>} map - A map of members and their scores.
+     * @param {Record<string, number | string> | Map<string, number | string>} map - A map of members and their scores.
      * @param opts - The options for adding elements to the sorted set.
      * @returns A promise that resolves when the elements are added successfully.
      */

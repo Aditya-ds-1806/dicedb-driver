@@ -2674,6 +2674,100 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('KeysCommand', () => {
+        beforeEach(async () => {
+            try {
+                // Clear any existing keys
+                await db.flushDB();
+
+                // Set up test data
+                await db.set('user:1', 'John');
+                await db.set('user:2', 'Jane');
+                await db.set('post:1', 'Hello');
+                await db.hSet('hash:1', { field1: 'value1' });
+                await db.zAdd('zset:1', { member1: 10 });
+            } catch {
+                // Ignore errors during setup
+            }
+        });
+
+        it('should return all keys matching exact pattern', async () => {
+            const response = await db.keys('user:1');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.have.lengthOf(1);
+            expect(response.data.result).to.include('user:1');
+        });
+
+        it('should return all keys matching wildcard pattern *', async () => {
+            const response = await db.keys('*');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.have.lengthOf(5); // All test keys
+            expect(response.data.result).to.include.members([
+                'user:1',
+                'user:2',
+                'post:1',
+                'hash:1',
+                'zset:1',
+            ]);
+        });
+
+        it('should return all keys matching prefix pattern', async () => {
+            const response = await db.keys('user:*');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.have.lengthOf(2);
+            expect(response.data.result).to.include.members([
+                'user:1',
+                'user:2',
+            ]);
+        });
+
+        it('should return all keys matching suffix pattern', async () => {
+            const response = await db.keys('*:1');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.have.lengthOf(4);
+            expect(response.data.result).to.include.members([
+                'user:1',
+                'post:1',
+                'hash:1',
+                'zset:1',
+            ]);
+        });
+
+        it('should return all keys matching question mark pattern', async () => {
+            const response = await db.keys('user:?');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.have.lengthOf(2);
+            expect(response.data.result).to.include.members([
+                'user:1',
+                'user:2',
+            ]);
+        });
+
+        it('should return empty array for non-matching pattern', async () => {
+            const response = await db.keys('nonexistent:*');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.have.lengthOf(0);
+        });
+
+        it('should return empty array when database is empty', async () => {
+            await db.flushDB();
+            const response = await db.keys('*');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.have.lengthOf(0);
+        });
+
+        it('should throw error for invalid pattern', async () => {
+            try {
+                await db.keys({ invalid: 'pattern' });
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include(
+                    'key must be a string or number',
+                );
+            }
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
