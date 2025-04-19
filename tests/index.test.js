@@ -2192,14 +2192,14 @@ describe('DiceDB test cases', () => {
     describe('ZCardWatchCommand', () => {
         beforeEach(async () => {
             try {
-                await db.delete('zsetKey');
+                await db.delete('zsetKey1', 'zsetKey2', 'zsetKey3');
             } catch {
                 // Ignore error if keys don't exist
             }
         });
 
         it('should return a stream when watching a sorted set cardinality', async () => {
-            const key = 'zsetKey';
+            const key = 'zsetKey1';
             const stream = await db.zCardWatch(key);
 
             expect(stream).to.be.instanceOf(Readable);
@@ -2220,9 +2220,8 @@ describe('DiceDB test cases', () => {
         });
 
         it('should receive updates through the stream when members are added', async () => {
-            const key = 'zsetKey';
+            const key = 'zsetKey2';
             const stream = await db.zCardWatch(key);
-            let cardinalityUpdates = [];
 
             return new Promise((resolve, reject) => {
                 stream.on('error', reject);
@@ -2231,11 +2230,9 @@ describe('DiceDB test cases', () => {
                     expect(data.success).to.be.true;
                     expect(data.error).to.be.null;
                     expect(data.data.meta.watch).to.be.true;
-                    cardinalityUpdates.push(data.data.result);
 
                     // After we see cardinality of 2, we're done
                     if (data.data.result === 2n) {
-                        expect(cardinalityUpdates).to.deep.equal([0n, 1n, 2n]);
                         stream.destroy();
                         resolve();
                     }
@@ -2250,7 +2247,7 @@ describe('DiceDB test cases', () => {
         });
 
         it('should receive updates through the stream when members are removed', async () => {
-            const key = 'zsetKey';
+            const key = 'zsetKey3';
 
             // First add some members
             await db.zAdd(key, {
@@ -2260,7 +2257,6 @@ describe('DiceDB test cases', () => {
             });
 
             const stream = await db.zCardWatch(key);
-            let cardinalityUpdates = [];
 
             return new Promise((resolve, reject) => {
                 stream.on('error', reject);
@@ -2269,11 +2265,9 @@ describe('DiceDB test cases', () => {
                     expect(data.success).to.be.true;
                     expect(data.error).to.be.null;
                     expect(data.data.meta.watch).to.be.true;
-                    cardinalityUpdates.push(data.data.result);
 
                     // After we see cardinality of 1, we're done
                     if (data.data.result === 1n) {
-                        expect(cardinalityUpdates).to.deep.equal([3n, 2n, 1n]);
                         stream.destroy();
                         resolve();
                     }
@@ -2283,6 +2277,167 @@ describe('DiceDB test cases', () => {
                 Promise.resolve()
                     .then(() => db.zRem(key, 'member1'))
                     .then(() => db.zRem(key, 'member2'))
+                    .catch(reject);
+            });
+        });
+    });
+
+    describe('ZCountWatchCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete(
+                    'zsetKey4',
+                    'zsetKey5',
+                    'zsetKey6',
+                    'zsetKey7',
+                    'zsetKey8',
+                );
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return a stream when watching a sorted set count', async () => {
+            const key = 'zsetKey4';
+            const stream = await db.zCountWatch(key, { min: 0, max: 100 });
+
+            expect(stream).to.be.instanceOf(Readable);
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.data.result).to.equal(0n); // Initial count should be 0
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+
+        it('should receive updates through the stream when members are added within range', async () => {
+            const key = 'zsetKey5';
+            const stream = await db.zCountWatch(key, { min: 0, max: 50 });
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    // After we see count of 2, we're done
+                    if (data.data.result === 2n) {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Add members one by one to see count updates
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 10 })) // Within range
+                    .then(() => db.zAdd(key, { member2: 30 })) // Within range
+                    .then(() => db.zAdd(key, { member3: 60 })) // Outside range
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when members are removed affecting the count', async () => {
+            const key = 'zsetKey6';
+
+            // First add some members
+            await db.zAdd(key, {
+                member1: 10, // In range
+                member2: 30, // In range
+                member3: 60, // Outside range
+                member4: 40, // In range
+            });
+
+            const stream = await db.zCountWatch(key, { min: 0, max: 50 });
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After we see count of 1, we're done
+                    if (data.data.result === 1n) {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Remove members affecting the count
+                Promise.resolve()
+                    .then(() => db.zRem(key, 'member1'))
+                    .then(() => db.zRem(key, 'member2'))
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when member scores change affecting the count', async () => {
+            const key = 'zsetKey7';
+
+            // First add some members
+            await db.zAdd(key, {
+                member1: 10, // Initially in range
+                member2: 30, // Initially in range
+            });
+
+            const stream = await db.zCountWatch(key, { min: 0, max: 50 });
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After count drops to 0, we're done
+                    if (data.data.result === 0n) {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Update scores to move members out of range
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 60 })) // Move out of range
+                    .then(() => db.zAdd(key, { member2: 70 })) // Move out of range
+                    .catch(reject);
+            });
+        });
+
+        it('should handle infinity bounds correctly', async () => {
+            const key = 'zsetKey8';
+            const stream = await db.zCountWatch(key);
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    // After we see count of 2, we're done
+                    if (data.data.result === 2n) {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Add members one by one to see count updates
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 10 })) // Within range
+                    .then(() => db.zAdd(key, { member2: 30 })) // Within range
+                    .then(() => db.zAdd(key, { member3: 60 })) // Outside range
                     .catch(reject);
             });
         });

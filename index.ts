@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T19:46:43.627Z
+ * Date: 2025-04-19T20:28:42.708Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -388,6 +388,18 @@ class DiceDB extends DiceDBBase {
      */
 	async zCount(key: string, opts: ZCountOptions | undefined) {
 		return this.execCommand('ZCOUNT', key, opts) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the ZCOUNT.WATCH command to get the number of members in a sorted set
+     * 
+     * @param {string} key - The key of the sorted set
+     * @param {ZCountOptions} opts - Options specifying the score range
+     * @returns The number of members in the sorted set
+     */
+	async zCountWatch(key: string, opts: ZCountOptions | undefined) {
+		return this.execCommand('ZCOUNT.WATCH', key, opts) as Promise<Readable>;
 	}
 
 

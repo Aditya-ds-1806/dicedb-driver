@@ -87,9 +87,6 @@ export const responseParser = (response: Result): DiceDBResponse => {
             parsedValue = value.seconds;
             break;
 
-        case 'wire.GETWATCHRes':
-        case 'wire.HGETALLWATCHRes':
-        case 'wire.HGETWATCHRes':
         case 'wire.SETRes':
         case 'wire.FLUSHDBRes':
         case 'wire.UNWATCHRes':
