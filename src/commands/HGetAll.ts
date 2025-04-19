@@ -19,11 +19,10 @@ export default class HGetAllCommand extends Command {
 
         const response = await super.exec(key);
 
-        response.data.result = response.data.result.reduce((map: Record<string, string>, entry: HElement) => {
-            map[entry.key] = entry.value;
-
+        response.data.result = response.data.result.reduce((map: Map<string, string>, entry: HElement) => {
+            map.set(entry.key, entry.value);
             return map;
-        }, {});
+        }, new Map());
 
         return response;
     }

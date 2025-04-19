@@ -830,14 +830,16 @@ describe('DiceDB test cases', () => {
 
             const response = await db.hGetAll(key);
             expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(hash);
+            expect(response.data.result).to.deep.equal(
+                new Map(Object.entries(hash)),
+            );
         });
 
         it('should return empty object for non-existent key', async () => {
             const key = 'nonexistentHash';
             const response = await db.hGetAll(key);
             expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal({});
+            expect(response.data.result).to.deep.equal(new Map());
         });
 
         it('should handle numeric values correctly', async () => {
@@ -850,11 +852,15 @@ describe('DiceDB test cases', () => {
 
             const response = await db.hGetAll(key);
             expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal({
-                int: '42',
-                float: '3.14',
-                string: 'text',
-            });
+            expect(response.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        int: '42',
+                        float: '3.14',
+                        string: 'text',
+                    }),
+                ),
+            );
         });
     });
 
@@ -905,8 +911,10 @@ describe('DiceDB test cases', () => {
                     expect(data.data.meta.watch).to.be.true;
 
                     // wait for newValue to be returned from server and then resolve
-                    if (Object.keys(data.data.result).length > 0) {
-                        expect(data.data.result).to.deep.equal(hash);
+                    if (data.data.result?.size > 0) {
+                        expect(data.data.result).to.deep.equal(
+                            new Map(Object.entries(hash)),
+                        );
                         stream.destroy();
                         resolve();
                     }
@@ -940,11 +948,15 @@ describe('DiceDB test cases', () => {
 
             // Verify fields were set correctly
             const getResponse = await db.hGetAll(key);
-            expect(getResponse.data.result).to.deep.equal({
-                name: 'testName',
-                age: '25',
-                city: 'testCity',
-            });
+            expect(getResponse.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        name: 'testName',
+                        age: '25',
+                        city: 'testCity',
+                    }),
+                ),
+            );
         });
 
         it('should update existing fields and return count of new fields only', async () => {
@@ -967,11 +979,15 @@ describe('DiceDB test cases', () => {
 
             // Verify all fields
             const getResponse = await db.hGetAll(key);
-            expect(getResponse.data.result).to.deep.equal({
-                name: 'newName',
-                age: '30',
-                city: 'testCity',
-            });
+            expect(getResponse.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        name: 'newName',
+                        age: '30',
+                        city: 'testCity',
+                    }),
+                ),
+            );
         });
 
         it('should return error for wrong type operation', async () => {
