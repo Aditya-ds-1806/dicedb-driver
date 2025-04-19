@@ -1,4 +1,4 @@
-import { Result, Status } from '../proto/res_pb';
+import { Result, Status, ZRANKResSchema } from '../proto/res_pb';
 
 export interface DiceDBResponse {
     success: boolean;

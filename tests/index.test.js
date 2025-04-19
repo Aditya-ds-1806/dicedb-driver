@@ -2443,6 +2443,202 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('ZRankWatchCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete(
+                    'zsetKey9',
+                    'zsetKey10',
+                    'zsetKey11',
+                    'zsetKey12',
+                    'zsetKey13',
+                );
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return a stream when watching a member rank', async () => {
+            const key = 'zsetKey9';
+            const stream = await db.zRankWatch(key, 'member1');
+
+            expect(stream).to.be.instanceOf(Readable);
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.data.result.rank).to.equal(0n);
+                    expect(data.data.result.element).to.be.undefined; // Initial state
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+
+        it('should receive updates when watched member is added', async () => {
+            const key = 'zsetKey10';
+            const stream = await db.zRankWatch(key, 'member2');
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After member2 is added
+                    if (data.data.result.rank === 2n) {
+                        expect(data.data.result.rank).to.equal(2n);
+                        expect(data.data.result.element).to.deep.equal(
+                            new Map([['member2', 20n]]),
+                        );
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 10 }))
+                    .then(() => db.zAdd(key, { member2: 20 }))
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when rank changes due to other members', async () => {
+            const key = 'zsetKey11';
+
+            // First add the watched member
+            await db.zAdd(key, { member2: 20 });
+
+            const stream = await db.zRankWatch(key, 'member2');
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After rank becomes 3, we're done
+                    if (data.data.result?.rank === 3n) {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Add members with lower scores to change member2's rank
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 10 }))
+                    .then(() => db.zAdd(key, { member3: 15 }))
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when watched member is removed', async () => {
+            const key = 'zsetKey12';
+
+            // Set up initial sorted set
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const stream = await db.zRankWatch(key, 'member2');
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After member2 is removed
+                    if (data.data.result.rank === 0n) {
+                        expect(data.data.result.rank).to.equal(0n);
+                        expect(data.data.result.element).to.deep.equal(
+                            new Map(Object.entries({ member2: 0n })),
+                        );
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                Promise.resolve()
+                    .then(() => db.zRem(key, 'member2'))
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when watched member score changes', async () => {
+            const key = 'zsetKey13';
+
+            // Set up initial sorted set
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const stream = await db.zRankWatch(key, 'member2');
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After getting 3 rank updates
+                    if (data.data.result?.rank === 3n) {
+                        expect(data.data.result.rank).to.equal(3n);
+                        expect(data.data.result.element).to.deep.equal(
+                            new Map([['member2', 35n]]),
+                        );
+
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Change member2's score to affect its rank
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member2: 5 })) // Should move to rank 1
+                    .then(() => db.zAdd(key, { member2: 35 })) // Should move to rank 3
+                    .catch(reject);
+            });
+        });
+
+        it('should handle non-existent sorted set', async () => {
+            const key = 'nonExistentKey';
+            const stream = await db.zRankWatch(key, 'member1');
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.data.result.element).to.be.undefined;
+                    expect(data.data.result.rank).to.equal(0n);
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),

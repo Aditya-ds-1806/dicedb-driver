@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T20:28:42.708Z
+ * Date: 2025-04-19T21:10:03.532Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -436,6 +436,18 @@ class DiceDB extends DiceDBBase {
      */
 	async zRank(key: string, member: string) {
 		return this.execCommand('ZRANK', key, member) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the ZRANK.WATCH command to retrieve the rank of a member in a sorted set.
+     * 
+     * @param {string} key - The key of the sorted set
+     * @param {string} member - The member whose rank to watch
+     * @returns The rank of the member in the sorted set
+     */
+	async zRankWatch(key: string, member: string) {
+		return this.execCommand('ZRANK.WATCH', key, member) as Promise<Transform>;
 	}
 
 

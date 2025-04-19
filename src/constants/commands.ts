@@ -34,6 +34,7 @@ export const COMMANDS = Object.freeze({
     ZPOPMAX: 'ZPOPMAX',
     ZPOPMIN: 'ZPOPMIN',
     ZRANK: 'ZRANK',
+    ZRANK_WATCH: 'ZRANK.WATCH',
     ZREM: 'ZREM',
 });
 
@@ -73,6 +74,7 @@ export const COMMAND_TO_COMMAND_NAME = Object.freeze({
     [COMMANDS.ZPOPMAX]: 'zPopMax',
     [COMMANDS.ZPOPMIN]: 'zPopMin',
     [COMMANDS.ZRANK]: 'zRank',
+    [COMMANDS.ZRANK_WATCH]: 'zRankWatch',
     [COMMANDS.ZREM]: 'zRem',
 });
 

@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T20:28:43.031Z
+ * Date: 2025-04-19T21:10:03.953Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -49,6 +49,7 @@ import ZCountWatchCommand from './commands/ZCountWatch';
 import ZPopMaxCommand from './commands/ZPopMax';
 import ZPopMinCommand from './commands/ZPopMin';
 import ZRankCommand from './commands/ZRank';
+import ZRankWatchCommand from './commands/ZRankWatch';
 import ZRemCommand from './commands/ZRem';
 
 type ValueOf<T> = T[keyof T];
@@ -90,6 +91,7 @@ commandRegistry.set(ZCountWatchCommand.command, ZCountWatchCommand);
 commandRegistry.set(ZPopMaxCommand.command, ZPopMaxCommand);
 commandRegistry.set(ZPopMinCommand.command, ZPopMinCommand);
 commandRegistry.set(ZRankCommand.command, ZRankCommand);
+commandRegistry.set(ZRankWatchCommand.command, ZRankWatchCommand);
 commandRegistry.set(ZRemCommand.command, ZRemCommand);
 
 export default commandRegistry;
