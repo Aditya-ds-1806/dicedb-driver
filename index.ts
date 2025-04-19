@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T18:48:26.662Z
+ * Date: 2025-04-19T19:16:34.202Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -352,7 +352,7 @@ class DiceDB extends DiceDBBase {
      * @param opts - The options for adding elements to the sorted set.
      * @returns A promise that resolves when the elements are added successfully.
      */
-	async zAdd(key: string, map: Record<string, string | number>, opts: ZAddCommandOptions | undefined) {
+	async zAdd(key: string, map: Record<string, string | number> | Map<string, string | number>, opts: ZAddCommandOptions | undefined) {
 		return this.execCommand('ZADD', key, map, opts) as Promise<DiceDBResponse>;
 	}
 

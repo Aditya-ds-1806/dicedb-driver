@@ -46,7 +46,7 @@ export default class ZAddCommand extends Command {
      * @param opts - The options for adding elements to the sorted set.
      * @returns A promise that resolves when the elements are added successfully.
      */
-    async exec(key: string, map: Record<string, number | string>, opts?: ZAddCommandOptions) {
+    async exec(key: string, map: Record<string, number | string> | Map<string, number | string>, opts?: ZAddCommandOptions) {
         validateKey(key);
 
         const args = [key];
@@ -71,7 +71,9 @@ export default class ZAddCommand extends Command {
             args.push('INCR');
         }
 
-        const memberScorePairs = Object.entries(map).map(([member, score]) => [score, member]).flat();
+        const memberScorePairs = map instanceof Map ? 
+            [...map.entries()].map(([member, score]) => [score, member]).flat() : 
+            Object.entries(map).map(([member, score]) => [score, member]).flat();
 
         if (opts?.incr && (opts?.gt || opts?.lt)) {
             throw new DiceDBCommandError({

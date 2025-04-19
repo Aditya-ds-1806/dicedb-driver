@@ -1380,6 +1380,17 @@ describe('DiceDB test cases', () => {
             expect(response.data.result).to.equal(2n); // Two new members added
         });
 
+        it('should add new members to a sorted set via a map', async () => {
+            const key = 'zsetKey';
+
+            const response = await db.zAdd(
+                key,
+                new Map(Object.entries({ member1: 100, member2: 200 })),
+            );
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(2n); // Two new members added
+        });
+
         it('should update scores of existing members', async () => {
             const key = 'zsetKey';
             // First add
