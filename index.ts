@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T14:58:39.390Z
+ * Date: 2025-04-19T15:29:19.627Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -17,6 +17,7 @@ import { DiceDBResponse } from "./lib/Parsers";
 import { GetAndSetExpiryCommandOptions } from './src/commands/GetAndSetExpiry';
 import { SetCommandOptions } from './src/commands/Set';
 import { ZAddCommandOptions } from './src/commands/ZAdd';
+import { ZCountOptions } from './src/commands/ZCount';
 
 
 /**
@@ -364,6 +365,18 @@ class DiceDB extends DiceDBBase {
      */
 	async zCard(key: string) {
 		return this.execCommand('ZCARD', key) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Get the count of members in a sorted set with scores between min and max
+     * 
+     * @param {string} key - The key of the sorted set
+     * @param {ZCountOptions} opts - Options specifying the score range
+     * @returns Count of members with scores in the range
+     */
+	async zCount(key: string, opts: ZCountOptions | undefined) {
+		return this.execCommand('ZCOUNT', key, opts) as Promise<DiceDBResponse>;
 	}
 
 }

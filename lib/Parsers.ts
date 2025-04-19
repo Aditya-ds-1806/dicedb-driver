@@ -55,6 +55,7 @@ export const responseParser = (response: Result): DiceDBResponse => {
         case 'wire.EXISTSRes':
         case 'wire.ZADDRes':
         case 'wire.ZCARDRes':
+        case 'wire.ZCOUNTRes':
             parsedValue = value.count;
             break;
 

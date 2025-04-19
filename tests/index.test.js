@@ -1593,6 +1593,92 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('ZCountCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should count elements with scores within range', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+                member4: 40,
+                member5: 50,
+            });
+
+            const response = await db.zCount(key, { min: 20, max: 40 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n); // member2, member3, member4
+        });
+
+        it('should count all elements when no range specified', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zCount(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n); // all members
+        });
+
+        it('should handle infinity bounds', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            // Count from -inf to 20
+            const response1 = await db.zCount(key, { max: 20 });
+            expect(response1.success).to.be.true;
+            expect(response1.data.result).to.equal(2n); // member1, member2
+
+            // Count from 20 to +inf
+            const response2 = await db.zCount(key, { min: 20 });
+            expect(response2.success).to.be.true;
+            expect(response2.data.result).to.equal(2n); // member2, member3
+        });
+
+        it('should return 0 for empty ranges', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zCount(key, { min: 15, max: 15 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n); // no members with score exactly 15
+        });
+
+        it('should return 0 for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.zCount(key, { min: 0, max: 100 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n);
+        });
+
+        it('should return error for wrong type', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'value');
+
+            const response = await db.zCount(key);
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
     it('should run all commands concurrently without error', async () => {
         const data = await Promise.allSettled([
             db.ping(),
