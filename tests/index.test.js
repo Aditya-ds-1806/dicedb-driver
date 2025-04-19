@@ -1989,6 +1989,113 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('ZRangeCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it.skip('should return members within index range in ascending order', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+                member4: 40,
+                member5: 50,
+            });
+
+            const response = await db.zRange(key, { start: 1, stop: 3 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        member2: 20n,
+                        member3: 30n,
+                        member4: 40n,
+                    }),
+                ),
+            );
+        });
+
+        it.skip('should return all members when range covers entire set', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zRange(key, { start: 0, stop: 2 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        member1: 10n,
+                        member2: 20n,
+                        member3: 30n,
+                    }),
+                ),
+            );
+        });
+
+        it.skip('should return empty map for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.zRange(key, { start: 0, stop: 10 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(new Map());
+        });
+
+        it.skip('should return empty map when start is greater than set size', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zRange(key, { start: 5, stop: 10 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(new Map());
+        });
+
+        it.skip('should throw error for negative start index', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, { member1: 10 });
+
+            try {
+                await db.zRange(key, { start: -1, stop: 1 });
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include('start must be >= 0');
+            }
+        });
+
+        it.skip('should throw error when stop is less than start', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, { member1: 10 });
+
+            try {
+                await db.zRange(key, { start: 2, stop: 1 });
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include('stop must be >= 2');
+            }
+        });
+
+        it.skip('should return error for wrong type', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'value');
+
+            const response = await db.zRange(key, { start: 0, stop: 1 });
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
     describe('ZRemCommand', () => {
         beforeEach(async () => {
             try {
