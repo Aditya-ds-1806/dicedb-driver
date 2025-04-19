@@ -6,9 +6,10 @@
   "scripts": {
     "lint": "npx eslint .",
     "lint:fix": "npx eslint . --fix",
-    "build": "rm -rf dist && npx tsup index.ts --dts --format esm,cjs --target node18 --external all",
+    "bundle": "rm -rf dist && npx tsup index.ts --dts --format esm,cjs --target node18 --external all",
     "compile": "protoc -I=./dicedb-protos --es_out=target=ts:./proto dicedb-protos/*.proto",
     "codegen": "node --loader ts-node/esm scripts/codegen.ts",
+    "build": "npm run compile && npm run codegen && npm run bundle",
     "test": "mocha tests/index.test.js"
   },
   "keywords": [

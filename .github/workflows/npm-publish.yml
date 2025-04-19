@@ -26,8 +26,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - run: npm i -g @bufbuild/protoc-gen-es@2.2.5
-      - run: npm run compile
-      - run: npm run codegen
       - run: npm run build
       - run: npm run test
       - run: npm publish
