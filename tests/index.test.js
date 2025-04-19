@@ -830,14 +830,16 @@ describe('DiceDB test cases', () => {
 
             const response = await db.hGetAll(key);
             expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(hash);
+            expect(response.data.result).to.deep.equal(
+                new Map(Object.entries(hash)),
+            );
         });
 
         it('should return empty object for non-existent key', async () => {
             const key = 'nonexistentHash';
             const response = await db.hGetAll(key);
             expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal({});
+            expect(response.data.result).to.deep.equal(new Map());
         });
 
         it('should handle numeric values correctly', async () => {
@@ -850,11 +852,15 @@ describe('DiceDB test cases', () => {
 
             const response = await db.hGetAll(key);
             expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal({
-                int: '42',
-                float: '3.14',
-                string: 'text',
-            });
+            expect(response.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        int: '42',
+                        float: '3.14',
+                        string: 'text',
+                    }),
+                ),
+            );
         });
     });
 
@@ -905,8 +911,10 @@ describe('DiceDB test cases', () => {
                     expect(data.data.meta.watch).to.be.true;
 
                     // wait for newValue to be returned from server and then resolve
-                    if (Object.keys(data.data.result).length > 0) {
-                        expect(data.data.result).to.deep.equal(hash);
+                    if (data.data.result?.size > 0) {
+                        expect(data.data.result).to.deep.equal(
+                            new Map(Object.entries(hash)),
+                        );
                         stream.destroy();
                         resolve();
                     }
@@ -940,11 +948,34 @@ describe('DiceDB test cases', () => {
 
             // Verify fields were set correctly
             const getResponse = await db.hGetAll(key);
-            expect(getResponse.data.result).to.deep.equal({
-                name: 'testName',
-                age: '25',
-                city: 'testCity',
-            });
+            expect(getResponse.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        name: 'testName',
+                        age: '25',
+                        city: 'testCity',
+                    }),
+                ),
+            );
+        });
+
+        it('should set multiple fields in a hash via map and return count of new fields', async () => {
+            const key = 'hashKey';
+            const hash = new Map(
+                Object.entries({
+                    name: 'testName',
+                    age: '25',
+                    city: 'testCity',
+                }),
+            );
+
+            const response = await db.hSet(key, hash);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n);
+
+            // Verify fields were set correctly
+            const getResponse = await db.hGetAll(key);
+            expect(getResponse.data.result).to.deep.equal(hash);
         });
 
         it('should update existing fields and return count of new fields only', async () => {
@@ -967,11 +998,15 @@ describe('DiceDB test cases', () => {
 
             // Verify all fields
             const getResponse = await db.hGetAll(key);
-            expect(getResponse.data.result).to.deep.equal({
-                name: 'newName',
-                age: '30',
-                city: 'testCity',
-            });
+            expect(getResponse.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        name: 'newName',
+                        age: '30',
+                        city: 'testCity',
+                    }),
+                ),
+            );
         });
 
         it('should return error for wrong type operation', async () => {
@@ -1360,6 +1395,1282 @@ describe('DiceDB test cases', () => {
             const response = await db.unwatch('nonexistent-fingerprint');
             expect(response.success).to.be.true;
             expect(response.data.result).to.equal('OK');
+        });
+    });
+
+    describe('ZAddCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should add new members to a sorted set', async () => {
+            const key = 'zsetKey';
+
+            const response = await db.zAdd(key, { member1: 100, member2: 200 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(2n); // Two new members added
+        });
+
+        it('should add new members to a sorted set via a map', async () => {
+            const key = 'zsetKey';
+
+            const response = await db.zAdd(
+                key,
+                new Map(Object.entries({ member1: 100, member2: 200 })),
+            );
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(2n); // Two new members added
+        });
+
+        it('should update scores of existing members', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100, member2: 200 });
+
+            // Update scores
+            const response = await db.zAdd(key, {
+                member1: 150, // Update
+                member2: 250, // Update
+                member3: 300, // New
+            });
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n); // Only one new member
+        });
+
+        it('should only add new members with NX option', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100, member2: 200 });
+
+            // Try adding new and updating existing with NX
+            const response = await db.zAdd(
+                key,
+                {
+                    member1: 150, // Should not update
+                    member2: 250, // Should not update
+                    member3: 300, // Should add
+                },
+                { nx: true },
+            );
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n); // Only one new member added
+        });
+
+        it('should only update existing members with XX option', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100, member2: 200 });
+
+            // Try adding new and updating existing with XX
+            const response = await db.zAdd(
+                key,
+                {
+                    member1: 150, // Should update
+                    member2: 250, // Should update
+                    member3: 300, // Should not add
+                },
+                { xx: true, ch: true },
+            );
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(2n); // Only two members updated
+        });
+
+        it('should update only if new score is greater with GT option', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100, member2: 200 });
+
+            // Try updating with GT
+            const response = await db.zAdd(
+                key,
+                {
+                    member1: 150, // Should update (150 > 100)
+                    member2: 150, // Should not update (150 < 200)
+                },
+                { gt: true, ch: true },
+            );
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n); // 1 updated member
+        });
+
+        it('should update only if new score is less with LT option', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100, member2: 200 });
+
+            // Try updating with LT
+            const response = await db.zAdd(
+                key,
+                {
+                    member1: 50, // Should update (50 < 100)
+                    member2: 250, // Should not update (250 > 200)
+                },
+                { lt: true, ch: true },
+            );
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n); // 1 updated member
+        });
+
+        it('should return count of changed elements with CH option', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100, member2: 200 });
+
+            // Update existing and add new with CH
+            const response = await db.zAdd(
+                key,
+                {
+                    member1: 150, // Changed
+                    member2: 250, // Changed
+                    member3: 300, // New
+                },
+                { ch: true },
+            );
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n); // 2 updates + 1 new
+        });
+
+        it('should increment score with INCR option', async () => {
+            const key = 'zsetKey';
+            // First add
+            await db.zAdd(key, { member1: 100 });
+
+            // Increment score
+            const response = await db.zAdd(
+                key,
+                {
+                    member1: 50, // Add 50 to existing score
+                },
+                { incr: true },
+            );
+
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(150n); // New score after increment
+        });
+
+        it('should throw error when using INCR with multiple members', async () => {
+            const key = 'zsetKey';
+
+            try {
+                await db.zAdd(
+                    key,
+                    {
+                        member1: 50,
+                        member2: 100,
+                    },
+                    { incr: true },
+                );
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include(
+                    'INCR option can only be used with a single member',
+                );
+            }
+        });
+
+        it('should throw error when using INCR with GT/LT', async () => {
+            const key = 'zsetKey';
+
+            try {
+                await db.zAdd(key, { member1: 50 }, { incr: true, gt: true });
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include(
+                    'INCR option cannot be used with the GT or LT options',
+                );
+            }
+        });
+    });
+
+    describe('ZCardCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey', 'emptySet', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return the number of members in a sorted set', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 100,
+                member2: 200,
+                member3: 300,
+            });
+
+            const response = await db.zCard(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n);
+        });
+
+        it('should return 0 for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.zCard(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n);
+        });
+
+        it('should return 0 for empty sorted set', async () => {
+            const key = 'emptySet';
+            // An empty sorted set is the same as a non-existent key
+            const response = await db.zCard(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n);
+        });
+
+        it('should return error for wrong type', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'value');
+
+            const response = await db.zCard(key);
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
+    describe('ZCountCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should count elements with scores within range', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+                member4: 40,
+                member5: 50,
+            });
+
+            const response = await db.zCount(key, { min: 20, max: 40 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n); // member2, member3, member4
+        });
+
+        it('should count all elements when no range specified', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zCount(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n); // all members
+        });
+
+        it('should handle infinity bounds', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            // Count from -inf to 20
+            const response1 = await db.zCount(key, { max: 20 });
+            expect(response1.success).to.be.true;
+            expect(response1.data.result).to.equal(2n); // member1, member2
+
+            // Count from 20 to +inf
+            const response2 = await db.zCount(key, { min: 20 });
+            expect(response2.success).to.be.true;
+            expect(response2.data.result).to.equal(2n); // member2, member3
+        });
+
+        it('should return 0 for empty ranges', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zCount(key, { min: 15, max: 15 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n); // no members with score exactly 15
+        });
+
+        it('should return 0 for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.zCount(key, { min: 0, max: 100 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n);
+        });
+
+        it('should return error for wrong type', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'value');
+
+            const response = await db.zCount(key);
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
+    describe('ZPopMaxCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should remove and return member with highest score by default', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zPopMax(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(
+                new Map(Object.entries({ member3: 30n })),
+            );
+
+            // Verify member was removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(2n);
+        });
+
+        it('should remove and return multiple members when count specified', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+                member4: 40,
+                member5: 50,
+            });
+
+            const response = await db.zPopMax(key, 3);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        member5: 50n,
+                        member4: 40n,
+                        member3: 30n,
+                    }),
+                ),
+            );
+
+            // Verify members were removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(2n);
+        });
+
+        it('should return empty object for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.zPopMax(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(new Map());
+        });
+
+        it('should return all members when count exceeds set size', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zPopMax(key, 5);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        member3: 30n,
+                        member2: 20n,
+                        member1: 10n,
+                    }),
+                ),
+            );
+
+            // Verify all members were removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(0n);
+        });
+
+        it('should throw error for invalid count', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, { member1: 10 });
+
+            try {
+                await db.zPopMax(key, 0);
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include('count must be >= 1!');
+            }
+
+            try {
+                await db.zPopMax(key, -1);
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include('count must be >= 1');
+            }
+        });
+
+        it('should return error for wrong type', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'value');
+
+            const response = await db.zPopMax(key);
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
+    describe('ZPopMinCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should remove and return member with lowest score by default', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zPopMin(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(
+                new Map(Object.entries({ member1: 10n })),
+            );
+
+            // Verify member was removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(2n);
+        });
+
+        it('should remove and return multiple members when count specified', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+                member4: 40,
+                member5: 50,
+            });
+
+            const response = await db.zPopMin(key, 3);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        member1: 10n,
+                        member2: 20n,
+                        member3: 30n,
+                    }),
+                ),
+            );
+
+            // Verify members were removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(2n);
+        });
+
+        it('should return empty map for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.zPopMin(key);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(new Map());
+        });
+
+        it('should return all members when count exceeds set size', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zPopMin(key, 5);
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        member1: 10n,
+                        member2: 20n,
+                        member3: 30n,
+                    }),
+                ),
+            );
+
+            // Verify all members were removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(0n);
+        });
+
+        it('should throw error for invalid count', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, { member1: 10 });
+
+            try {
+                await db.zPopMin(key, 0);
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include('count must be >= 1');
+            }
+
+            try {
+                await db.zPopMin(key, -1);
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include('count must be >= 1');
+            }
+        });
+
+        it('should return error for wrong type', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'value');
+
+            const response = await db.zPopMin(key);
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
+    describe('ZRankCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return rank of member in sorted set', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+                member4: 40,
+            });
+
+            const response = await db.zRank(key, 'member2');
+            expect(response.success).to.be.true;
+            expect(response.data.result.rank).to.equal(2n);
+            expect(response.data.result.element).to.deep.equal(
+                new Map([['member2', 20n]]),
+            );
+        });
+
+        it('should return 0 rank and 0 score for non-existent member', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+            });
+
+            const response = await db.zRank(key, 'nonexistent');
+            expect(response.success).to.be.true;
+            expect(response.data.result.element.size).to.equal(1);
+            expect(response.data.result.rank).to.equal(0n); // Rank is 0 for non-existent member
+            expect(response.data.result.element.get('nonexistent')).to.equal(
+                0n, // Score is 0 for non-existent member
+            );
+        });
+
+        it('should return 0 score and undefined member for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.zRank(key, 'member1');
+            expect(response.success).to.be.true;
+            expect(response.data.result.rank).to.equal(0n); // Rank is 0 for non-existent member
+            expect(response.data.result.element).to.be.undefined; // No member found
+        });
+
+        it('should handle members with same score', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 20, // Same score as member2
+                member4: 30,
+            });
+
+            const response1 = await db.zRank(key, 'member2');
+            const response2 = await db.zRank(key, 'member3');
+            expect(response1.success).to.be.true;
+            expect(response2.success).to.be.true;
+            // With same scores, order is lexicographical by member name
+            expect(response1.data.result.rank).to.equal(2n);
+            expect(response2.data.result.rank).to.equal(3n);
+        });
+
+        it('should return error for wrong type', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'value');
+
+            const response = await db.zRank(key, 'member1');
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
+    describe('ZRangeCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it.skip('should return members within index range in ascending order', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+                member4: 40,
+                member5: 50,
+            });
+
+            const response = await db.zRange(key, { start: 1, stop: 3 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        member2: 20n,
+                        member3: 30n,
+                        member4: 40n,
+                    }),
+                ),
+            );
+        });
+
+        it.skip('should return all members when range covers entire set', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zRange(key, { start: 0, stop: 2 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(
+                new Map(
+                    Object.entries({
+                        member1: 10n,
+                        member2: 20n,
+                        member3: 30n,
+                    }),
+                ),
+            );
+        });
+
+        it.skip('should return empty map for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.zRange(key, { start: 0, stop: 10 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(new Map());
+        });
+
+        it.skip('should return empty map when start is greater than set size', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zRange(key, { start: 5, stop: 10 });
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.deep.equal(new Map());
+        });
+
+        it.skip('should throw error for negative start index', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, { member1: 10 });
+
+            try {
+                await db.zRange(key, { start: -1, stop: 1 });
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include('start must be >= 0');
+            }
+        });
+
+        it.skip('should throw error when stop is less than start', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, { member1: 10 });
+
+            try {
+                await db.zRange(key, { start: 2, stop: 1 });
+                expect.fail('Should have thrown error');
+            } catch (error) {
+                expect(error.message).to.include('stop must be >= 2');
+            }
+        });
+
+        it.skip('should return error for wrong type', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'value');
+
+            const response = await db.zRange(key, { start: 0, stop: 1 });
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
+    describe('ZRemCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should remove single member from sorted set', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const response = await db.zRem(key, 'member2');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(1n); // 1 member removed
+
+            // Verify member was removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(2n);
+        });
+
+        it('should remove multiple members from sorted set', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+                member4: 40,
+            });
+
+            const response = await db.zRem(
+                key,
+                'member1',
+                'member3',
+                'member4',
+            );
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(3n); // 3 members removed
+
+            // Verify members were removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(1n);
+        });
+
+        it('should return 0 for non-existent members', async () => {
+            const key = 'zsetKey';
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+            });
+
+            const response = await db.zRem(key, 'nonexistent1', 'nonexistent2');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n);
+
+            // Verify no members were removed
+            const card = await db.zCard(key);
+            expect(card.data.result).to.equal(2n);
+        });
+
+        it('should return 0 for non-existent key', async () => {
+            const key = 'nonexistentKey';
+            const response = await db.zRem(key, 'member1');
+            expect(response.success).to.be.true;
+            expect(response.data.result).to.equal(0n);
+        });
+
+        it('should return error for wrong type', async () => {
+            const key = 'stringKey';
+            await db.set(key, 'value');
+
+            const response = await db.zRem(key, 'member1');
+            expect(response.success).to.be.false;
+            expect(response.error).to.include('wrongtype operation');
+        });
+    });
+
+    describe('ZCardWatchCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('zsetKey1', 'zsetKey2', 'zsetKey3');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return a stream when watching a sorted set cardinality', async () => {
+            const key = 'zsetKey1';
+            const stream = await db.zCardWatch(key);
+
+            expect(stream).to.be.instanceOf(Readable);
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.data.result).to.equal(0n); // Initial cardinality should be 0
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+
+        it('should receive updates through the stream when members are added', async () => {
+            const key = 'zsetKey2';
+            const stream = await db.zCardWatch(key);
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After we see cardinality of 2, we're done
+                    if (data.data.result === 2n) {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Add members one by one to see cardinality updates
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 10 }))
+                    .then(() => db.zAdd(key, { member2: 20 }))
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates through the stream when members are removed', async () => {
+            const key = 'zsetKey3';
+
+            // First add some members
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const stream = await db.zCardWatch(key);
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After we see cardinality of 1, we're done
+                    if (data.data.result === 1n) {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Remove members one by one to see cardinality updates
+                Promise.resolve()
+                    .then(() => db.zRem(key, 'member1'))
+                    .then(() => db.zRem(key, 'member2'))
+                    .catch(reject);
+            });
+        });
+    });
+
+    describe('ZCountWatchCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete(
+                    'zsetKey4',
+                    'zsetKey5',
+                    'zsetKey6',
+                    'zsetKey7',
+                    'zsetKey8',
+                );
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return a stream when watching a sorted set count', async () => {
+            const key = 'zsetKey4';
+            const stream = await db.zCountWatch(key, { min: 0, max: 100 });
+
+            expect(stream).to.be.instanceOf(Readable);
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.data.result).to.equal(0n); // Initial count should be 0
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+
+        it('should receive updates through the stream when members are added within range', async () => {
+            const key = 'zsetKey5';
+            const stream = await db.zCountWatch(key, { min: 0, max: 50 });
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    // After we see count of 2, we're done
+                    if (data.data.result === 2n) {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Add members one by one to see count updates
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 10 })) // Within range
+                    .then(() => db.zAdd(key, { member2: 30 })) // Within range
+                    .then(() => db.zAdd(key, { member3: 60 })) // Outside range
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when members are removed affecting the count', async () => {
+            const key = 'zsetKey6';
+
+            // First add some members
+            await db.zAdd(key, {
+                member1: 10, // In range
+                member2: 30, // In range
+                member3: 60, // Outside range
+                member4: 40, // In range
+            });
+
+            const stream = await db.zCountWatch(key, { min: 0, max: 50 });
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After we see count of 1, we're done
+                    if (data.data.result === 1n) {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Remove members affecting the count
+                Promise.resolve()
+                    .then(() => db.zRem(key, 'member1'))
+                    .then(() => db.zRem(key, 'member2'))
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when member scores change affecting the count', async () => {
+            const key = 'zsetKey7';
+
+            // First add some members
+            await db.zAdd(key, {
+                member1: 10, // Initially in range
+                member2: 30, // Initially in range
+            });
+
+            const stream = await db.zCountWatch(key, { min: 0, max: 50 });
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After count drops to 0, we're done
+                    if (data.data.result === 0n) {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Update scores to move members out of range
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 60 })) // Move out of range
+                    .then(() => db.zAdd(key, { member2: 70 })) // Move out of range
+                    .catch(reject);
+            });
+        });
+
+        it('should handle infinity bounds correctly', async () => {
+            const key = 'zsetKey8';
+            const stream = await db.zCountWatch(key);
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    // After we see count of 2, we're done
+                    if (data.data.result === 2n) {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Add members one by one to see count updates
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 10 })) // Within range
+                    .then(() => db.zAdd(key, { member2: 30 })) // Within range
+                    .then(() => db.zAdd(key, { member3: 60 })) // Outside range
+                    .catch(reject);
+            });
+        });
+    });
+
+    describe('ZRankWatchCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete(
+                    'zsetKey9',
+                    'zsetKey10',
+                    'zsetKey11',
+                    'zsetKey12',
+                    'zsetKey13',
+                );
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return a stream when watching a member rank', async () => {
+            const key = 'zsetKey9';
+            const stream = await db.zRankWatch(key, 'member1');
+
+            expect(stream).to.be.instanceOf(Readable);
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.data.result.rank).to.equal(0n);
+                    expect(data.data.result.element).to.be.undefined; // Initial state
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+
+        it('should receive updates when watched member is added', async () => {
+            const key = 'zsetKey10';
+            const stream = await db.zRankWatch(key, 'member2');
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After member2 is added
+                    if (data.data.result.rank === 2n) {
+                        expect(data.data.result.rank).to.equal(2n);
+                        expect(data.data.result.element).to.deep.equal(
+                            new Map([['member2', 20n]]),
+                        );
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 10 }))
+                    .then(() => db.zAdd(key, { member2: 20 }))
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when rank changes due to other members', async () => {
+            const key = 'zsetKey11';
+
+            // First add the watched member
+            await db.zAdd(key, { member2: 20 });
+
+            const stream = await db.zRankWatch(key, 'member2');
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After rank becomes 3, we're done
+                    if (data.data.result?.rank === 3n) {
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Add members with lower scores to change member2's rank
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 10 }))
+                    .then(() => db.zAdd(key, { member3: 15 }))
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when watched member is removed', async () => {
+            const key = 'zsetKey12';
+
+            // Set up initial sorted set
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const stream = await db.zRankWatch(key, 'member2');
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After member2 is removed
+                    if (data.data.result.rank === 0n) {
+                        expect(data.data.result.rank).to.equal(0n);
+                        expect(data.data.result.element).to.deep.equal(
+                            new Map(Object.entries({ member2: 0n })),
+                        );
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                Promise.resolve()
+                    .then(() => db.zRem(key, 'member2'))
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when watched member score changes', async () => {
+            const key = 'zsetKey13';
+
+            // Set up initial sorted set
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const stream = await db.zRankWatch(key, 'member2');
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After getting 3 rank updates
+                    if (data.data.result?.rank === 3n) {
+                        expect(data.data.result.rank).to.equal(3n);
+                        expect(data.data.result.element).to.deep.equal(
+                            new Map([['member2', 35n]]),
+                        );
+
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Change member2's score to affect its rank
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member2: 5 })) // Should move to rank 1
+                    .then(() => db.zAdd(key, { member2: 35 })) // Should move to rank 3
+                    .catch(reject);
+            });
+        });
+
+        it('should handle non-existent sorted set', async () => {
+            const key = 'nonExistentKeyForZRankWatch';
+            const stream = await db.zRankWatch(key, 'member1');
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.data.result.element).to.be.undefined;
+                    expect(data.data.result.rank).to.equal(0n);
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
         });
     });
 

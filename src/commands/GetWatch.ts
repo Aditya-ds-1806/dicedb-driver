@@ -8,7 +8,7 @@ export default class GetWatchCommand extends WatchableCommand {
     }
 
     /**
-     * Executes the GET_WATCH command to retrieve the value of a key and watch it for changes.
+     * Executes the GET.WATCH command to retrieve the value of a key and watch it for changes.
      *
      * @param {string} key - The key to retrieve and watch.
      * @returns A promise that resolves to a Node.js Readable Stream

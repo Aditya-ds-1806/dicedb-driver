@@ -26,6 +26,16 @@ export const COMMANDS = Object.freeze({
     TTL: 'TTL',
     TYPE: 'TYPE',
     UNWATCH: 'UNWATCH',
+    ZADD: 'ZADD',
+    ZCARD: 'ZCARD',
+    ZCARD_WATCH: 'ZCARD.WATCH',
+    ZCOUNT: 'ZCOUNT',
+    ZCOUNT_WATCH: 'ZCOUNT.WATCH',
+    ZPOPMAX: 'ZPOPMAX',
+    ZPOPMIN: 'ZPOPMIN',
+    ZRANK: 'ZRANK',
+    ZRANK_WATCH: 'ZRANK.WATCH',
+    ZREM: 'ZREM',
 });
 
 export const COMMAND_TO_COMMAND_NAME = Object.freeze({
@@ -56,6 +66,16 @@ export const COMMAND_TO_COMMAND_NAME = Object.freeze({
     [COMMANDS.TTL]: 'ttl',
     [COMMANDS.TYPE]: 'type',
     [COMMANDS.UNWATCH]: 'unwatch',
+    [COMMANDS.ZADD]: 'zAdd',
+    [COMMANDS.ZCARD]: 'zCard',
+    [COMMANDS.ZCARD_WATCH]: 'zCardWatch',
+    [COMMANDS.ZCOUNT]: 'zCount',
+    [COMMANDS.ZCOUNT_WATCH]: 'zCountWatch',
+    [COMMANDS.ZPOPMAX]: 'zPopMax',
+    [COMMANDS.ZPOPMIN]: 'zPopMin',
+    [COMMANDS.ZRANK]: 'zRank',
+    [COMMANDS.ZRANK_WATCH]: 'zRankWatch',
+    [COMMANDS.ZREM]: 'zRem',
 });
 
 export const CONN_TIMEOUT_MS = 5000;

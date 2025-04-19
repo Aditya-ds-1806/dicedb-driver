@@ -1,4 +1,4 @@
-import { Result, Status } from '../proto/res_pb';
+import { Result, Status, ZRANKResSchema } from '../proto/res_pb';
 
 export interface DiceDBResponse {
     success: boolean;
@@ -42,6 +42,8 @@ export const responseParser = (response: Result): DiceDBResponse => {
             break;
         
         case 'wire.HGETALLRes':
+        case 'wire.ZPOPMAXRes':
+        case 'wire.ZPOPMINRes':
             parsedValue = value.elements;
             break;
 
@@ -53,7 +55,15 @@ export const responseParser = (response: Result): DiceDBResponse => {
         case 'wire.DELRes':
         case 'wire.HSETRes':
         case 'wire.EXISTSRes':
+        case 'wire.ZADDRes':
+        case 'wire.ZCARDRes':
+        case 'wire.ZCOUNTRes':
+        case 'wire.ZREMRes':
             parsedValue = value.count;
+            break;
+
+        case 'wire.ZRANKRes':
+            parsedValue = { element: value.element, rank: value.rank };
             break;
 
         case 'wire.EXPIREATRes':
@@ -77,9 +87,6 @@ export const responseParser = (response: Result): DiceDBResponse => {
             parsedValue = value.seconds;
             break;
 
-        case 'wire.GETWATCHRes':
-        case 'wire.HGETALLWATCHRes':
-        case 'wire.HGETWATCHRes':
         case 'wire.SETRes':
         case 'wire.FLUSHDBRes':
         case 'wire.UNWATCHRes':

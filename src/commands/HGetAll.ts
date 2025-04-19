@@ -9,7 +9,7 @@ export default class HGetAllCommand extends Command {
     }
 
     /**
-     * Executes the HGET command to retrieve the value of a field in a hash stored at a key.
+     * Executes the HGETALL command to retrieve the value of a field in a hash stored at a key.
      *
      * @param {string} key - The key of the hash.
      * @returns A promise that resolves with the value of the field, or null if the field does not exist.
@@ -19,11 +19,10 @@ export default class HGetAllCommand extends Command {
 
         const response = await super.exec(key);
 
-        response.data.result = response.data.result.reduce((map: Record<string, string>, entry: HElement) => {
-            map[entry.key] = entry.value;
-
+        response.data.result = response.data.result.reduce((map: Map<string, string>, entry: HElement) => {
+            map.set(entry.key, entry.value);
             return map;
-        }, {});
+        }, new Map());
 
         return response;
     }

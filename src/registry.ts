@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T08:37:23.464Z
+ * Date: 2025-04-19T21:44:44.059Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -41,6 +41,16 @@ import SetCommand from './commands/Set';
 import TTLCommand from './commands/TTL';
 import TypeCommand from './commands/Type';
 import UnwatchCommand from './commands/Unwatch';
+import ZAddCommand from './commands/ZAdd';
+import ZCardCommand from './commands/ZCard';
+import ZCardWatchCommand from './commands/ZCardWatch';
+import ZCountCommand from './commands/ZCount';
+import ZCountWatchCommand from './commands/ZCountWatch';
+import ZPopMaxCommand from './commands/ZPopMax';
+import ZPopMinCommand from './commands/ZPopMin';
+import ZRankCommand from './commands/ZRank';
+import ZRankWatchCommand from './commands/ZRankWatch';
+import ZRemCommand from './commands/ZRem';
 
 type ValueOf<T> = T[keyof T];
 
@@ -73,5 +83,15 @@ commandRegistry.set(SetCommand.command, SetCommand);
 commandRegistry.set(TTLCommand.command, TTLCommand);
 commandRegistry.set(TypeCommand.command, TypeCommand);
 commandRegistry.set(UnwatchCommand.command, UnwatchCommand);
+commandRegistry.set(ZAddCommand.command, ZAddCommand);
+commandRegistry.set(ZCardCommand.command, ZCardCommand);
+commandRegistry.set(ZCardWatchCommand.command, ZCardWatchCommand);
+commandRegistry.set(ZCountCommand.command, ZCountCommand);
+commandRegistry.set(ZCountWatchCommand.command, ZCountWatchCommand);
+commandRegistry.set(ZPopMaxCommand.command, ZPopMaxCommand);
+commandRegistry.set(ZPopMinCommand.command, ZPopMinCommand);
+commandRegistry.set(ZRankCommand.command, ZRankCommand);
+commandRegistry.set(ZRankWatchCommand.command, ZRankWatchCommand);
+commandRegistry.set(ZRemCommand.command, ZRemCommand);
 
 export default commandRegistry;

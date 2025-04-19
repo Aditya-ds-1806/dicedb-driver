@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T08:37:23.158Z
+ * Date: 2025-04-19T21:44:43.742Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -16,6 +16,8 @@ import DiceDBBase, { type DiceDBOptions } from "./src/dicedb";
 import { DiceDBResponse } from "./lib/Parsers";
 import { GetAndSetExpiryCommandOptions } from './src/commands/GetAndSetExpiry';
 import { SetCommandOptions } from './src/commands/Set';
+import { ZAddCommandOptions } from './src/commands/ZAdd';
+import { ZCountOptions } from './src/commands/ZCount';
 
 
 /**
@@ -182,7 +184,7 @@ class DiceDB extends DiceDBBase {
 
 
 	/**
-     * Executes the GET_WATCH command to retrieve the value of a key and watch it for changes.
+     * Executes the GET.WATCH command to retrieve the value of a key and watch it for changes.
      *
      * @param {string} key - The key to retrieve and watch.
      * @returns A promise that resolves to a Node.js Readable Stream
@@ -205,7 +207,7 @@ class DiceDB extends DiceDBBase {
 
 
 	/**
-     * Executes the HGET command to retrieve the value of a field in a hash stored at a key.
+     * Executes the HGETALL command to retrieve the value of a field in a hash stored at a key.
      *
      * @param {string} key - The key of the hash.
      * @returns A promise that resolves with the value of the field, or null if the field does not exist.
@@ -216,7 +218,7 @@ class DiceDB extends DiceDBBase {
 
 
 	/**
-     * Executes the HGETALL_WATCH command to retrieve all fields and values in a hash stored at a key and watch it for changes.
+     * Executes the HGETALL.WATCH command to retrieve all fields and values in a hash stored at a key and watch it for changes.
      * 
      * @param {string} key - The key of the hash.
      * @returns A Transform stream that emits the result of the command.
@@ -242,10 +244,10 @@ class DiceDB extends DiceDBBase {
      * Executes the HSET command to set the value of a field in a hash stored at key.
      *
      * @param {string} key - The key of the hash.
-     * @param {Record<string, number | string>} map - An object representing field-value pairs to set in the hash.
+     * @param {Record<string, number | string> | Map<string, number | string>} map - An object representing field-value pairs to set in the hash.
      * @returns A promise that resolves with the result of the command execution.
      */
-	async hSet(key: string, map: Record<string, string | number>) {
+	async hSet(key: string, map: Record<string, string | number> | Map<string, string | number>) {
 		return this.execCommand('HSET', key, map) as Promise<DiceDBResponse>;
 	}
 
@@ -338,6 +340,126 @@ class DiceDB extends DiceDBBase {
      */
 	async unwatch(fingerprint: string) {
 		return this.execCommand('UNWATCH', fingerprint) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the ZADD command to add elements to a sorted set with optional
+     * options for adding elements.
+     *
+     * @param {string} key - The key of the sorted set.
+     * @param {Record<string, number | string>} map - A map of members and their scores.
+     * @param opts - The options for adding elements to the sorted set.
+     * @returns A promise that resolves when the elements are added successfully.
+     */
+	async zAdd(key: string, map: Record<string, string | number> | Map<string, string | number>, opts: ZAddCommandOptions | undefined) {
+		return this.execCommand('ZADD', key, map, opts) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Get the number of members in a sorted set
+     * 
+     * @param {string} key - The key of the sorted set
+     * @returns The number of members in the sorted set
+     */
+	async zCard(key: string) {
+		return this.execCommand('ZCARD', key) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the ZCARD.WATCH command to retrieve the number of members in a sorted set.
+     * 
+     * @param {string} key - The key of the sorted set
+     * @returns The number of members in the sorted set
+     */
+	async zCardWatch(key: string) {
+		return this.execCommand('ZCARD.WATCH', key) as Promise<Readable>;
+	}
+
+
+	/**
+     * Get the count of members in a sorted set with scores between min and max
+     * 
+     * @param {string} key - The key of the sorted set
+     * @param {ZCountOptions} opts - Options specifying the score range
+     * @returns Count of members with scores in the range
+     */
+	async zCount(key: string, opts: ZCountOptions | undefined) {
+		return this.execCommand('ZCOUNT', key, opts) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the ZCOUNT.WATCH command to get the number of members in a sorted set
+     * 
+     * @param {string} key - The key of the sorted set
+     * @param {ZCountOptions} opts - Options specifying the score range
+     * @returns The number of members in the sorted set
+     */
+	async zCountWatch(key: string, opts: ZCountOptions | undefined) {
+		return this.execCommand('ZCOUNT.WATCH', key, opts) as Promise<Readable>;
+	}
+
+
+	/**
+     * Remove and return the member with the highest score in a sorted set
+     * 
+     * @param {string} key - The key of the sorted set
+     * @param {number} count - Options specifying the number of elements to pop
+     * @returns The member with the highest score and its score
+     */
+	async zPopMax(key: string, count: number | undefined) {
+		return this.execCommand('ZPOPMAX', key, count) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Remove and return the member with the lowest score in a sorted set
+     * 
+     * @param {string} key - The key of the sorted set
+     * @param {number} count - Options specifying the number of elements to pop
+     * @returns The member with the lowest score and its score
+     */
+	async zPopMin(key: string, count: number | undefined) {
+		return this.execCommand('ZPOPMIN', key, count) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Get the rank of a member in a sorted set
+     * 
+     * @param {string} key - The key of the sorted set
+     * @param {string} member - The member whose rank to get
+     * @returns The rank of the member in the sorted set
+     */
+	async zRank(key: string, member: string) {
+		return this.execCommand('ZRANK', key, member) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the ZRANK.WATCH command to retrieve the rank of a member in a sorted set.
+     * 
+     * @param {string} key - The key of the sorted set
+     * @param {string} member - The member whose rank to watch
+     * @returns The rank of the member in the sorted set
+     */
+	async zRankWatch(key: string, member: string) {
+		return this.execCommand('ZRANK.WATCH', key, member) as Promise<Transform>;
+	}
+
+
+	/**
+     * Remove members from a sorted set
+     * 
+     * @param {string} key - The key of the sorted set
+     * @param {string[]} members - The members to remove from the sorted set
+     * @returns The number of members removed from the sorted set
+     */
+	async zRem(key: string, ...members: string[]) {
+		return this.execCommand('ZREM', key, ...members) as Promise<DiceDBResponse>;
 	}
 
 }
