@@ -12,7 +12,7 @@ export default class HGetAllWatchCommand extends WatchableCommand {
      * Executes the HGETALL_WATCH command to retrieve all fields and values in a hash stored at a key and watch it for changes.
      * 
      * @param {string} key - The key of the hash.
-     * @returns A promise that resolves to a Node.js Readable Stream
+     * @returns A Transform stream that emits the result of the command.
     */
     async exec(key: string) {
         validateKey(key);

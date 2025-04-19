@@ -3,14 +3,14 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T07:02:25.467Z
+ * Date: 2025-04-19T08:37:23.158Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
  * --------------------------------------------------------------
  */
 
-import { Readable } from "stream";
+import { Readable, Transform } from "stream";
 
 import DiceDBBase, { type DiceDBOptions } from "./src/dicedb";
 import { DiceDBResponse } from "./lib/Parsers";
@@ -219,10 +219,10 @@ class DiceDB extends DiceDBBase {
      * Executes the HGETALL_WATCH command to retrieve all fields and values in a hash stored at a key and watch it for changes.
      * 
      * @param {string} key - The key of the hash.
-     * @returns A promise that resolves to a Node.js Readable Stream
+     * @returns A Transform stream that emits the result of the command.
     */
 	async hGetAllWatch(key: string) {
-		return this.execCommand('HGETALL.WATCH', key) as Promise<Readable>;
+		return this.execCommand('HGETALL.WATCH', key) as Promise<Transform>;
 	}
 
 

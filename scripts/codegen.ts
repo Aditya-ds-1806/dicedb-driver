@@ -28,7 +28,7 @@ function buildIndexFileString() {
  * --------------------------------------------------------------
  */`;
 
-    let imports = 'import { Readable } from "stream";\n\n';
+    let imports = 'import { Readable, Transform } from "stream";\n\n';
     imports += 'import DiceDBBase, { type DiceDBOptions } from "./src/dicedb";\n';
     imports += 'import { DiceDBResponse } from "./lib/Parsers";\n';
     
