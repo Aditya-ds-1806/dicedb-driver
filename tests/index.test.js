@@ -858,6 +858,65 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('HGetAllWatchCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete('hashKey', 'stringKey');
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return a stream when watching a hash', async () => {
+            const key = 'newHashKey';
+            const stream = await db.hGetAllWatch(key);
+
+            expect(stream).to.be.instanceOf(Readable);
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+
+        it('should receive updates through the stream', async () => {
+            const key = 'newHashKey';
+            const stream = await db.hGetAllWatch(key);
+            const hash = {
+                name: 'testName',
+                age: '25',
+                city: 'testCity',
+            };
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // wait for newValue to be returned from server and then resolve
+                    if (Object.keys(data.data.result).length > 0) {
+                        expect(data.data.result).to.deep.equal(hash);
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                db.hSet(key, hash).catch(reject);
+            });
+        });
+    });
+
     describe('HSetCommand', () => {
         beforeEach(async () => {
             try {

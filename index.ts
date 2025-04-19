@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T06:21:41.836Z
+ * Date: 2025-04-19T07:02:25.467Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -212,6 +212,17 @@ class DiceDB extends DiceDBBase {
      */
 	async hGetAll(key: string) {
 		return this.execCommand('HGETALL', key) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the HGETALL_WATCH command to retrieve all fields and values in a hash stored at a key and watch it for changes.
+     * 
+     * @param {string} key - The key of the hash.
+     * @returns A promise that resolves to a Node.js Readable Stream
+    */
+	async hGetAllWatch(key: string) {
+		return this.execCommand('HGETALL.WATCH', key) as Promise<Readable>;
 	}
 
 
