@@ -280,19 +280,6 @@ Get all keys matching a pattern. Issues the `KEYS` command.
 
 Adds one or more members to a sorted set, or updates their scores. Issues the `ZADD` command.
 
-Where `ZAddCommandOptions` is:
-
-```typescript
-{
-    nx?: boolean;   // Only add new elements
-    xx?: boolean;   // Only update existing elements
-    gt?: boolean;   // Only update existing elements if new score is greater
-    lt?: boolean;   // Only update existing elements if new score is less
-    ch?: boolean;   // Modify output to total changed elements
-    incr?: boolean; // Treat scores as increments to current score
-}
-```
-
 ### `zCard()`
 
 **Signature**: `client.zCard(key: string): Promise<DiceDBResponse>`
@@ -310,15 +297,6 @@ Watches the number of members in a sorted set for changes. Issues the `ZCARD.WAT
 **Signature**: `client.zCount(key: string, opts?: ZCountOptions): Promise<DiceDBResponse>`
 
 Gets the number of members in a sorted set with scores within the given range. Issues the `ZCOUNT` command.
-
-Where `ZCountOptions` is:
-
-```typescript
-{
-    min?: number;  // Minimum score (default -inf)
-    max?: number;  // Maximum score (default +inf)
-}
-```
 
 ### `zCountWatch()`
 
@@ -413,5 +391,27 @@ interface DiceDBResponse {
       valueCase: string | undefined;
     };
   };
+}
+```
+
+### `ZAddCommandOptions`
+
+```typescript
+interface ZAddCommandOptions {
+    nx?: boolean;   // Only add new elements
+    xx?: boolean;   // Only update existing elements
+    gt?: boolean;   // Only update existing elements if new score is greater
+    lt?: boolean;   // Only update existing elements if new score is less
+    ch?: boolean;   // Modify output to total changed elements
+    incr?: boolean; // Treat scores as increments to current score
+}
+```
+
+### `ZCountOptions`
+
+```typescript
+interface ZCountOptions {
+    min?: number;  // Minimum score (default -inf)
+    max?: number;  // Maximum score (default +inf)
 }
 ```
