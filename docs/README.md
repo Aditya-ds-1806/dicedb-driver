@@ -9,6 +9,7 @@
     <img src="https://img.shields.io/npm/v/dicedb-driver" />
     <img src="https://img.shields.io/node/v/dicedb-driver" />
     <img src="https://img.shields.io/npm/types/dicedb-driver" />
+    <img src="https://img.shields.io/bundlephobia/minzip/dicedb-driver" />
 </p>
 
 DiceDB Driver is a lightweight, promise-based database driver for DiceDB with built-in connection pooling. Designed for performance and simplicity, it lets you interact with DiceDB using a clean, modern API.
@@ -182,6 +183,12 @@ Gets the value of a key and sets its expiration. Issues the `GETEX` command.
 
 Watches a key for changes and returns a [Node.js Readable stream](https://nodejs.org/api/stream.html#readable-streams). Issues the `GET.WATCH` command.
 
+### `getSet()`
+
+**Signature**: `client.getSet(key: string, value: string | number): Promise<DiceDBResponse>`
+
+Sets the value of a key and returns its old value. Issues the `GETSET` command.
+
 ### `handshake()`
 
 **Signature**: `client.handshake(execMode: "command" | "watch"): Promise<DiceDBResponse>`
@@ -231,6 +238,124 @@ Gets the type of a key. Issues the `TYPE` command.
 
 Unwatches a subscription via fingerprint. Issues the `UNWATCH` command.
 
+### `hGet()`
+
+**Signature**: `client.hGet(key: string, field: string): Promise<DiceDBResponse>`
+
+Gets the value of a field in a hash stored at a key. Issues the `HGET` command.
+
+### `hGetAll()`
+
+**Signature**: `client.hGetAll(key: string): Promise<DiceDBResponse>`
+
+Gets all fields and values in a hash stored at a key. Issues the `HGETALL` command.
+
+### `hGetAllWatch()`
+
+**Signature**: `client.hGetAllWatch(key: string): Promise<Readable>`
+
+Watches all fields and values in a hash stored at a key for changes. Issues the `HGETALL.WATCH` command.
+
+### `hGetWatch()`
+
+**Signature**: `client.hGetWatch(key: string, field: string): Promise<Readable>`
+
+Watches a field in a hash stored at a key for changes. Issues the `HGET.WATCH` command.
+
+### `hSet()`
+
+**Signature**: `client.hSet(key: string, map: Record<string, string | number> | Map<string, string | number>): Promise<DiceDBResponse>`
+
+Sets multiple fields in a hash stored at a key. Issues the `HSET` command.
+
+### `keys()`
+
+**Signature**: `client.keys(pattern: string): Promise<DiceDBResponse>`
+
+Get all keys matching a pattern. Issues the `KEYS` command.
+
+### `zAdd()`
+
+**Signature**: `client.zAdd(key: string, map: Record<string, string | number> | Map<string, string | number>, opts?: ZAddCommandOptions): Promise<DiceDBResponse>`
+
+Adds one or more members to a sorted set, or updates their scores. Issues the `ZADD` command.
+
+Where `ZAddCommandOptions` is:
+
+```typescript
+{
+    nx?: boolean;   // Only add new elements
+    xx?: boolean;   // Only update existing elements
+    gt?: boolean;   // Only update existing elements if new score is greater
+    lt?: boolean;   // Only update existing elements if new score is less
+    ch?: boolean;   // Modify output to total changed elements
+    incr?: boolean; // Treat scores as increments to current score
+}
+```
+
+### `zCard()`
+
+**Signature**: `client.zCard(key: string): Promise<DiceDBResponse>`
+
+Gets the number of members in a sorted set. Issues the `ZCARD` command.
+
+### `zCardWatch()`
+
+**Signature**: `client.zCardWatch(key: string): Promise<Readable>`
+
+Watches the number of members in a sorted set for changes. Issues the `ZCARD.WATCH` command.
+
+### `zCount()`
+
+**Signature**: `client.zCount(key: string, opts?: ZCountOptions): Promise<DiceDBResponse>`
+
+Gets the number of members in a sorted set with scores within the given range. Issues the `ZCOUNT` command.
+
+Where `ZCountOptions` is:
+
+```typescript
+{
+    min?: number;  // Minimum score (default -inf)
+    max?: number;  // Maximum score (default +inf)
+}
+```
+
+### `zCountWatch()`
+
+**Signature**: `client.zCountWatch(key: string, opts?: ZCountOptions): Promise<Readable>`
+
+Watches the number of members in a sorted set with scores within the given range. Issues the `ZCOUNT.WATCH` command.
+
+### `zPopMax()`
+
+**Signature**: `client.zPopMax(key: string, count?: number): Promise<DiceDBResponse>`
+
+Removes and returns up to `count` members with the highest scores in a sorted set. Issues the `ZPOPMAX` command.
+
+### `zPopMin()`
+
+**Signature**: `client.zPopMin(key: string, count?: number): Promise<DiceDBResponse>`
+
+Removes and returns up to `count` members with the lowest scores in a sorted set. Issues the `ZPOPMIN` command.
+
+### `zRank()`
+
+**Signature**: `client.zRank(key: string, member: string): Promise<DiceDBResponse>`
+
+Gets the rank of a member in a sorted set, with scores ordered from low to high. Issues the `ZRANK` command.
+
+### `zRankWatch()`
+
+**Signature**: `client.zRankWatch(key: string, member: string): Promise<Readable>`
+
+Watches the rank of a member in a sorted set for changes. Issues the `ZRANK.WATCH` command.
+
+### `zRem()`
+
+**Signature**: `client.zRem(key: string, ...members: string[]): Promise<DiceDBResponse>`
+
+Removes one or more members from a sorted set. Issues the `ZREM` command.
+
 ## Classes
 
 ### `DiceDBClient`
@@ -257,13 +382,13 @@ The DiceDB client accepts the following `opts` during initialization:
 
 ```typescript
 interface DiceDBOptions {
-    host: string;
-    port: number;
-    client_id?: string;
-    max_pool_size?: number;
-    query_timeout_ms?: number;
-    conn_timeout_ms?: number;
-    idle_timeout_ms?: number;
+  host: string;
+  port: number;
+  client_id?: string;
+  max_pool_size?: number;
+  query_timeout_ms?: number;
+  conn_timeout_ms?: number;
+  idle_timeout_ms?: number;
 }
 ```
 
@@ -271,16 +396,22 @@ interface DiceDBOptions {
 
 ```typescript
 interface DiceDBResponse {
-    success: boolean;
-    error: string | null;
-    data: {
-        result: string | number | bigint | boolean | Uint8Array<ArrayBufferLike> | undefined;
-        vList: any[];
-        attrs: Record<string, any>;
-        meta: {
-            $typeName: string;
-            valueCase: string | undefined;
-        };
+  success: boolean;
+  error: string | null;
+  data: {
+    result:
+      | string
+      | number
+      | bigint
+      | boolean
+      | Uint8Array<ArrayBufferLike>
+      | undefined;
+    vList: any[];
+    attrs: Record<string, any>;
+    meta: {
+      $typeName: string;
+      valueCase: string | undefined;
     };
+  };
 }
 ```
