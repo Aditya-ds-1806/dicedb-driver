@@ -74,29 +74,51 @@ const client = new DiceDB({ host: "localhost", port: 7379 });
 
 DiceJS supports a wide range of DiceDB commands. Below is the list of currently supported commands:
 
-| **Command**  | **Supported** |
-| ------------ | ------------- |
-| `DECR`       | ✅            |
-| `DECRBY`     | ✅            |
-| `DEL`        | ✅            |
-| `ECHO`       | ✅            |
-| `EXISTS`     | ✅            |
-| `EXPIRE`     | ✅            |
-| `EXPIREAT`   | ✅            |
-| `EXPIRETIME` | ✅            |
-| `FLUSHDB`    | ✅            |
-| `GET`        | ✅            |
-| `GETDEL`     | ✅            |
-| `GETEX`      | ✅            |
-| `GET.WATCH`  | ✅            |
-| `HANDSHAKE`  | ✅            |
-| `INCR`       | ✅            |
-| `INCRBY`     | ✅            |
-| `PING`       | ✅            |
-| `SET`        | ✅            |
-| `TTL`        | ✅            |
-| `TYPE`       | ✅            |
-| `UNWATCH`    | ✅            |
+| **Command**      | **Supported** |
+| ---------------- | ------------- |
+| `DECR`           | ✅            |
+| `DECRBY`         | ✅            |
+| `DEL`            | ✅            |
+| `ECHO`           | ✅            |
+| `EXISTS`         | ✅            |
+| `EXPIRE`         | ✅            |
+| `EXPIREAT`       | ✅            |
+| `EXPIRETIME`     | ✅            |
+| `FLUSHDB`        | ✅            |
+| `GET`            | ✅            |
+| `GETDEL`         | ✅            |
+| `GETEX`          | ✅            |
+| `GETSET`         | ✅            |
+| `GET.WATCH`      | ✅            |
+| `HANDSHAKE`      | ✅            |
+| `HGET`           | ✅            |
+| `HGETALL`        | ✅            |
+| `HGETALL.WATCH`  | ✅            |
+| `HGET.WATCH`     | ✅            |
+| `HSET`           | ✅            |
+| `INCR`           | ✅            |
+| `INCRBY`         | ✅            |
+| `KEYS`           | ✅            |
+| `PING`           | ✅            |
+| `SET`            | ✅            |
+| `TTL`            | ✅            |
+| `TYPE`           | ✅            |
+| `UNWATCH`        | ✅            |
+| `ZADD`           | ✅            |
+| `ZCARD`          | ✅            |
+| `ZCARD.WATCH`    | ✅            |
+| `ZCOUNT`         | ✅            |
+| `ZCOUNT.WATCH`   | ✅            |
+| `ZPOPMAX`        | ✅            |
+| `ZPOPMIN`        | ✅            |
+| `ZRANGE`         | ❌            |
+| `ZRANGE.WATCH`   | ❌            |
+| `ZRANK`          | ✅            |
+| `ZRANK.WATCH`    | ✅            |
+| `ZREM`           | ✅            |
+
+> Note: `ZRANGE` and `ZRANGE.WATCH` aren't supported yet since the behavior is
+inconsistent. See [#1699](https://github.com/DiceDB/dice/issues/1699).
 
 ## Documentation
 
