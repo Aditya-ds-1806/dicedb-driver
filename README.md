@@ -10,6 +10,7 @@
     <img src="https://img.shields.io/npm/v/dicedb-driver" />
     <img src="https://img.shields.io/node/v/dicedb-driver" />
     <img src="https://img.shields.io/npm/types/dicedb-driver" />
+    <img src="https://img.shields.io/bundlephobia/minzip/dicedb-driver" />
 </p>
 
 DiceDB Node.js Driver is a lightweight, promise-based database driver for DiceDB with built-in connection pooling. Designed for performance and simplicity, it lets you interact with DiceDB using a clean, modern API.
