@@ -18,6 +18,7 @@ import { GetAndSetExpiryCommandOptions } from './src/commands/GetAndSetExpiry';
 import { SetCommandOptions } from './src/commands/Set';
 import { ZAddCommandOptions } from './src/commands/ZAdd';
 import { ZCountOptions } from './src/commands/ZCount';
+import { ZRangeCommandOptions } from './src/commands/ZRange';
 
 
 /**
@@ -435,6 +436,18 @@ class DiceDB extends DiceDBBase {
      */
 	async zPopMin(key: string, count: number | undefined) {
 		return this.execCommand('ZPOPMIN', key, count) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the ZRANGE command to get elements from a sorted set.
+     *
+     * @param {string} key - The key of the sorted set.
+     * @param {ZRangeCommandOptions} opts - The options for the range.
+     * @returns A promise that resolves with the elements in the specified range.
+     */
+	async zRange(key: string, opts: ZRangeCommandOptions) {
+		return this.execCommand('ZRANGE', key, opts) as Promise<DiceDBResponse>;
 	}
 
 
