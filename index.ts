@@ -452,6 +452,18 @@ class DiceDB extends DiceDBBase {
 
 
 	/**
+     * Executes the ZRANGE_WATCH command to get elements from a sorted set.
+     * 
+     * @param {string} key - The key of the sorted set.
+     * @param {ZRangeCommandOptions} opts - The options for the range.
+     * @returns A promise that resolves with a readable stream of elements in the specified range.
+     */
+	async zRangeWatch(key: string, opts: ZRangeCommandOptions) {
+		return this.execCommand('ZRANGE.WATCH', key, opts) as Promise<Transform>;
+	}
+
+
+	/**
      * Get the rank of a member in a sorted set
      * 
      * @param {string} key - The key of the sorted set

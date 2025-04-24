@@ -2448,6 +2448,191 @@ describe('DiceDB test cases', () => {
         });
     });
 
+    describe('ZRangeWatchCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete(
+                    'zsetKey14',
+                    'zsetKey15',
+                    'zsetKey16',
+                    'zsetKey17',
+                    'zsetKey18',
+                );
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return a stream when watching a score range', async () => {
+            const key = 'zsetKey14';
+            const stream = await db.zRangeWatch(key, { start: 0, stop: 100 });
+
+            expect(stream).to.be.instanceOf(Readable);
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.data.result).to.deep.equal(new Map()); // Initial empty state
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+
+        it('should receive updates when members are added within range', async () => {
+            const key = 'zsetKey15';
+            const stream = await db.zRangeWatch(key, { start: 10, stop: 30 });
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After we see all three members in range, we're done
+                    if (data.data.result.size === 3) {
+                        expect(data.data.result).to.deep.equal(
+                            new Map(
+                                Object.entries({
+                                    member1: 10n,
+                                    member2: 20n,
+                                    member3: 30n,
+                                }),
+                            ),
+                        );
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Add members one by one to see range updates
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 10 })) // At lower bound
+                    .then(() => db.zAdd(key, { member2: 20 })) // In middle
+                    .then(() => db.zAdd(key, { member3: 30 })) // At upper bound
+                    .then(() => db.zAdd(key, { member4: 40 })) // Outside range
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when members are removed from range', async () => {
+            const key = 'zsetKey16';
+
+            // First add some members
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+                member4: 40,
+            });
+
+            const stream = await db.zRangeWatch(key, { start: 10, stop: 30 });
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After member2 is removed and we see only 2 members
+                    if (
+                        data.data.result.size === 2 &&
+                        !data.data.result.has('member2')
+                    ) {
+                        expect(data.data.result).to.deep.equal(
+                            new Map(
+                                Object.entries({
+                                    member1: 10n,
+                                    member3: 30n,
+                                }),
+                            ),
+                        );
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Remove member2 from the range
+                Promise.resolve()
+                    .then(() => db.zRem(key, 'member2'))
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when member scores change affecting range', async () => {
+            const key = 'zsetKey17';
+
+            // Set up initial sorted set
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const stream = await db.zRangeWatch(key, { start: 10, stop: 30 });
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After member2's score is changed to be outside range
+                    if (
+                        data.data.result.size === 2 &&
+                        !data.data.result.has('member2')
+                    ) {
+                        expect(data.data.result).to.deep.equal(
+                            new Map(
+                                Object.entries({
+                                    member1: 10n,
+                                    member3: 30n,
+                                }),
+                            ),
+                        );
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Change member2's score to move it outside range
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member2: 35 }))
+                    .catch(reject);
+            });
+        });
+
+        it('should handle non-existent sorted set', async () => {
+            const key = 'nonExistentKeyForZRangeWatch';
+            const stream = await db.zRangeWatch(key, { start: 0, stop: 100 });
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.data.result).to.deep.equal(new Map());
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+    });
+
     describe('KeysCommand', () => {
         beforeEach(async () => {
             try {
