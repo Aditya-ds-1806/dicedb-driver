@@ -20,14 +20,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('DecrementCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey');
-                await db.delete('nonExistentKey');
-            } catch {
-                // Ignore error if key doesn't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should decrement the value of a key by 1', async () => {
             const key = 'testKey';
@@ -56,14 +49,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('DecrementByCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey');
-                await db.delete('nonExistentKey');
-            } catch {
-                // Ignore error if key doesn't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should decrement the value of a key by specified amount', async () => {
             const key = 'testKey';
@@ -90,13 +76,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('DeleteCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey', 'key1', 'key2', 'key3');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should delete an existing key and return count as BigInt', async () => {
             const key = 'testKey';
@@ -142,13 +122,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ExistsCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey', 'key1', 'key2', 'key3');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return 1 if key exists', async () => {
             const key = 'testKey';
@@ -178,14 +152,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ExpireCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey');
-                await db.delete('expireKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should set expiry on key and return true', async () => {
             const key = 'testKey';
@@ -237,14 +204,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ExpireAtCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey');
-                await db.delete('expireAtKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should set expiry at timestamp and return true', async () => {
             const key = 'testKey';
@@ -344,13 +304,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ExpireTimeCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return timestamp when key has expiry set', async () => {
             const key = 'testKey';
@@ -382,6 +336,8 @@ describe('DiceDB test cases', () => {
 
     describe('FlushDBCommand', () => {
         beforeEach(async () => {
+            await db.flushDB();
+
             // Setup multiple keys to test flushing
             await db.set('key1', 'value1');
             await db.set('key2', 'value2');
@@ -417,13 +373,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('GetCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey', 'nonExistentKey', 'hashKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return the value of an existing key', async () => {
             const key = 'testKey';
@@ -454,13 +404,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('GetAndDeleteCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey', 'nonExistentKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should get and delete the value of an existing key', async () => {
             const key = 'testKey';
@@ -499,13 +443,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('GetAndSetExpiryCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey', 'nonExistentKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should get value and set expiry in seconds', async () => {
             const key = 'testKey';
@@ -590,13 +528,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('GetSetCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey', 'nonExistentKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should set new value and return old value', async () => {
             const key = 'testKey';
@@ -642,13 +574,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('GetWatchCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey', 'nonExistentKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return a stream when watching a key', async () => {
             const key = 'testKey';
@@ -695,13 +621,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('HGetCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('hashKey', 'stringKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return the value of an existing hash field', async () => {
             const key = 'hashKey';
@@ -756,13 +676,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('HGetWatchCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('hashKey', 'stringKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return a stream when watching a hash field', async () => {
             const key = 'hashKey';
@@ -811,13 +725,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('HGetAllCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('hashKey', 'stringKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return all fields and values of a hash', async () => {
             const key = 'hashKey';
@@ -865,13 +773,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('HGetAllWatchCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('hashKey', 'stringKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return a stream when watching a hash', async () => {
             const key = 'newHashKey';
@@ -926,13 +828,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('HSetCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('hashKey', 'stringKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should set multiple fields in a hash and return count of new fields', async () => {
             const key = 'hashKey';
@@ -1020,13 +916,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('IncrementCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey', 'nonExistentKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should increment the value of a key by 1', async () => {
             const key = 'testKey';
@@ -1055,13 +945,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('IncrementByCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey', 'nonExistentKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should increment the value of a key by specified amount', async () => {
             const key = 'testKey';
@@ -1114,13 +998,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('SetCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey', 'existingKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should set a simple string value', async () => {
             const key = 'testKey';
@@ -1279,13 +1157,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('TTLCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('testKey', 'persistentKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return remaining TTL for key with expiry', async () => {
             const key = 'testKey';
@@ -1317,13 +1189,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('TypeCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('stringKey', 'hashKey', 'nonexistentKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return "string" for string values', async () => {
             const key = 'stringKey';
@@ -1357,10 +1223,8 @@ describe('DiceDB test cases', () => {
 
         beforeEach(async () => {
             try {
-                await db.delete('watchKey');
-                if (watchStream) {
-                    watchStream.destroy();
-                }
+                await db.flushDB();
+                watchStream?.destroy();
             } catch {
                 // Ignore error if keys don't exist or stream is already closed
             }
@@ -1399,13 +1263,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ZAddCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('zsetKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should add new members to a sorted set', async () => {
             const key = 'zsetKey';
@@ -1593,13 +1451,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ZCardCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('zsetKey', 'emptySet', 'stringKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return the number of members in a sorted set', async () => {
             const key = 'zsetKey';
@@ -1640,13 +1492,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ZCountCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('zsetKey', 'stringKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should count elements with scores within range', async () => {
             const key = 'zsetKey';
@@ -1726,13 +1572,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ZPopMaxCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('zsetKey', 'stringKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should remove and return member with highest score by default', async () => {
             const key = 'zsetKey';
@@ -1842,13 +1682,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ZPopMinCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('zsetKey', 'stringKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should remove and return member with lowest score by default', async () => {
             const key = 'zsetKey';
@@ -1958,13 +1792,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ZRankCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('zsetKey', 'stringKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return rank of member in sorted set', async () => {
             const key = 'zsetKey';
@@ -2036,15 +1864,9 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ZRangeCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('zsetKey', 'stringKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
-        it.skip('should return members within index range in ascending order', async () => {
+        it('should return members within score range in ascending order', async () => {
             const key = 'zsetKey';
             await db.zAdd(key, {
                 member1: 10,
@@ -2059,15 +1881,15 @@ describe('DiceDB test cases', () => {
             expect(response.data.result).to.deep.equal(
                 new Map(
                     Object.entries({
+                        member1: 10n,
                         member2: 20n,
                         member3: 30n,
-                        member4: 40n,
                     }),
                 ),
             );
         });
 
-        it.skip('should return all members when range covers entire set', async () => {
+        it('should return all members when range covers entire set', async () => {
             const key = 'zsetKey';
             await db.zAdd(key, {
                 member1: 10,
@@ -2075,7 +1897,7 @@ describe('DiceDB test cases', () => {
                 member3: 30,
             });
 
-            const response = await db.zRange(key, { start: 0, stop: 2 });
+            const response = await db.zRange(key, { start: 1, stop: 3 });
             expect(response.success).to.be.true;
             expect(response.data.result).to.deep.equal(
                 new Map(
@@ -2088,14 +1910,14 @@ describe('DiceDB test cases', () => {
             );
         });
 
-        it.skip('should return empty map for non-existent key', async () => {
+        it('should return empty map for non-existent key', async () => {
             const key = 'nonexistentKey';
             const response = await db.zRange(key, { start: 0, stop: 10 });
             expect(response.success).to.be.true;
             expect(response.data.result).to.deep.equal(new Map());
         });
 
-        it.skip('should return empty map when start is greater than set size', async () => {
+        it('should return empty map when start is greater than set size', async () => {
             const key = 'zsetKey';
             await db.zAdd(key, {
                 member1: 10,
@@ -2103,24 +1925,12 @@ describe('DiceDB test cases', () => {
                 member3: 30,
             });
 
-            const response = await db.zRange(key, { start: 5, stop: 10 });
+            const response = await db.zRange(key, { start: 40, stop: 50 });
             expect(response.success).to.be.true;
             expect(response.data.result).to.deep.equal(new Map());
         });
 
-        it.skip('should throw error for negative start index', async () => {
-            const key = 'zsetKey';
-            await db.zAdd(key, { member1: 10 });
-
-            try {
-                await db.zRange(key, { start: -1, stop: 1 });
-                expect.fail('Should have thrown error');
-            } catch (error) {
-                expect(error.message).to.include('start must be >= 0');
-            }
-        });
-
-        it.skip('should throw error when stop is less than start', async () => {
+        it('should throw error when stop is less than start', async () => {
             const key = 'zsetKey';
             await db.zAdd(key, { member1: 10 });
 
@@ -2132,7 +1942,7 @@ describe('DiceDB test cases', () => {
             }
         });
 
-        it.skip('should return error for wrong type', async () => {
+        it('should return error for wrong type', async () => {
             const key = 'stringKey';
             await db.set(key, 'value');
 
@@ -2143,13 +1953,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ZRemCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('zsetKey', 'stringKey');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should remove single member from sorted set', async () => {
             const key = 'zsetKey';
@@ -2225,13 +2029,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ZCardWatchCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete('zsetKey1', 'zsetKey2', 'zsetKey3');
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return a stream when watching a sorted set cardinality', async () => {
             const key = 'zsetKey1';
@@ -2318,19 +2116,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ZCountWatchCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete(
-                    'zsetKey4',
-                    'zsetKey5',
-                    'zsetKey6',
-                    'zsetKey7',
-                    'zsetKey8',
-                );
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return a stream when watching a sorted set count', async () => {
             const key = 'zsetKey4';
@@ -2479,19 +2265,7 @@ describe('DiceDB test cases', () => {
     });
 
     describe('ZRankWatchCommand', () => {
-        beforeEach(async () => {
-            try {
-                await db.delete(
-                    'zsetKey9',
-                    'zsetKey10',
-                    'zsetKey11',
-                    'zsetKey12',
-                    'zsetKey13',
-                );
-            } catch {
-                // Ignore error if keys don't exist
-            }
-        });
+        beforeEach(async () => db.flushDB());
 
         it('should return a stream when watching a member rank', async () => {
             const key = 'zsetKey9';
@@ -2664,6 +2438,192 @@ describe('DiceDB test cases', () => {
                     expect(data.data.meta.watch).to.be.true;
                     expect(data.data.result.element).to.be.undefined;
                     expect(data.data.result.rank).to.equal(0n);
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+    });
+
+    describe('ZRangeWatchCommand', () => {
+        beforeEach(async () => {
+            try {
+                await db.delete(
+                    'zsetKey14',
+                    'zsetKey15',
+                    'zsetKey16',
+                    'zsetKey17',
+                    'zsetKey18',
+                );
+            } catch {
+                // Ignore error if keys don't exist
+            }
+        });
+
+        it('should return a stream when watching a score range', async () => {
+            const key = 'zsetKey14';
+            const stream = await db.zRangeWatch(key, { start: 0, stop: 100 });
+
+            expect(stream).to.be.instanceOf(Readable);
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.data.result).to.deep.equal(new Map()); // Initial empty state
+
+                    stream.destroy();
+                    resolve();
+                });
+
+                stream.once('error', reject);
+            });
+        });
+
+        it('should receive updates when members are added within range', async () => {
+            const key = 'zsetKey15';
+            const stream = await db.zRangeWatch(key, { start: 1, stop: 3 });
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After we see all three members in range, we're done
+                    if (data.data.result.size === 3) {
+                        expect(data.data.result).to.deep.equal(
+                            new Map(
+                                Object.entries({
+                                    member1: 10n,
+                                    member2: 20n,
+                                    member3: 30n,
+                                }),
+                            ),
+                        );
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Add members one by one to see range updates
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member1: 10 })) // At lower bound
+                    .then(() => db.zAdd(key, { member2: 20 })) // In middle
+                    .then(() => db.zAdd(key, { member3: 30 })) // At upper bound
+                    .then(() => db.zAdd(key, { member4: 40 })) // Outside range
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when members are removed from range', async () => {
+            const key = 'zsetKey16';
+
+            // First add some members
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+            });
+
+            const stream = await db.zRangeWatch(key, { start: 1, stop: 3 });
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After member2 is removed and we see only 2 members
+                    if (
+                        data.data.result.size === 2 &&
+                        !data.data.result.has('member2')
+                    ) {
+                        expect(data.data.result).to.deep.equal(
+                            new Map(
+                                Object.entries({
+                                    member1: 10n,
+                                    member3: 30n,
+                                }),
+                            ),
+                        );
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Remove member2 from the range
+                Promise.resolve()
+                    .then(() => db.zRem(key, 'member2'))
+                    .catch(reject);
+            });
+        });
+
+        it('should receive updates when member scores change affecting range', async () => {
+            const key = 'zsetKey17';
+
+            // Set up initial sorted set
+            await db.zAdd(key, {
+                member1: 10,
+                member2: 20,
+                member3: 30,
+                member4: 40,
+            });
+
+            const stream = await db.zRangeWatch(key, { start: 1, stop: 3 });
+
+            return new Promise((resolve, reject) => {
+                stream.on('error', reject);
+
+                stream.on('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+
+                    // After member2's score is changed to be outside range
+                    if (
+                        data.data.result.size === 3 &&
+                        !data.data.result.has('member2')
+                    ) {
+                        expect(data.data.result).to.deep.equal(
+                            new Map(
+                                Object.entries({
+                                    member1: 10n,
+                                    member3: 30n,
+                                    member4: 40n,
+                                }),
+                            ),
+                        );
+                        stream.destroy();
+                        resolve();
+                    }
+                });
+
+                // Change member2's score to move it outside range
+                Promise.resolve()
+                    .then(() => db.zAdd(key, { member2: 50 }))
+                    .catch(reject);
+            });
+        });
+
+        it('should handle non-existent sorted set', async () => {
+            const key = 'nonExistentKeyForZRangeWatch';
+            const stream = await db.zRangeWatch(key, { start: 0, stop: 100 });
+
+            return new Promise((resolve, reject) => {
+                stream.once('data', (data) => {
+                    expect(data.success).to.be.true;
+                    expect(data.error).to.be.null;
+                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.data.result).to.deep.equal(new Map());
 
                     stream.destroy();
                     resolve();

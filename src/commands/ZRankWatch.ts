@@ -4,6 +4,7 @@ import { WatchableCommand } from '../../lib/Command';
 import { validateKey } from '../../lib/Validators';
 import { COMMANDS } from '../constants/commands';
 import { ZElement } from '../../proto/res_pb';
+import { DiceDBResponse } from '../../dist';
 
 export default class ZRankWatchCommand extends WatchableCommand {
     static get command() {
@@ -25,10 +26,15 @@ export default class ZRankWatchCommand extends WatchableCommand {
 
         const transform = new Transform({
             objectMode: true,
-            transform: (data, _encoding, callback) => {
-                if (data.data.result?.element) {
-                    const { score, member }: ZElement = data.data.result.element;
-                    data.data.result.element = new Map([[member, score]]);
+            transform: (data: DiceDBResponse, _encoding, callback) => {
+                if (!data.error) {
+                    data.data.result.rank = 0n;
+
+                    if (data.data.result.element) {
+                        const { score, member, rank }: ZElement = data.data.result.element;
+                        data.data.result.element = new Map([[member, score]]);
+                        data.data.result.rank = rank ?? 0n;
+                    }
                 }
 
                 callback(null, data);

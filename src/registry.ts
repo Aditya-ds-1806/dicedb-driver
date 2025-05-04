@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-04-19T22:01:56.519Z
+ * Date: 2025-05-04T20:00:48.926Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -49,6 +49,8 @@ import ZCountCommand from './commands/ZCount';
 import ZCountWatchCommand from './commands/ZCountWatch';
 import ZPopMaxCommand from './commands/ZPopMax';
 import ZPopMinCommand from './commands/ZPopMin';
+import ZRangeCommand from './commands/ZRange';
+import ZRangeWatchCommand from './commands/ZRangeWatch';
 import ZRankCommand from './commands/ZRank';
 import ZRankWatchCommand from './commands/ZRankWatch';
 import ZRemCommand from './commands/ZRem';
@@ -92,6 +94,8 @@ commandRegistry.set(ZCountCommand.command, ZCountCommand);
 commandRegistry.set(ZCountWatchCommand.command, ZCountWatchCommand);
 commandRegistry.set(ZPopMaxCommand.command, ZPopMaxCommand);
 commandRegistry.set(ZPopMinCommand.command, ZPopMinCommand);
+commandRegistry.set(ZRangeCommand.command, ZRangeCommand);
+commandRegistry.set(ZRangeWatchCommand.command, ZRangeWatchCommand);
 commandRegistry.set(ZRankCommand.command, ZRankCommand);
 commandRegistry.set(ZRankWatchCommand.command, ZRankWatchCommand);
 commandRegistry.set(ZRemCommand.command, ZRemCommand);

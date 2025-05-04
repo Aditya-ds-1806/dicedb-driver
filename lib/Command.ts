@@ -27,6 +27,8 @@ export default class Command<T = DiceDBResponse> extends EventEmitter {
         this.init(opts);
     }
 
+    private BYTE_LENGTH_PREFIX_LEN = 4
+
     private init(opts: CommandOptions): void {
         if (
             !(
@@ -58,6 +60,27 @@ export default class Command<T = DiceDBResponse> extends EventEmitter {
         this.command = (this.constructor as typeof Command).command;
     }
 
+    prefixMsgWithByteLength(msg: Uint8Array<ArrayBufferLike>) {
+        const byteLenPrefixBuffer = new ArrayBuffer(this.BYTE_LENGTH_PREFIX_LEN);
+        const view = new DataView(byteLenPrefixBuffer);
+        view.setUint32(0, msg.byteLength, false); // big-endian value
+
+        const byteLenPrefixMsg = new Uint8Array(byteLenPrefixBuffer);
+        const finalMsg = new Uint8Array(this.BYTE_LENGTH_PREFIX_LEN + msg.byteLength);
+
+        finalMsg.set(byteLenPrefixMsg, 0);
+        finalMsg.set(msg, byteLenPrefixMsg.byteLength);
+
+        return finalMsg;
+    }
+
+    decodeByteLengthPrefixedMsg(msg: Uint8Array) {
+        const msgLength = new DataView(msg.buffer, msg.byteOffset, 4).getUint32(0);
+        const message = msg.slice(this.BYTE_LENGTH_PREFIX_LEN, this.BYTE_LENGTH_PREFIX_LEN + msgLength);
+        
+        return message
+    }
+
     static get watchable(): boolean {
         return false;
     }
@@ -83,8 +106,8 @@ export default class Command<T = DiceDBResponse> extends EventEmitter {
             }),
         );
 
-        const data = await this.conn.write(msg);
-        const response = responseParser(fromBinary(ResultSchema, data));
+        const data = await this.conn.write(this.prefixMsgWithByteLength(msg));
+        const response = responseParser(fromBinary(ResultSchema, this.decodeByteLengthPrefixedMsg(data)));
 
         Object.assign(response.data.meta, {
             watch: (this.constructor as typeof Command).watchable,
@@ -105,6 +128,12 @@ export class WatchableCommand extends Command<Readable> {
     }
 
     async exec(...args: any[]) {
+        if (!this.conn.subscribe) {
+            throw new DiceDBCommandError({
+                message: 'Connection does not support subscribe',
+            });
+        }
+
         const cmdArgs = args
             .filter((arg) => arg !== null && arg !== undefined)
             .map(String);
@@ -117,19 +146,13 @@ export class WatchableCommand extends Command<Readable> {
             }),
         );
 
-        if (!this.conn.subscribe) {
-            throw new DiceDBCommandError({
-                message: 'Connection does not support subscribe',
-            });
-        }
-
-        const socket = this.conn.subscribe(msg);
+        const socket = this.conn.subscribe(this.prefixMsgWithByteLength(msg));
         const readable = new Readable({ read() {}, objectMode: true });
 
         socket.on('error', (err) => readable.destroy(err));
         socket.on('data', (data) => {
             const decodedData = responseParser(
-                fromBinary(ResultSchema, data),
+                fromBinary(ResultSchema, this.decodeByteLengthPrefixedMsg(data)),
             );
 
             Object.assign(decodedData.data.meta, {
