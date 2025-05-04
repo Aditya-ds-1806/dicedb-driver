@@ -20,10 +20,15 @@ export default class ZRankCommand extends Command {
         validateKey(member);
 
         const response = await super.exec(key, member);
+        
+        if (!response.error) {
+            response.data.result.rank = 0n;
 
-        if (response.data.result?.element) {
-            const { score, member }: ZElement = response.data.result.element;
-            response.data.result.element = new Map([[member, score]]);
+            if (response.data.result.element) {
+                const { score, member, rank }: ZElement = response.data.result.element;
+                response.data.result.element = new Map([[member, score]]);
+                response.data.result.rank = rank ?? 0n;
+            }
         }
 
         return response;
