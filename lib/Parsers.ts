@@ -63,7 +63,7 @@ export const responseParser = (response: Result): DiceDBResponse => {
             break;
 
         case 'wire.ZRANKRes':
-            parsedValue = { element: value.element, rank: value.rank };
+            parsedValue = { element: value.element, rank: value.element?.rank };
             break;
 
         case 'wire.EXPIREATRes':
