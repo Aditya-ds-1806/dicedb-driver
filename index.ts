@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-05-04T19:21:06.825Z
+ * Date: 2025-05-04T20:00:48.602Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -452,7 +452,7 @@ class DiceDB extends DiceDBBase {
 
 
 	/**
-     * Executes the ZRANGE_WATCH command to get elements from a sorted set.
+     * Executes the ZRANGE.WATCH command to get elements from a sorted set.
      * 
      * @param {string} key - The key of the sorted set.
      * @param {ZRangeCommandOptions} opts - The options for the range.

@@ -1876,7 +1876,7 @@ describe('DiceDB test cases', () => {
                 member5: 50,
             });
 
-            const response = await db.zRange(key, { start: 10, stop: 30 });
+            const response = await db.zRange(key, { start: 1, stop: 3 });
             expect(response.success).to.be.true;
             expect(response.data.result).to.deep.equal(
                 new Map(
@@ -1897,7 +1897,7 @@ describe('DiceDB test cases', () => {
                 member3: 30,
             });
 
-            const response = await db.zRange(key, { start: 10, stop: 30 });
+            const response = await db.zRange(key, { start: 1, stop: 3 });
             expect(response.success).to.be.true;
             expect(response.data.result).to.deep.equal(
                 new Map(
@@ -2486,7 +2486,7 @@ describe('DiceDB test cases', () => {
 
         it('should receive updates when members are added within range', async () => {
             const key = 'zsetKey15';
-            const stream = await db.zRangeWatch(key, { start: 10, stop: 30 });
+            const stream = await db.zRangeWatch(key, { start: 1, stop: 3 });
 
             return new Promise((resolve, reject) => {
                 stream.on('error', reject);
@@ -2530,10 +2530,9 @@ describe('DiceDB test cases', () => {
                 member1: 10,
                 member2: 20,
                 member3: 30,
-                member4: 40,
             });
 
-            const stream = await db.zRangeWatch(key, { start: 10, stop: 30 });
+            const stream = await db.zRangeWatch(key, { start: 1, stop: 3 });
 
             return new Promise((resolve, reject) => {
                 stream.on('error', reject);
@@ -2576,9 +2575,10 @@ describe('DiceDB test cases', () => {
                 member1: 10,
                 member2: 20,
                 member3: 30,
+                member4: 40,
             });
 
-            const stream = await db.zRangeWatch(key, { start: 10, stop: 30 });
+            const stream = await db.zRangeWatch(key, { start: 1, stop: 3 });
 
             return new Promise((resolve, reject) => {
                 stream.on('error', reject);
@@ -2590,7 +2590,7 @@ describe('DiceDB test cases', () => {
 
                     // After member2's score is changed to be outside range
                     if (
-                        data.data.result.size === 2 &&
+                        data.data.result.size === 3 &&
                         !data.data.result.has('member2')
                     ) {
                         expect(data.data.result).to.deep.equal(
@@ -2598,6 +2598,7 @@ describe('DiceDB test cases', () => {
                                 Object.entries({
                                     member1: 10n,
                                     member3: 30n,
+                                    member4: 40n,
                                 }),
                             ),
                         );
@@ -2608,7 +2609,7 @@ describe('DiceDB test cases', () => {
 
                 // Change member2's score to move it outside range
                 Promise.resolve()
-                    .then(() => db.zAdd(key, { member2: 35 }))
+                    .then(() => db.zAdd(key, { member2: 50 }))
                     .catch(reject);
             });
         });
