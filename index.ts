@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-05-04T19:21:06.825Z
+ * Date: 2025-05-04T20:00:48.602Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -18,6 +18,7 @@ import { GetAndSetExpiryCommandOptions } from './src/commands/GetAndSetExpiry';
 import { SetCommandOptions } from './src/commands/Set';
 import { ZAddCommandOptions } from './src/commands/ZAdd';
 import { ZCountOptions } from './src/commands/ZCount';
+import { ZRangeCommandOptions } from './src/commands/ZRange';
 
 
 /**
@@ -435,6 +436,30 @@ class DiceDB extends DiceDBBase {
      */
 	async zPopMin(key: string, count: number | undefined) {
 		return this.execCommand('ZPOPMIN', key, count) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the ZRANGE command to get elements from a sorted set.
+     *
+     * @param {string} key - The key of the sorted set.
+     * @param {ZRangeCommandOptions} opts - The options for the range.
+     * @returns A promise that resolves with the elements in the specified range.
+     */
+	async zRange(key: string, opts: ZRangeCommandOptions) {
+		return this.execCommand('ZRANGE', key, opts) as Promise<DiceDBResponse>;
+	}
+
+
+	/**
+     * Executes the ZRANGE.WATCH command to get elements from a sorted set.
+     * 
+     * @param {string} key - The key of the sorted set.
+     * @param {ZRangeCommandOptions} opts - The options for the range.
+     * @returns A promise that resolves with a readable stream of elements in the specified range.
+     */
+	async zRangeWatch(key: string, opts: ZRangeCommandOptions) {
+		return this.execCommand('ZRANGE.WATCH', key, opts) as Promise<Transform>;
 	}
 
 

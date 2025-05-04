@@ -44,6 +44,7 @@ export const responseParser = (response: Result): DiceDBResponse => {
         case 'wire.HGETALLRes':
         case 'wire.ZPOPMAXRes':
         case 'wire.ZPOPMINRes':
+        case 'wire.ZRANGERes':
             parsedValue = value.elements;
             break;
 
