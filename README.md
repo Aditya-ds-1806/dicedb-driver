@@ -112,14 +112,11 @@ DiceJS supports a wide range of DiceDB commands. Below is the list of currently 
 | `ZCOUNT.WATCH`   | ✅            |
 | `ZPOPMAX`        | ✅            |
 | `ZPOPMIN`        | ✅            |
-| `ZRANGE`         | ❌            |
-| `ZRANGE.WATCH`   | ❌            |
+| `ZRANGE`         | ✅            |
+| `ZRANGE.WATCH`   | ✅            |
 | `ZRANK`          | ✅            |
 | `ZRANK.WATCH`    | ✅            |
 | `ZREM`           | ✅            |
-
-> Note: `ZRANGE` and `ZRANGE.WATCH` aren't supported yet since the behavior is
-inconsistent. See [#1699](https://github.com/DiceDB/dice/issues/1699).
 
 ## Documentation
 

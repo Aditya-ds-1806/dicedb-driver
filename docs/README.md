@@ -316,6 +316,18 @@ Removes and returns up to `count` members with the highest scores in a sorted se
 
 Removes and returns up to `count` members with the lowest scores in a sorted set. Issues the `ZPOPMIN` command.
 
+### `zRange()`
+
+**Signature**: `client.zRange(key: string, opts: ZRangeCommandOptions): Promise<DiceDBResponse>`
+
+Gets the range of elements from the sorted set stored at key, with scores ordered from low to high. Issues the `ZRANGE` command.
+
+### `zRangeWatch()`
+
+**Signature**: `client.zRangeWatch(key: string, opts: ZRangeCommandOptions): Promise<DiceDBResponse>`
+
+Watches the range of elements from the sorted set stored at key for changes. Issues the `ZRANGE.WATCH` command.
+
 ### `zRank()`
 
 **Signature**: `client.zRank(key: string, member: string): Promise<DiceDBResponse>`
