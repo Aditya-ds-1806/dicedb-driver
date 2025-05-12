@@ -45,10 +45,27 @@ function buildIndexFileString() {
             const declarations = p.getDeclarations();
             const decl = declarations.find(Node.isParameterDeclaration);
             const isRest = decl?.isRestParameter() ?? false;
+            const isOptional = decl?.isOptional() ?? false;
 
             params.push(`${isRest ? '...' : ''}${p.getName()}`);
 
-            return `${isRest ? '...' : ''}${p.getName()}: ${p.getTypeAtLocation(execMethod!).getText(undefined, ts.TypeFormatFlags.None)}`;
+            let signature = '';
+
+            if (isRest) {
+                signature += '...';
+            }
+
+            signature += `${p.getName()}`;
+
+            if (isOptional && !isRest) {
+                signature += '?: ';
+            } else {
+                signature += ': ';
+            }
+
+            signature += decl?.getTypeNodeOrThrow('failed to get typeNode').getText(false);
+
+            return signature;
         })?.join(', ');
 
         const commandName = commandGetter?.getType()?.getText()?.replaceAll('"', '') as keyof typeof COMMAND_TO_COMMAND_NAME;
@@ -116,4 +133,7 @@ const indexFileString = buildIndexFileString();
 const registryFileString = buildRegistryFileString();
 
 await fs.writeFile(INDEX_FILE_PATH, indexFileString);
+console.log('✅ index.ts written!');
+
 await fs.writeFile(REGISTRY_FILE_PATH, registryFileString);
+console.log('✅ registry.ts written!');

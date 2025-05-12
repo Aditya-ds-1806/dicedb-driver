@@ -3,7 +3,7 @@
  * --------------------------------------------------------------
  * This file was automatically generated.
  * Source: build.ts
- * Date: 2025-05-04T20:00:48.602Z
+ * Date: 2025-05-12T18:27:01.281Z
  * 
  * ⚠️ DO NOT MODIFY THIS FILE MANUALLY ⚠️
  * Changes will be overwritten the next time it is built.
@@ -75,7 +75,7 @@ class DiceDB extends DiceDBBase {
      * @param {string} [message=''] - The message to be echoed back.
      * @returns A promise that resolves with the echoed message.
      */
-	async echo(message: string) {
+	async echo(message?: string) {
 		return this.execCommand('ECHO', message) as Promise<DiceDBResponse>;
 	}
 
@@ -99,7 +99,7 @@ class DiceDB extends DiceDBBase {
      * @param condition - The condition for setting the timeout.
      * @returns A promise that resolves with a boolean indicating if the timeout was set.
      */
-	async expire(key: string, seconds: number, condition: "NX" | "XX" | undefined) {
+	async expire(key: string, seconds: number, condition?: 'NX' | 'XX') {
 		return this.execCommand('EXPIRE', key, seconds, condition) as Promise<DiceDBResponse>;
 	}
 
@@ -112,7 +112,7 @@ class DiceDB extends DiceDBBase {
      * @param condition - The condition for setting the timeout.
      * @returns A promise that resolves with a boolean indicating if the timeout was set.
      */
-	async expireAt(key: string, timestamp: number, condition: "NX" | "XX" | "GT" | "LT" | undefined) {
+	async expireAt(key: string, timestamp: number, condition?: 'NX' | 'XX' | 'GT' | 'LT') {
 		return this.execCommand('EXPIREAT', key, timestamp, condition) as Promise<DiceDBResponse>;
 	}
 
@@ -167,7 +167,7 @@ class DiceDB extends DiceDBBase {
      * @param opts - The options for setting the expiry.
      * @returns A promise that resolves with the value of the key.
      */
-	async getAndSetExpiry(key: string, opts: GetAndSetExpiryCommandOptions) {
+	async getAndSetExpiry(key: string, opts?: GetAndSetExpiryCommandOptions) {
 		return this.execCommand('GETEX', key, opts) as Promise<DiceDBResponse>;
 	}
 
@@ -179,7 +179,7 @@ class DiceDB extends DiceDBBase {
      * @param {number | string} value - The value to set.
      * @returns A promise that resolves with the old value of the key.
      */
-	async getSet(key: string, value: string | number) {
+	async getSet(key: string, value: number | string) {
 		return this.execCommand('GETSET', key, value) as Promise<DiceDBResponse>;
 	}
 
@@ -248,7 +248,7 @@ class DiceDB extends DiceDBBase {
      * @param {Record<string, number | string> | Map<string, number | string>} map - An object representing field-value pairs to set in the hash.
      * @returns A promise that resolves with the result of the command execution.
      */
-	async hSet(key: string, map: Record<string, string | number> | Map<string, string | number>) {
+	async hSet(key: string, map: Record<string, number | string> | Map<string, number | string>) {
 		return this.execCommand('HSET', key, map) as Promise<DiceDBResponse>;
 	}
 
@@ -259,7 +259,7 @@ class DiceDB extends DiceDBBase {
      * @param {'command' | 'watch'} execMode - The execution mode for the handshake.
      * @returns A promise that resolves when the handshake is successful.
      */
-	async handshake(execMode: "command" | "watch") {
+	async handshake(execMode: 'command' | 'watch') {
 		return this.execCommand('HANDSHAKE', execMode) as Promise<DiceDBResponse>;
 	}
 
@@ -304,7 +304,7 @@ class DiceDB extends DiceDBBase {
      * @param {string} [message] - An optional message to send with the PING command.
      * @returns A promise that resolves with the server's response.
      */
-	async ping(message: string | undefined) {
+	async ping(message?: string) {
 		return this.execCommand('PING', message) as Promise<DiceDBResponse>;
 	}
 
@@ -317,7 +317,7 @@ class DiceDB extends DiceDBBase {
      * @param opts - The options for setting the key, such as expiry time.
      * @returns A promise that resolves when the key is set successfully.
      */
-	async set(key: string, value: string | number, opts: SetCommandOptions) {
+	async set(key: string, value: string | number, opts?: SetCommandOptions) {
 		return this.execCommand('SET', key, value, opts) as Promise<DiceDBResponse>;
 	}
 
@@ -364,7 +364,7 @@ class DiceDB extends DiceDBBase {
      * @param opts - The options for adding elements to the sorted set.
      * @returns A promise that resolves when the elements are added successfully.
      */
-	async zAdd(key: string, map: Record<string, string | number> | Map<string, string | number>, opts: ZAddCommandOptions | undefined) {
+	async zAdd(key: string, map: Record<string, number | string> | Map<string, number | string>, opts?: ZAddCommandOptions) {
 		return this.execCommand('ZADD', key, map, opts) as Promise<DiceDBResponse>;
 	}
 
@@ -398,7 +398,7 @@ class DiceDB extends DiceDBBase {
      * @param {ZCountOptions} opts - Options specifying the score range
      * @returns Count of members with scores in the range
      */
-	async zCount(key: string, opts: ZCountOptions | undefined) {
+	async zCount(key: string, opts?: ZCountOptions) {
 		return this.execCommand('ZCOUNT', key, opts) as Promise<DiceDBResponse>;
 	}
 
@@ -410,7 +410,7 @@ class DiceDB extends DiceDBBase {
      * @param {ZCountOptions} opts - Options specifying the score range
      * @returns The number of members in the sorted set
      */
-	async zCountWatch(key: string, opts: ZCountOptions | undefined) {
+	async zCountWatch(key: string, opts?: ZCountOptions) {
 		return this.execCommand('ZCOUNT.WATCH', key, opts) as Promise<Readable>;
 	}
 
@@ -422,7 +422,7 @@ class DiceDB extends DiceDBBase {
      * @param {number} count - Options specifying the number of elements to pop
      * @returns The member with the highest score and its score
      */
-	async zPopMax(key: string, count: number | undefined) {
+	async zPopMax(key: string, count?: number) {
 		return this.execCommand('ZPOPMAX', key, count) as Promise<DiceDBResponse>;
 	}
 
@@ -434,7 +434,7 @@ class DiceDB extends DiceDBBase {
      * @param {number} count - Options specifying the number of elements to pop
      * @returns The member with the lowest score and its score
      */
-	async zPopMin(key: string, count: number | undefined) {
+	async zPopMin(key: string, count?: number) {
 		return this.execCommand('ZPOPMIN', key, count) as Promise<DiceDBResponse>;
 	}
 
