@@ -1,13 +1,12 @@
-import { expect } from 'chai';
-import { describe, before, it, after, beforeEach, afterEach } from 'mocha';
+import { expect, describe, beforeAll, afterAll } from '@jest/globals';
 
-import DiceDB from '../dist/index.js';
+import DiceDB from '..';
 import { Readable } from 'stream';
 
 describe('DiceDB test cases', () => {
     let db: DiceDB;
 
-    before(async () => {
+    beforeAll(async () => {
         db = new DiceDB({
             host: 'localhost',
             port: 7379,
@@ -25,26 +24,26 @@ describe('DiceDB test cases', () => {
         it('should decrement the value of a key by 1', async () => {
             const key = 'testKey';
             const setResult = await db.set(key, 10);
-            expect(setResult.success).to.be.true;
+            expect(setResult.success).toBe(true);
 
             const response = await db.decrement(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(9n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(9n);
         });
 
         it('should initialize to -1 if key does not exist', async () => {
             const key = 'nonExistentKey';
             const response = await db.decrement(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(-1n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(-1n);
         });
 
         it('should return error if the value at key is not an integer', async () => {
             const key = 'testKey';
             await db.set(key, 'not-a-number');
             const response = await db.decrement(key);
-            expect(response.success).to.be.false;
-            expect(response.error).to.include('wrongtype operation');
+            expect(response.success).toBe(false);
+            expect(response.error).toContain('wrongtype operation');
         });
     });
 
@@ -55,23 +54,23 @@ describe('DiceDB test cases', () => {
             const key = 'testKey';
             await db.set(key, '10');
             const response = await db.decrementBy(key, 3);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(7n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(7n);
         });
 
         it('should initialize to negative of decrement amount if key does not exist', async () => {
             const key = 'nonExistentKey';
             const response = await db.decrementBy(key, 5);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(-5n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(-5n);
         });
 
         it('should return error if the value at key is not an integer', async () => {
             const key = 'testKey';
             await db.set(key, 'not-a-number');
             const response = await db.decrementBy(key, 3);
-            expect(response.success).to.be.false;
-            expect(response.error).to.include('wrongtype operation');
+            expect(response.success).toBe(false);
+            expect(response.error).toContain('wrongtype operation');
         });
     });
 
@@ -82,15 +81,15 @@ describe('DiceDB test cases', () => {
             const key = 'testKey';
             await db.set(key, 'value');
             const response = await db.delete(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(1n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(1n);
         });
 
         it('should return 0n when trying to delete non-existent key', async () => {
             const key = 'nonExistentKey';
             const response = await db.delete(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(0n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(0n);
         });
 
         it('should delete multiple keys and return count of deleted keys as BigInt', async () => {
@@ -101,8 +100,8 @@ describe('DiceDB test cases', () => {
             }
 
             const response = await db.delete(...keys);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(3n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(3n);
         });
     });
 
@@ -110,14 +109,14 @@ describe('DiceDB test cases', () => {
         it('should echo back the provided message', async () => {
             const message = 'Hello DiceDB!';
             const response = await db.echo(message);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(message);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(message);
         });
 
         it('should echo back an empty string when no message is provided', async () => {
             const response = await db.echo();
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('');
         });
     });
 
@@ -128,15 +127,15 @@ describe('DiceDB test cases', () => {
             const key = 'testKey';
             await db.set(key, 'value');
             const response = await db.exists(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(1n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(1n);
         });
 
         it('should return 0 if key does not exist', async () => {
             const key = 'nonExistentKey';
             const response = await db.exists(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(0n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(0n);
         });
 
         it('should return count of existing keys when checking multiple keys', async () => {
@@ -146,8 +145,8 @@ describe('DiceDB test cases', () => {
             await db.set(keys[1], 'value2');
 
             const response = await db.exists(...keys);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(2n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(2n);
         });
     });
 
@@ -158,15 +157,15 @@ describe('DiceDB test cases', () => {
             const key = 'testKey';
             await db.set(key, 'value');
             const response = await db.expire(key, 100);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(true);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(true);
         });
 
         it('should return false when key does not exist', async () => {
             const key = 'nonExistentKey';
             const response = await db.expire(key, 100);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(false);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(false);
         });
 
         it('should set expiry only when key has no expiry with NX condition', async () => {
@@ -175,13 +174,13 @@ describe('DiceDB test cases', () => {
 
             // First expire should succeed
             const response1 = await db.expire(key, 100, 'NX');
-            expect(response1.success).to.be.true;
-            expect(response1.data.result).to.equal(true);
+            expect(response1.success).toBe(true);
+            expect(response1.data.result).toEqual(true);
 
             // Second expire with NX should fail since key already has expiry
             const response2 = await db.expire(key, 200, 'NX');
-            expect(response2.success).to.be.true;
-            expect(response2.data.result).to.equal(false);
+            expect(response2.success).toBe(true);
+            expect(response2.data.result).toEqual(false);
         });
 
         it('should set expiry only when key has existing expiry with XX condition', async () => {
@@ -190,16 +189,16 @@ describe('DiceDB test cases', () => {
 
             // First expire with XX should fail since key has no expiry
             const response1 = await db.expire(key, 100, 'XX');
-            expect(response1.success).to.be.true;
-            expect(response1.data.result).to.equal(false);
+            expect(response1.success).toBe(true);
+            expect(response1.data.result).toEqual(false);
 
             // Set initial expiry
             await db.expire(key, 100);
 
             // Second expire with XX should succeed since key has expiry
             const response2 = await db.expire(key, 200, 'XX');
-            expect(response2.success).to.be.true;
-            expect(response2.data.result).to.equal(true);
+            expect(response2.success).toBe(true);
+            expect(response2.data.result).toEqual(true);
         });
     });
 
@@ -211,16 +210,16 @@ describe('DiceDB test cases', () => {
             await db.set(key, 'value');
             const timestamp = Math.floor(Date.now() / 1000) + 100; // 100 seconds from now
             const response = await db.expireAt(key, timestamp);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(true);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(true);
         });
 
         it('should return false when key does not exist', async () => {
             const key = 'nonExistentKey';
             const timestamp = Math.floor(Date.now() / 1000) + 100;
             const response = await db.expireAt(key, timestamp);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(false);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(false);
         });
 
         it('should set expiry only when key has no expiry with NX condition', async () => {
@@ -231,13 +230,13 @@ describe('DiceDB test cases', () => {
 
             // First expireAt should succeed
             const response1 = await db.expireAt(key, timestamp, 'NX');
-            expect(response1.success).to.be.true;
-            expect(response1.data.result).to.equal(true);
+            expect(response1.success).toBe(true);
+            expect(response1.data.result).toEqual(true);
 
             // Second expireAt with NX should fail since key already has expiry
             const response2 = await db.expireAt(key, futureTimestamp, 'NX');
-            expect(response2.success).to.be.true;
-            expect(response2.data.result).to.equal(false);
+            expect(response2.success).toBe(true);
+            expect(response2.data.result).toEqual(false);
         });
 
         it('should set expiry only when key has existing expiry with XX condition', async () => {
@@ -248,16 +247,16 @@ describe('DiceDB test cases', () => {
 
             // First expireAt with XX should fail since key has no expiry
             const response1 = await db.expireAt(key, timestamp, 'XX');
-            expect(response1.success).to.be.true;
-            expect(response1.data.result).to.equal(false);
+            expect(response1.success).toBe(true);
+            expect(response1.data.result).toEqual(false);
 
             // Set initial expiry
             await db.expireAt(key, timestamp);
 
             // Second expireAt with XX should succeed since key has expiry
             const response2 = await db.expireAt(key, futureTimestamp, 'XX');
-            expect(response2.success).to.be.true;
-            expect(response2.data.result).to.equal(true);
+            expect(response2.success).toBe(true);
+            expect(response2.data.result).toEqual(true);
         });
 
         it('should set expiry only when new expiry is greater with GT condition', async () => {
@@ -272,13 +271,13 @@ describe('DiceDB test cases', () => {
 
             // Earlier timestamp with GT should fail
             const response1 = await db.expireAt(key, earlierTimestamp, 'GT');
-            expect(response1.success).to.be.true;
-            expect(response1.data.result).to.equal(false);
+            expect(response1.success).toBe(true);
+            expect(response1.data.result).toEqual(false);
 
             // Later timestamp with GT should succeed
             const response2 = await db.expireAt(key, laterTimestamp, 'GT');
-            expect(response2.success).to.be.true;
-            expect(response2.data.result).to.equal(true);
+            expect(response2.success).toBe(true);
+            expect(response2.data.result).toEqual(true);
         });
 
         it('should set expiry only when new expiry is less with LT condition', async () => {
@@ -293,13 +292,13 @@ describe('DiceDB test cases', () => {
 
             // Later timestamp with LT should fail
             const response1 = await db.expireAt(key, laterTimestamp, 'LT');
-            expect(response1.success).to.be.true;
-            expect(response1.data.result).to.equal(false);
+            expect(response1.success).toBe(true);
+            expect(response1.data.result).toEqual(false);
 
             // Earlier timestamp with LT should succeed
             const response2 = await db.expireAt(key, earlierTimestamp, 'LT');
-            expect(response2.success).to.be.true;
-            expect(response2.data.result).to.equal(true);
+            expect(response2.success).toBe(true);
+            expect(response2.data.result).toEqual(true);
         });
     });
 
@@ -313,8 +312,8 @@ describe('DiceDB test cases', () => {
             await db.expireAt(key, expireAt);
 
             const response = await db.expireTime(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(BigInt(expireAt));
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(BigInt(expireAt));
         });
 
         it('should return -1n when key exists but has no expiry', async () => {
@@ -322,15 +321,15 @@ describe('DiceDB test cases', () => {
             await db.set(key, 'value');
 
             const response = await db.expireTime(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(-1n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(-1n);
         });
 
         it('should return -2n when key does not exist', async () => {
             const key = 'nonExistentKey';
             const response = await db.expireTime(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(-2n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(-2n);
         });
     });
 
@@ -347,18 +346,18 @@ describe('DiceDB test cases', () => {
         it('should remove all keys from the database', async () => {
             // First verify keys exist
             const exists1 = await db.exists('key1', 'key2', 'hash1');
-            expect(exists1.success).to.be.true;
-            expect(exists1.data.result).to.equal(3n);
+            expect(exists1.success).toBe(true);
+            expect(exists1.data.result).toEqual(3n);
 
             // Flush the database
             const response = await db.flushDB();
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('OK');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('OK');
 
             // Verify all keys are gone
             const exists2 = await db.exists('key1', 'key2', 'hash1');
-            expect(exists2.success).to.be.true;
-            expect(exists2.data.result).to.equal(0n);
+            expect(exists2.success).toBe(true);
+            expect(exists2.data.result).toEqual(0n);
         });
 
         it('should return OK even when database is empty', async () => {
@@ -367,8 +366,8 @@ describe('DiceDB test cases', () => {
 
             // Try flushing again
             const response = await db.flushDB();
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('OK');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('OK');
         });
     });
 
@@ -381,15 +380,15 @@ describe('DiceDB test cases', () => {
             await db.set(key, value);
 
             const response = await db.get(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(value);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(value);
         });
 
         it('should return empty string for a non-existent key', async () => {
             const key = 'nonExistentKey';
             const response = await db.get(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('');
         });
 
         it('should handle numeric values correctly', async () => {
@@ -398,8 +397,8 @@ describe('DiceDB test cases', () => {
             await db.set(key, value);
 
             const response = await db.get(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(String(value));
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(String(value));
         });
     });
 
@@ -412,19 +411,19 @@ describe('DiceDB test cases', () => {
             await db.set(key, value);
 
             const response = await db.getAndDelete(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(value);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(value);
 
             // Verify key was deleted
             const exists = await db.exists(key);
-            expect(exists.data.result).to.equal(0n);
+            expect(exists.data.result).toEqual(0n);
         });
 
         it('should return empty string for a non-existent key', async () => {
             const key = 'nonExistentKey';
             const response = await db.getAndDelete(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('');
         });
 
         it('should retrieve and delete numeric values as strings', async () => {
@@ -433,12 +432,12 @@ describe('DiceDB test cases', () => {
             await db.set(key, value);
 
             const response = await db.getAndDelete(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('42');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('42');
 
             // Verify key was deleted
             const exists = await db.exists(key);
-            expect(exists.data.result).to.equal(0n);
+            expect(exists.data.result).toEqual(0n);
         });
     });
 
@@ -451,12 +450,12 @@ describe('DiceDB test cases', () => {
             await db.set(key, value);
 
             const response = await db.getAndSetExpiry(key, { ex: 100 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(value);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(value);
 
             // Verify expiry was set
             const expireTime = await db.expireTime(key);
-            expect(Number(expireTime.data.result)).to.be.greaterThan(0);
+            expect(Number(expireTime.data.result)).toBeGreaterThan(0);
         });
 
         it('should get value and set expiry in milliseconds', async () => {
@@ -465,12 +464,12 @@ describe('DiceDB test cases', () => {
             await db.set(key, value);
 
             const response = await db.getAndSetExpiry(key, { px: 100000 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(value);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(value);
 
             // Verify expiry was set
             const expireTime = await db.expireTime(key);
-            expect(Number(expireTime.data.result)).to.be.greaterThan(0);
+            expect(Number(expireTime.data.result)).toBeGreaterThan(0);
         });
 
         it('should get value and set expiry at timestamp', async () => {
@@ -482,12 +481,12 @@ describe('DiceDB test cases', () => {
             const response = await db.getAndSetExpiry(key, {
                 ex_at: futureTimestamp,
             });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(value);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(value);
 
             // Verify expiry was set
             const expireTime = await db.expireTime(key);
-            expect(expireTime.data.result).to.equal(BigInt(futureTimestamp));
+            expect(expireTime.data.result).toEqual(BigInt(futureTimestamp));
         });
 
         it('should get value and remove expiry with persist option', async () => {
@@ -497,19 +496,19 @@ describe('DiceDB test cases', () => {
             await db.expire(key, 100);
 
             const response = await db.getAndSetExpiry(key, { persist: true });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(value);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(value);
 
             // Verify expiry was removed
             const expireTime = await db.expireTime(key);
-            expect(expireTime.data.result).to.equal(-1n);
+            expect(expireTime.data.result).toEqual(-1n);
         });
 
         it('should return empty string for non-existent key', async () => {
             const key = 'nonExistentKey';
             const response = await db.getAndSetExpiry(key, { ex: 100 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('');
         });
 
         it('should handle numeric values correctly', async () => {
@@ -518,12 +517,12 @@ describe('DiceDB test cases', () => {
             await db.set(key, value);
 
             const response = await db.getAndSetExpiry(key, { ex: 100 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('42');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('42');
 
             // Verify expiry was set
             const expireTime = await db.expireTime(key);
-            expect(Number(expireTime.data.result)).to.be.greaterThan(0);
+            expect(Number(expireTime.data.result)).toBeGreaterThan(0);
         });
     });
 
@@ -537,24 +536,24 @@ describe('DiceDB test cases', () => {
             await db.set(key, oldValue);
 
             const response = await db.getSet(key, newValue);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(oldValue);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(oldValue);
 
             // Verify new value was set
             const get = await db.get(key);
-            expect(get.data.result).to.equal(newValue);
+            expect(get.data.result).toEqual(newValue);
         });
 
         it('should return empty string for non-existent key', async () => {
             const key = 'nonExistentKey';
             const value = 'newValue';
             const response = await db.getSet(key, value);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('');
 
             // Verify value was set
             const get = await db.get(key);
-            expect(get.data.result).to.equal(value);
+            expect(get.data.result).toEqual(value);
         });
 
         it('should handle numeric values correctly', async () => {
@@ -564,29 +563,29 @@ describe('DiceDB test cases', () => {
             await db.set(key, oldValue);
 
             const response = await db.getSet(key, newValue);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('42');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('42');
 
             // Verify new value was set
             const get = await db.get(key);
-            expect(get.data.result).to.equal('84');
+            expect(get.data.result).toEqual('84');
         });
     });
 
     describe('GetWatchCommand', () => {
         beforeEach(async () => db.flushDB());
 
-        it('should return a stream when watching a key', async () => {
+        it('should return a stream when watching a key', async (): Promise<void> => {
             const key = 'testKey';
             const stream = await db.getWatch(key);
 
-            expect(stream).to.be.instanceOf(Readable);
+            expect(stream).toBeInstanceOf(Readable);
 
             return new Promise((resolve, reject) => {
                 stream.once('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     stream.destroy();
                     resolve();
@@ -596,7 +595,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates through the stream', async () => {
+        it('should receive updates through the stream', async (): Promise<void> => {
             const key = 'testKey';
             const stream = await db.getWatch(key);
 
@@ -604,9 +603,9 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // wait for newValue to be returned from server and then resolve
                     if (data.data.result === 'newValue') {
@@ -630,8 +629,8 @@ describe('DiceDB test cases', () => {
             await db.hSet(key, { [field]: value });
 
             const response = await db.hGet(key, field);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(value);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(value);
         });
 
         it('should return empty string for a non-existent field', async () => {
@@ -640,8 +639,8 @@ describe('DiceDB test cases', () => {
             await db.hSet(key, { otherField: 'value' });
 
             const response = await db.hGet(key, field);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('');
         });
 
         it('should return empty string for a non-existent key', async () => {
@@ -649,8 +648,8 @@ describe('DiceDB test cases', () => {
             const field = 'someField';
 
             const response = await db.hGet(key, field);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('');
         });
 
         it('should handle numeric values correctly', async () => {
@@ -660,8 +659,8 @@ describe('DiceDB test cases', () => {
             await db.hSet(key, { [field]: value });
 
             const response = await db.hGet(key, field);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('42');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('42');
         });
 
         it('should return error for wrong type operation', async () => {
@@ -670,26 +669,26 @@ describe('DiceDB test cases', () => {
             await db.set(key, 'string value');
 
             const response = await db.hGet(key, field);
-            expect(response.success).to.be.false;
-            expect(response.error).to.include('wrongtype operation');
+            expect(response.success).toBe(false);
+            expect(response.error).toContain('wrongtype operation');
         });
     });
 
     describe('HGetWatchCommand', () => {
         beforeEach(async () => db.flushDB());
 
-        it('should return a stream when watching a hash field', async () => {
+        it('should return a stream when watching a hash field', async (): Promise<void> => {
             const key = 'hashKey';
             const field = 'name';
             const stream = await db.hGetWatch(key, field);
 
-            expect(stream).to.be.instanceOf(Readable);
+            expect(stream).toBeInstanceOf(Readable);
 
             return new Promise((resolve, reject) => {
                 stream.once('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     stream.destroy();
                     resolve();
@@ -699,7 +698,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates through the stream', async () => {
+        it('should receive updates through the stream', async (): Promise<void> => {
             const key = 'hashKey';
             const field = 'name';
             const stream = await db.hGetWatch(key, field);
@@ -708,9 +707,9 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // wait for newValue to be returned from server and then resolve
                     if (data.data.result === 'newValue') {
@@ -737,8 +736,8 @@ describe('DiceDB test cases', () => {
             await db.hSet(key, hash);
 
             const response = await db.hGetAll(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(
                 new Map(Object.entries(hash)),
             );
         });
@@ -746,8 +745,8 @@ describe('DiceDB test cases', () => {
         it('should return empty object for non-existent key', async () => {
             const key = 'nonexistentHash';
             const response = await db.hGetAll(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(new Map());
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(new Map());
         });
 
         it('should handle numeric values correctly', async () => {
@@ -759,8 +758,8 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.hGetAll(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(
                 new Map(
                     Object.entries({
                         int: '42',
@@ -775,17 +774,17 @@ describe('DiceDB test cases', () => {
     describe('HGetAllWatchCommand', () => {
         beforeEach(async () => db.flushDB());
 
-        it('should return a stream when watching a hash', async () => {
+        it('should return a stream when watching a hash', async (): Promise<void> => {
             const key = 'newHashKey';
             const stream = await db.hGetAllWatch(key);
 
-            expect(stream).to.be.instanceOf(Readable);
+            expect(stream).toBeInstanceOf(Readable);
 
             return new Promise((resolve, reject) => {
                 stream.once('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     stream.destroy();
                     resolve();
@@ -795,7 +794,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates through the stream', async () => {
+        it('should receive updates through the stream', async (): Promise<void> => {
             const key = 'newHashKey';
             const stream = await db.hGetAllWatch(key);
             const hash = {
@@ -808,13 +807,13 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // wait for newValue to be returned from server and then resolve
                     if (data.data.result?.size > 0) {
-                        expect(data.data.result).to.deep.equal(
+                        expect(data.data.result).toEqual(
                             new Map(Object.entries(hash)),
                         );
                         stream.destroy();
@@ -839,12 +838,12 @@ describe('DiceDB test cases', () => {
             };
 
             const response = await db.hSet(key, hash);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(3n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(3n);
 
             // Verify fields were set correctly
             const getResponse = await db.hGetAll(key);
-            expect(getResponse.data.result).to.deep.equal(
+            expect(getResponse.data.result).toEqual(
                 new Map(
                     Object.entries({
                         name: 'testName',
@@ -866,12 +865,12 @@ describe('DiceDB test cases', () => {
             );
 
             const response = await db.hSet(key, hash);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(3n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(3n);
 
             // Verify fields were set correctly
             const getResponse = await db.hGetAll(key);
-            expect(getResponse.data.result).to.deep.equal(hash);
+            expect(getResponse.data.result).toEqual(hash);
         });
 
         it('should update existing fields and return count of new fields only', async () => {
@@ -889,12 +888,12 @@ describe('DiceDB test cases', () => {
                 city: 'testCity', // new field
             });
 
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(1n); // only one new field
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(1n); // only one new field
 
             // Verify all fields
             const getResponse = await db.hGetAll(key);
-            expect(getResponse.data.result).to.deep.equal(
+            expect(getResponse.data.result).toEqual(
                 new Map(
                     Object.entries({
                         name: 'newName',
@@ -910,8 +909,8 @@ describe('DiceDB test cases', () => {
             await db.set(key, 'string value');
 
             const response = await db.hSet(key, { field: 'value' });
-            expect(response.success).to.be.false;
-            expect(response.error).to.include('wrongtype operation');
+            expect(response.success).toBe(false);
+            expect(response.error).toContain('wrongtype operation');
         });
     });
 
@@ -923,15 +922,15 @@ describe('DiceDB test cases', () => {
             await db.set(key, 10);
 
             const response = await db.increment(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(11n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(11n);
         });
 
         it('should initialize to 1 if key does not exist', async () => {
             const key = 'nonExistentKey';
             const response = await db.increment(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(1n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(1n);
         });
 
         it('should return error for wrong type operation', async () => {
@@ -939,8 +938,8 @@ describe('DiceDB test cases', () => {
             await db.set(key, 'not-a-number');
 
             const response = await db.increment(key);
-            expect(response.success).to.be.false;
-            expect(response.error).to.include('wrongtype operation');
+            expect(response.success).toBe(false);
+            expect(response.error).toContain('wrongtype operation');
         });
     });
 
@@ -952,15 +951,15 @@ describe('DiceDB test cases', () => {
             await db.set(key, 10);
 
             const response = await db.incrementBy(key, 5);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(15n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(15n);
         });
 
         it('should initialize to delta if key does not exist', async () => {
             const key = 'nonExistentKey';
             const response = await db.incrementBy(key, 5);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(5n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(5n);
         });
 
         it('should handle negative delta values', async () => {
@@ -968,8 +967,8 @@ describe('DiceDB test cases', () => {
             await db.set(key, 10);
 
             const response = await db.incrementBy(key, -3);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(7n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(7n);
         });
 
         it('should return error for wrong type operation', async () => {
@@ -977,23 +976,23 @@ describe('DiceDB test cases', () => {
             await db.set(key, 'not-a-number');
 
             const response = await db.incrementBy(key, 5);
-            expect(response.success).to.be.false;
-            expect(response.error).to.include('wrongtype operation');
+            expect(response.success).toBe(false);
+            expect(response.error).toContain('wrongtype operation');
         });
     });
 
     describe('PingCommand', () => {
         it('should return PONG when no message is provided', async () => {
             const response = await db.ping();
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('PONG');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('PONG');
         });
 
         it('should echo back the provided message with a PONG', async () => {
             const message = 'Hello DiceDB!';
             const response = await db.ping(message);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(`PONG ${message}`);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(`PONG ${message}`);
         });
     });
 
@@ -1005,12 +1004,12 @@ describe('DiceDB test cases', () => {
             const value = 'testValue';
 
             const response = await db.set(key, value);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('OK');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('OK');
 
             // Verify value was set
             const get = await db.get(key);
-            expect(get.data.result).to.equal(value);
+            expect(get.data.result).toEqual(value);
         });
 
         it('should set a numeric value', async () => {
@@ -1018,12 +1017,12 @@ describe('DiceDB test cases', () => {
             const value = 42;
 
             const response = await db.set(key, value);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('OK');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('OK');
 
             // Verify value was set
             const get = await db.get(key);
-            expect(get.data.result).to.equal('42');
+            expect(get.data.result).toEqual('42');
         });
 
         it('should set with expiry in seconds with EX', async () => {
@@ -1031,12 +1030,12 @@ describe('DiceDB test cases', () => {
             const value = 'expiring';
 
             const response = await db.set(key, value, { ex: 100 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('OK');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('OK');
 
             // Verify expiry was set
             const ttl = await db.expireTime(key);
-            expect(Number(ttl.data.result)).to.be.greaterThan(0);
+            expect(Number(ttl.data.result)).toBeGreaterThan(0);
         });
 
         it('should set with expiry in milliseconds with PX', async () => {
@@ -1044,12 +1043,12 @@ describe('DiceDB test cases', () => {
             const value = 'expiring';
 
             const response = await db.set(key, value, { px: 1000000 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('OK');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('OK');
 
             // Verify expiry was set
             const ttl = await db.expireTime(key);
-            expect(Number(ttl.data.result)).to.be.greaterThan(0);
+            expect(Number(ttl.data.result)).toBeGreaterThan(0);
         });
 
         it('should set with expiry at timestamp with EXAT', async () => {
@@ -1058,12 +1057,12 @@ describe('DiceDB test cases', () => {
             const timestamp = Math.floor(Date.now() / 1000) + 100;
 
             const response = await db.set(key, value, { ex_at: timestamp });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('OK');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('OK');
 
             // Verify expiry was set
             const ttl = await db.expireTime(key);
-            expect(ttl.data.result).to.equal(BigInt(timestamp));
+            expect(ttl.data.result).toEqual(BigInt(timestamp));
         });
 
         it('should set with expiry at timestamp with PXAT', async () => {
@@ -1072,12 +1071,12 @@ describe('DiceDB test cases', () => {
             const timestamp = Date.now() + 10000;
 
             const response = await db.set(key, value, { px_at: timestamp });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('OK');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('OK');
 
             // Verify expiry was set
             const ttl = await db.expireTime(key);
-            expect(ttl.data.result).to.equal(
+            expect(ttl.data.result).toEqual(
                 BigInt(Math.floor(timestamp / 1000)),
             );
         });
@@ -1092,22 +1091,22 @@ describe('DiceDB test cases', () => {
 
             // Set with XX should succeed since key exists
             const response1 = await db.set(key, newValue, { xx: true });
-            expect(response1.success).to.be.true;
-            expect(response1.data.result).to.equal('OK');
+            expect(response1.success).toBe(true);
+            expect(response1.data.result).toEqual('OK');
 
             // Get value to verify it was updated
             const get1 = await db.get(key);
-            expect(get1.data.result).to.equal(newValue);
+            expect(get1.data.result).toEqual(newValue);
 
             // Try setting non-existent key with XX
             const response2 = await db.set('nonexistentKey', 'value', {
                 xx: true,
             });
-            expect(response2.success).to.be.true;
+            expect(response2.success).toBe(true);
 
             // Verify key wasn't set
             const get2 = await db.get('nonexistentKey');
-            expect(get2.data.result).to.equal('');
+            expect(get2.data.result).toEqual('');
         });
 
         it('should not set if key does not exist with NX option', async () => {
@@ -1117,20 +1116,20 @@ describe('DiceDB test cases', () => {
 
             // Set with NX should succeed since key doesn't exist
             const response1 = await db.set(key, initialValue, { nx: true });
-            expect(response1.success).to.be.true;
-            expect(response1.data.result).to.equal('OK');
+            expect(response1.success).toBe(true);
+            expect(response1.data.result).toEqual('OK');
 
             // Get value to verify it was set
             const get1 = await db.get(key);
-            expect(get1.data.result).to.equal(initialValue);
+            expect(get1.data.result).toEqual(initialValue);
 
             // Second set with NX should fail since key exists
             const response2 = await db.set(key, newValue, { nx: true });
-            expect(response2.success).to.be.true;
+            expect(response2.success).toBe(true);
 
             // Verify value wasn't changed
             const get2 = await db.get(key);
-            expect(get2.data.result).to.equal(initialValue);
+            expect(get2.data.result).toEqual(initialValue);
         });
 
         it('should keep existing TTL with keepTTL option even with expiry', async () => {
@@ -1147,12 +1146,12 @@ describe('DiceDB test cases', () => {
                 keepTTL: true,
                 ex: 10000,
             });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('OK');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('OK');
 
             // Verify TTL is unchanged
             const currentTTL = await db.expireTime(key);
-            expect(currentTTL.data.result).to.equal(initialTTL.data.result);
+            expect(currentTTL.data.result).toEqual(initialTTL.data.result);
         });
     });
 
@@ -1165,16 +1164,16 @@ describe('DiceDB test cases', () => {
             await db.set(key, value, { ex: 100 });
 
             const response = await db.ttl(key);
-            expect(response.success).to.be.true;
-            expect(Number(response.data.result)).to.be.greaterThan(0);
-            expect(Number(response.data.result)).to.be.lessThanOrEqual(100);
+            expect(response.success).toBe(true);
+            expect(Number(response.data.result)).toBeGreaterThan(0);
+            expect(Number(response.data.result)).toBeLessThanOrEqual(100);
         });
 
         it('should return -2 for non-existent key', async () => {
             const key = 'nonexistentKey';
             const response = await db.ttl(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(-2n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(-2n);
         });
 
         it('should return -1 for key with no expiry', async () => {
@@ -1183,8 +1182,8 @@ describe('DiceDB test cases', () => {
             await db.set(key, value);
 
             const response = await db.ttl(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(-1n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(-1n);
         });
     });
 
@@ -1197,8 +1196,8 @@ describe('DiceDB test cases', () => {
             await db.set(key, value);
 
             const response = await db.type(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('string');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('string');
         });
 
         it('should return "int" for integers', async () => {
@@ -1206,15 +1205,15 @@ describe('DiceDB test cases', () => {
             await db.set(key, 256);
 
             const response = await db.type(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('int');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('int');
         });
 
         it('should return "none" for non-existent keys', async () => {
             const key = 'nonexistentKey';
             const response = await db.type(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('none');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('none');
         });
     });
 
@@ -1248,17 +1247,17 @@ describe('DiceDB test cases', () => {
 
             // Unwatch the key
             const response = await db.unwatch(fingerprint);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('OK');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('OK');
 
             // Verify stream is ended
-            // expect(watchStream.destroyed).to.be.true;
+            // expect(watchStream.destroyed).toBe(true);
         });
 
         it('should handle unwatching non-existent subscription', async () => {
             const response = await db.unwatch('nonexistent-fingerprint');
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal('OK');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual('OK');
         });
     });
 
@@ -1269,8 +1268,8 @@ describe('DiceDB test cases', () => {
             const key = 'zsetKey';
 
             const response = await db.zAdd(key, { member1: 100, member2: 200 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(2n); // Two new members added
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(2n); // Two new members added
         });
 
         it('should add new members to a sorted set via a map', async () => {
@@ -1280,8 +1279,8 @@ describe('DiceDB test cases', () => {
                 key,
                 new Map(Object.entries({ member1: 100, member2: 200 })),
             );
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(2n); // Two new members added
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(2n); // Two new members added
         });
 
         it('should update scores of existing members', async () => {
@@ -1296,8 +1295,8 @@ describe('DiceDB test cases', () => {
                 member3: 300, // New
             });
 
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(1n); // Only one new member
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(1n); // Only one new member
         });
 
         it('should only add new members with NX option', async () => {
@@ -1316,8 +1315,8 @@ describe('DiceDB test cases', () => {
                 { nx: true },
             );
 
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(1n); // Only one new member added
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(1n); // Only one new member added
         });
 
         it('should only update existing members with XX option', async () => {
@@ -1336,8 +1335,8 @@ describe('DiceDB test cases', () => {
                 { xx: true, ch: true },
             );
 
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(2n); // Only two members updated
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(2n); // Only two members updated
         });
 
         it('should update only if new score is greater with GT option', async () => {
@@ -1355,8 +1354,8 @@ describe('DiceDB test cases', () => {
                 { gt: true, ch: true },
             );
 
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(1n); // 1 updated member
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(1n); // 1 updated member
         });
 
         it('should update only if new score is less with LT option', async () => {
@@ -1374,8 +1373,8 @@ describe('DiceDB test cases', () => {
                 { lt: true, ch: true },
             );
 
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(1n); // 1 updated member
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(1n); // 1 updated member
         });
 
         it('should return count of changed elements with CH option', async () => {
@@ -1394,8 +1393,8 @@ describe('DiceDB test cases', () => {
                 { ch: true },
             );
 
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(3n); // 2 updates + 1 new
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(3n); // 2 updates + 1 new
         });
 
         it('should increment score with INCR option', async () => {
@@ -1412,8 +1411,8 @@ describe('DiceDB test cases', () => {
                 { incr: true },
             );
 
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(150n); // New score after increment
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(150n); // New score after increment
         });
 
         it('should throw error when using INCR with multiple members', async () => {
@@ -1428,10 +1427,9 @@ describe('DiceDB test cases', () => {
                     },
                     { incr: true },
                 );
-                expect.fail('Should have thrown error');
             } catch (error) {
                 if (error instanceof Error) {
-                    expect(error.message).to.include(
+                    expect(error.message).toContain(
                         'INCR option can only be used with a single member',
                     );
                 }
@@ -1443,10 +1441,9 @@ describe('DiceDB test cases', () => {
 
             try {
                 await db.zAdd(key, { member1: 50 }, { incr: true, gt: true });
-                expect.fail('Should have thrown error');
             } catch (error) {
                 if (error instanceof Error) {
-                    expect(error.message).to.include(
+                    expect(error.message).toContain(
                         'INCR option cannot be used with the GT or LT options',
                     );
                 }
@@ -1466,23 +1463,23 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zCard(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(3n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(3n);
         });
 
         it('should return 0 for non-existent key', async () => {
             const key = 'nonexistentKey';
             const response = await db.zCard(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(0n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(0n);
         });
 
         it('should return 0 for empty sorted set', async () => {
             const key = 'emptySet';
             // An empty sorted set is the same as a non-existent key
             const response = await db.zCard(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(0n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(0n);
         });
 
         it('should return error for wrong type', async () => {
@@ -1490,8 +1487,8 @@ describe('DiceDB test cases', () => {
             await db.set(key, 'value');
 
             const response = await db.zCard(key);
-            expect(response.success).to.be.false;
-            expect(response.error).to.include('wrongtype operation');
+            expect(response.success).toBe(false);
+            expect(response.error).toContain('wrongtype operation');
         });
     });
 
@@ -1509,8 +1506,8 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zCount(key, { min: 20, max: 40 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(3n); // member2, member3, member4
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(3n); // member2, member3, member4
         });
 
         it('should count all elements when no range specified', async () => {
@@ -1522,8 +1519,8 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zCount(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(3n); // all members
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(3n); // all members
         });
 
         it('should handle infinity bounds', async () => {
@@ -1536,13 +1533,13 @@ describe('DiceDB test cases', () => {
 
             // Count from -inf to 20
             const response1 = await db.zCount(key, { max: 20 });
-            expect(response1.success).to.be.true;
-            expect(response1.data.result).to.equal(2n); // member1, member2
+            expect(response1.success).toBe(true);
+            expect(response1.data.result).toEqual(2n); // member1, member2
 
             // Count from 20 to +inf
             const response2 = await db.zCount(key, { min: 20 });
-            expect(response2.success).to.be.true;
-            expect(response2.data.result).to.equal(2n); // member2, member3
+            expect(response2.success).toBe(true);
+            expect(response2.data.result).toEqual(2n); // member2, member3
         });
 
         it('should return 0 for empty ranges', async () => {
@@ -1554,15 +1551,15 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zCount(key, { min: 15, max: 15 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(0n); // no members with score exactly 15
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(0n); // no members with score exactly 15
         });
 
         it('should return 0 for non-existent key', async () => {
             const key = 'nonexistentKey';
             const response = await db.zCount(key, { min: 0, max: 100 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(0n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(0n);
         });
 
         it('should return error for wrong type', async () => {
@@ -1570,8 +1567,8 @@ describe('DiceDB test cases', () => {
             await db.set(key, 'value');
 
             const response = await db.zCount(key);
-            expect(response.success).to.be.false;
-            expect(response.error).to.include('wrongtype operation');
+            expect(response.success).toBe(false);
+            expect(response.error).toContain('wrongtype operation');
         });
     });
 
@@ -1587,14 +1584,14 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zPopMax(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(
                 new Map(Object.entries({ member3: 30n })),
             );
 
             // Verify member was removed
             const card = await db.zCard(key);
-            expect(card.data.result).to.equal(2n);
+            expect(card.data.result).toEqual(2n);
         });
 
         it('should remove and return multiple members when count specified', async () => {
@@ -1608,8 +1605,8 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zPopMax(key, 3);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(
                 new Map(
                     Object.entries({
                         member5: 50n,
@@ -1621,14 +1618,14 @@ describe('DiceDB test cases', () => {
 
             // Verify members were removed
             const card = await db.zCard(key);
-            expect(card.data.result).to.equal(2n);
+            expect(card.data.result).toEqual(2n);
         });
 
         it('should return empty object for non-existent key', async () => {
             const key = 'nonexistentKey';
             const response = await db.zPopMax(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(new Map());
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(new Map());
         });
 
         it('should return all members when count exceeds set size', async () => {
@@ -1640,8 +1637,8 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zPopMax(key, 5);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(
                 new Map(
                     Object.entries({
                         member3: 30n,
@@ -1653,7 +1650,7 @@ describe('DiceDB test cases', () => {
 
             // Verify all members were removed
             const card = await db.zCard(key);
-            expect(card.data.result).to.equal(0n);
+            expect(card.data.result).toEqual(0n);
         });
 
         it('should throw error for invalid count', async () => {
@@ -1662,19 +1659,17 @@ describe('DiceDB test cases', () => {
 
             try {
                 await db.zPopMax(key, 0);
-                expect.fail('Should have thrown error');
             } catch (error) {
                 if (error instanceof Error) {
-                    expect(error.message).to.include('count must be >= 1!');
+                    expect(error.message).toContain('count must be >= 1!');
                 }
             }
 
             try {
                 await db.zPopMax(key, -1);
-                expect.fail('Should have thrown error');
             } catch (error) {
                 if (error instanceof Error) {
-                    expect(error.message).to.include('count must be >= 1');
+                    expect(error.message).toContain('count must be >= 1');
                 }
             }
         });
@@ -1684,8 +1679,8 @@ describe('DiceDB test cases', () => {
             await db.set(key, 'value');
 
             const response = await db.zPopMax(key);
-            expect(response.success).to.be.false;
-            expect(response.error).to.include('wrongtype operation');
+            expect(response.success).toBe(false);
+            expect(response.error).toContain('wrongtype operation');
         });
     });
 
@@ -1701,14 +1696,14 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zPopMin(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(
                 new Map(Object.entries({ member1: 10n })),
             );
 
             // Verify member was removed
             const card = await db.zCard(key);
-            expect(card.data.result).to.equal(2n);
+            expect(card.data.result).toEqual(2n);
         });
 
         it('should remove and return multiple members when count specified', async () => {
@@ -1722,8 +1717,8 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zPopMin(key, 3);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(
                 new Map(
                     Object.entries({
                         member1: 10n,
@@ -1735,14 +1730,14 @@ describe('DiceDB test cases', () => {
 
             // Verify members were removed
             const card = await db.zCard(key);
-            expect(card.data.result).to.equal(2n);
+            expect(card.data.result).toEqual(2n);
         });
 
         it('should return empty map for non-existent key', async () => {
             const key = 'nonexistentKey';
             const response = await db.zPopMin(key);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(new Map());
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(new Map());
         });
 
         it('should return all members when count exceeds set size', async () => {
@@ -1754,8 +1749,8 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zPopMin(key, 5);
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(
                 new Map(
                     Object.entries({
                         member1: 10n,
@@ -1767,7 +1762,7 @@ describe('DiceDB test cases', () => {
 
             // Verify all members were removed
             const card = await db.zCard(key);
-            expect(card.data.result).to.equal(0n);
+            expect(card.data.result).toEqual(0n);
         });
 
         it('should throw error for invalid count', async () => {
@@ -1776,19 +1771,17 @@ describe('DiceDB test cases', () => {
 
             try {
                 await db.zPopMin(key, 0);
-                expect.fail('Should have thrown error');
             } catch (error) {
                 if (error instanceof Error) {
-                    expect(error.message).to.include('count must be >= 1');
+                    expect(error.message).toContain('count must be >= 1');
                 }
             }
 
             try {
                 await db.zPopMin(key, -1);
-                expect.fail('Should have thrown error');
             } catch (error) {
                 if (error instanceof Error) {
-                    expect(error.message).to.include('count must be >= 1');
+                    expect(error.message).toContain('count must be >= 1');
                 }
             }
         });
@@ -1798,8 +1791,8 @@ describe('DiceDB test cases', () => {
             await db.set(key, 'value');
 
             const response = await db.zPopMin(key);
-            expect(response.success).to.be.false;
-            expect(response.error).to.include('wrongtype operation');
+            expect(response.success).toBe(false);
+            expect(response.error).toContain('wrongtype operation');
         });
     });
 
@@ -1816,9 +1809,9 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zRank(key, 'member2');
-            expect(response.success).to.be.true;
-            expect(response.data.result.rank).to.equal(2n);
-            expect(response.data.result.element).to.deep.equal(
+            expect(response.success).toBe(true);
+            expect(response.data.result.rank).toEqual(2n);
+            expect(response.data.result.element).toEqual(
                 new Map([['member2', 20n]]),
             );
         });
@@ -1831,10 +1824,10 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zRank(key, 'nonexistent');
-            expect(response.success).to.be.true;
-            expect(response.data.result.element.size).to.equal(1);
-            expect(response.data.result.rank).to.equal(0n); // Rank is 0 for non-existent member
-            expect(response.data.result.element.get('nonexistent')).to.equal(
+            expect(response.success).toBe(true);
+            expect(response.data.result.element.size).toEqual(1);
+            expect(response.data.result.rank).toEqual(0n); // Rank is 0 for non-existent member
+            expect(response.data.result.element.get('nonexistent')).toEqual(
                 0n, // Score is 0 for non-existent member
             );
         });
@@ -1842,9 +1835,9 @@ describe('DiceDB test cases', () => {
         it('should return 0 score and undefined member for non-existent key', async () => {
             const key = 'nonexistentKey';
             const response = await db.zRank(key, 'member1');
-            expect(response.success).to.be.true;
-            expect(response.data.result.rank).to.equal(0n); // Rank is 0 for non-existent member
-            expect(response.data.result.element).to.be.undefined; // No member found
+            expect(response.success).toBe(true);
+            expect(response.data.result.rank).toEqual(0n); // Rank is 0 for non-existent member
+            expect(response.data.result.element).toBe(undefined); // No member foun)d
         });
 
         it('should handle members with same score', async () => {
@@ -1858,11 +1851,11 @@ describe('DiceDB test cases', () => {
 
             const response1 = await db.zRank(key, 'member2');
             const response2 = await db.zRank(key, 'member3');
-            expect(response1.success).to.be.true;
-            expect(response2.success).to.be.true;
+            expect(response1.success).toBe(true);
+            expect(response2.success).toBe(true);
             // With same scores, order is lexicographical by member name
-            expect(response1.data.result.rank).to.equal(2n);
-            expect(response2.data.result.rank).to.equal(3n);
+            expect(response1.data.result.rank).toEqual(2n);
+            expect(response2.data.result.rank).toEqual(3n);
         });
 
         it('should return error for wrong type', async () => {
@@ -1870,8 +1863,8 @@ describe('DiceDB test cases', () => {
             await db.set(key, 'value');
 
             const response = await db.zRank(key, 'member1');
-            expect(response.success).to.be.false;
-            expect(response.error).to.include('wrongtype operation');
+            expect(response.success).toBe(false);
+            expect(response.error).toContain('wrongtype operation');
         });
     });
 
@@ -1889,8 +1882,8 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zRange(key, { start: 1, stop: 3 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(
                 new Map(
                     Object.entries({
                         member1: 10n,
@@ -1910,8 +1903,8 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zRange(key, { start: 1, stop: 3 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(
                 new Map(
                     Object.entries({
                         member1: 10n,
@@ -1925,8 +1918,8 @@ describe('DiceDB test cases', () => {
         it('should return empty map for non-existent key', async () => {
             const key = 'nonexistentKey';
             const response = await db.zRange(key, { start: 0, stop: 10 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(new Map());
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(new Map());
         });
 
         it('should return empty map when start is greater than set size', async () => {
@@ -1938,8 +1931,8 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zRange(key, { start: 40, stop: 50 });
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.deep.equal(new Map());
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(new Map());
         });
 
         it('should throw error when stop is less than start', async () => {
@@ -1948,10 +1941,9 @@ describe('DiceDB test cases', () => {
 
             try {
                 await db.zRange(key, { start: 2, stop: 1 });
-                expect.fail('Should have thrown error');
             } catch (error) {
                 if (error instanceof Error) {
-                    expect(error.message).to.include('stop must be >= 2');
+                    expect(error.message).toContain('stop must be >= 2');
                 }
             }
         });
@@ -1961,8 +1953,8 @@ describe('DiceDB test cases', () => {
             await db.set(key, 'value');
 
             const response = await db.zRange(key, { start: 0, stop: 1 });
-            expect(response.success).to.be.false;
-            expect(response.error).to.include('wrongtype operation');
+            expect(response.success).toBe(false);
+            expect(response.error).toContain('wrongtype operation');
         });
     });
 
@@ -1978,12 +1970,12 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zRem(key, 'member2');
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(1n); // 1 member removed
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(1n); // 1 member removed
 
             // Verify member was removed
             const card = await db.zCard(key);
-            expect(card.data.result).to.equal(2n);
+            expect(card.data.result).toEqual(2n);
         });
 
         it('should remove multiple members from sorted set', async () => {
@@ -2001,12 +1993,12 @@ describe('DiceDB test cases', () => {
                 'member3',
                 'member4',
             );
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(3n); // 3 members removed
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(3n); // 3 members removed
 
             // Verify members were removed
             const card = await db.zCard(key);
-            expect(card.data.result).to.equal(1n);
+            expect(card.data.result).toEqual(1n);
         });
 
         it('should return 0 for non-existent members', async () => {
@@ -2017,19 +2009,19 @@ describe('DiceDB test cases', () => {
             });
 
             const response = await db.zRem(key, 'nonexistent1', 'nonexistent2');
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(0n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(0n);
 
             // Verify no members were removed
             const card = await db.zCard(key);
-            expect(card.data.result).to.equal(2n);
+            expect(card.data.result).toEqual(2n);
         });
 
         it('should return 0 for non-existent key', async () => {
             const key = 'nonexistentKey';
             const response = await db.zRem(key, 'member1');
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.equal(0n);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toEqual(0n);
         });
 
         it('should return error for wrong type', async () => {
@@ -2037,26 +2029,26 @@ describe('DiceDB test cases', () => {
             await db.set(key, 'value');
 
             const response = await db.zRem(key, 'member1');
-            expect(response.success).to.be.false;
-            expect(response.error).to.include('wrongtype operation');
+            expect(response.success).toBe(false);
+            expect(response.error).toContain('wrongtype operation');
         });
     });
 
     describe('ZCardWatchCommand', () => {
         beforeEach(async () => db.flushDB());
 
-        it('should return a stream when watching a sorted set cardinality', async () => {
+        it('should return a stream when watching a sorted set cardinality', async (): Promise<void> => {
             const key = 'zsetKey1';
             const stream = await db.zCardWatch(key);
 
-            expect(stream).to.be.instanceOf(Readable);
+            expect(stream).toBeInstanceOf(Readable);
 
             return new Promise((resolve, reject) => {
                 stream.once('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
-                    expect(data.data.result).to.equal(0n); // Initial cardinality should be 0
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
+                    expect(data.data.result).toEqual(0n); // Initial cardinality should be 0
 
                     stream.destroy();
                     resolve();
@@ -2066,7 +2058,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates through the stream when members are added', async () => {
+        it('should receive updates through the stream when members are added', async (): Promise<void> => {
             const key = 'zsetKey2';
             const stream = await db.zCardWatch(key);
 
@@ -2074,9 +2066,9 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // After we see cardinality of 2, we're done
                     if (data.data.result === 2n) {
@@ -2093,7 +2085,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates through the stream when members are removed', async () => {
+        it('should receive updates through the stream when members are removed', async (): Promise<void> => {
             const key = 'zsetKey3';
 
             // First add some members
@@ -2109,9 +2101,9 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // After we see cardinality of 1, we're done
                     if (data.data.result === 1n) {
@@ -2132,18 +2124,18 @@ describe('DiceDB test cases', () => {
     describe('ZCountWatchCommand', () => {
         beforeEach(async () => db.flushDB());
 
-        it('should return a stream when watching a sorted set count', async () => {
+        it('should return a stream when watching a sorted set count', async (): Promise<void> => {
             const key = 'zsetKey4';
             const stream = await db.zCountWatch(key, { min: 0, max: 100 });
 
-            expect(stream).to.be.instanceOf(Readable);
+            expect(stream).toBeInstanceOf(Readable);
 
             return new Promise((resolve, reject) => {
                 stream.once('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
-                    expect(data.data.result).to.equal(0n); // Initial count should be 0
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
+                    expect(data.data.result).toEqual(0n); // Initial count should be 0
 
                     stream.destroy();
                     resolve();
@@ -2153,7 +2145,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates through the stream when members are added within range', async () => {
+        it('should receive updates through the stream when members are added within range', async (): Promise<void> => {
             const key = 'zsetKey5';
             const stream = await db.zCountWatch(key, { min: 0, max: 50 });
 
@@ -2161,9 +2153,9 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
                     // After we see count of 2, we're done
                     if (data.data.result === 2n) {
                         stream.destroy();
@@ -2180,7 +2172,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates when members are removed affecting the count', async () => {
+        it('should receive updates when members are removed affecting the count', async (): Promise<void> => {
             const key = 'zsetKey6';
 
             // First add some members
@@ -2197,9 +2189,9 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // After we see count of 1, we're done
                     if (data.data.result === 1n) {
@@ -2216,7 +2208,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates when member scores change affecting the count', async () => {
+        it('should receive updates when member scores change affecting the count', async (): Promise<void> => {
             const key = 'zsetKey7';
 
             // First add some members
@@ -2231,9 +2223,9 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // After count drops to 0, we're done
                     if (data.data.result === 0n) {
@@ -2250,7 +2242,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should handle infinity bounds correctly', async () => {
+        it('should handle infinity bounds correctly', async (): Promise<void> => {
             const key = 'zsetKey8';
             const stream = await db.zCountWatch(key);
 
@@ -2258,9 +2250,9 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
                     // After we see count of 2, we're done
                     if (data.data.result === 2n) {
                         stream.destroy();
@@ -2281,19 +2273,19 @@ describe('DiceDB test cases', () => {
     describe('ZRankWatchCommand', () => {
         beforeEach(async () => db.flushDB());
 
-        it('should return a stream when watching a member rank', async () => {
+        it('should return a stream when watching a member rank', async (): Promise<void> => {
             const key = 'zsetKey9';
             const stream = await db.zRankWatch(key, 'member1');
 
-            expect(stream).to.be.instanceOf(Readable);
+            expect(stream).toBeInstanceOf(Readable);
 
             return new Promise((resolve, reject) => {
                 stream.once('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
-                    expect(data.data.result.rank).to.equal(0n);
-                    expect(data.data.result.element).to.be.undefined; // Initial state
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
+                    expect(data.data.result.rank).toEqual(0n);
+                    expect(data.data.result.element).toBe(undefined); // Initial stat)e
 
                     stream.destroy();
                     resolve();
@@ -2303,7 +2295,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates when watched member is added', async () => {
+        it('should receive updates when watched member is added', async (): Promise<void> => {
             const key = 'zsetKey10';
             const stream = await db.zRankWatch(key, 'member2');
 
@@ -2311,14 +2303,14 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // After member2 is added
                     if (data.data.result.rank === 2n) {
-                        expect(data.data.result.rank).to.equal(2n);
-                        expect(data.data.result.element).to.deep.equal(
+                        expect(data.data.result.rank).toEqual(2n);
+                        expect(data.data.result.element).toEqual(
                             new Map([['member2', 20n]]),
                         );
                         stream.destroy();
@@ -2333,7 +2325,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates when rank changes due to other members', async () => {
+        it('should receive updates when rank changes due to other members', async (): Promise<void> => {
             const key = 'zsetKey11';
 
             // First add the watched member
@@ -2345,9 +2337,9 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // After rank becomes 3, we're done
                     if (data.data.result?.rank === 3n) {
@@ -2364,7 +2356,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates when watched member is removed', async () => {
+        it('should receive updates when watched member is removed', async (): Promise<void> => {
             const key = 'zsetKey12';
 
             // Set up initial sorted set
@@ -2380,14 +2372,14 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // After member2 is removed
                     if (data.data.result.rank === 0n) {
-                        expect(data.data.result.rank).to.equal(0n);
-                        expect(data.data.result.element).to.deep.equal(
+                        expect(data.data.result.rank).toEqual(0n);
+                        expect(data.data.result.element).toEqual(
                             new Map(Object.entries({ member2: 0n })),
                         );
                         stream.destroy();
@@ -2401,7 +2393,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates when watched member score changes', async () => {
+        it('should receive updates when watched member score changes', async (): Promise<void> => {
             const key = 'zsetKey13';
 
             // Set up initial sorted set
@@ -2417,14 +2409,14 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // After getting 3 rank updates
                     if (data.data.result?.rank === 3n) {
-                        expect(data.data.result.rank).to.equal(3n);
-                        expect(data.data.result.element).to.deep.equal(
+                        expect(data.data.result.rank).toEqual(3n);
+                        expect(data.data.result.element).toEqual(
                             new Map([['member2', 35n]]),
                         );
 
@@ -2441,17 +2433,17 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should handle non-existent sorted set', async () => {
+        it('should handle non-existent sorted set', async (): Promise<void> => {
             const key = 'nonExistentKeyForZRankWatch';
             const stream = await db.zRankWatch(key, 'member1');
 
             return new Promise((resolve, reject) => {
                 stream.once('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
-                    expect(data.data.result.element).to.be.undefined;
-                    expect(data.data.result.rank).to.equal(0n);
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
+                    expect(data.data.result.element).toBe(undefined);
+                    expect(data.data.result.rank).toEqual(0n);
 
                     stream.destroy();
                     resolve();
@@ -2477,18 +2469,18 @@ describe('DiceDB test cases', () => {
             }
         });
 
-        it('should return a stream when watching a score range', async () => {
+        it('should return a stream when watching a score range', async (): Promise<void> => {
             const key = 'zsetKey14';
             const stream = await db.zRangeWatch(key, { start: 0, stop: 100 });
 
-            expect(stream).to.be.instanceOf(Readable);
+            expect(stream).toBeInstanceOf(Readable);
 
             return new Promise((resolve, reject) => {
                 stream.once('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
-                    expect(data.data.result).to.deep.equal(new Map()); // Initial empty state
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
+                    expect(data.data.result).toEqual(new Map()); // Initial empty state
 
                     stream.destroy();
                     resolve();
@@ -2498,7 +2490,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates when members are added within range', async () => {
+        it('should receive updates when members are added within range', async (): Promise<void> => {
             const key = 'zsetKey15';
             const stream = await db.zRangeWatch(key, { start: 1, stop: 3 });
 
@@ -2506,13 +2498,13 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // After we see all three members in range, we're done
                     if (data.data.result.size === 3) {
-                        expect(data.data.result).to.deep.equal(
+                        expect(data.data.result).toEqual(
                             new Map(
                                 Object.entries({
                                     member1: 10n,
@@ -2536,7 +2528,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates when members are removed from range', async () => {
+        it('should receive updates when members are removed from range', async (): Promise<void> => {
             const key = 'zsetKey16';
 
             // First add some members
@@ -2552,16 +2544,16 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // After member2 is removed and we see only 2 members
                     if (
                         data.data.result.size === 2 &&
                         !data.data.result.has('member2')
                     ) {
-                        expect(data.data.result).to.deep.equal(
+                        expect(data.data.result).toEqual(
                             new Map(
                                 Object.entries({
                                     member1: 10n,
@@ -2581,7 +2573,7 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should receive updates when member scores change affecting range', async () => {
+        it('should receive updates when member scores change affecting range', async (): Promise<void> => {
             const key = 'zsetKey17';
 
             // Set up initial sorted set
@@ -2598,16 +2590,16 @@ describe('DiceDB test cases', () => {
                 stream.on('error', reject);
 
                 stream.on('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
 
                     // After member2's score is changed to be outside range
                     if (
                         data.data.result.size === 3 &&
                         !data.data.result.has('member2')
                     ) {
-                        expect(data.data.result).to.deep.equal(
+                        expect(data.data.result).toEqual(
                             new Map(
                                 Object.entries({
                                     member1: 10n,
@@ -2628,16 +2620,16 @@ describe('DiceDB test cases', () => {
             });
         });
 
-        it('should handle non-existent sorted set', async () => {
+        it('should handle non-existent sorted set', async (): Promise<void> => {
             const key = 'nonExistentKeyForZRangeWatch';
             const stream = await db.zRangeWatch(key, { start: 0, stop: 100 });
 
             return new Promise((resolve, reject) => {
                 stream.once('data', (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.error).to.be.null;
-                    expect(data.data.meta.watch).to.be.true;
-                    expect(data.data.result).to.deep.equal(new Map());
+                    expect(data.success).toBe(true);
+                    expect(data.error).toBe(null);
+                    expect(data.data.meta.watch).toBe(true);
+                    expect(data.data.result).toEqual(new Map());
 
                     stream.destroy();
                     resolve();
@@ -2667,67 +2659,67 @@ describe('DiceDB test cases', () => {
 
         it('should return all keys matching exact pattern', async () => {
             const response = await db.keys('user:1');
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.have.lengthOf(1);
-            expect(response.data.result).to.include('user:1');
+            expect(response.success).toBe(true);
+            expect(response.data.result).toHaveLength(1);
+            expect(response.data.result).toContain('user:1');
         });
 
         it('should return all keys matching wildcard pattern *', async () => {
             const response = await db.keys('*');
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.have.lengthOf(5); // All test keys
-            expect(response.data.result).to.include.members([
+            expect(response.success).toBe(true);
+            expect(response.data.result).toHaveLength(5); // All test keys
+            expect(response.data.result).toEqual(expect.arrayContaining([
                 'user:1',
                 'user:2',
                 'post:1',
                 'hash:1',
                 'zset:1',
-            ]);
+            ]));
         });
 
         it('should return all keys matching prefix pattern', async () => {
             const response = await db.keys('user:*');
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.have.lengthOf(2);
-            expect(response.data.result).to.include.members([
+            expect(response.success).toBe(true);
+            expect(response.data.result).toHaveLength(2);
+            expect(response.data.result).toEqual(expect.arrayContaining([
                 'user:1',
                 'user:2',
-            ]);
+            ]));
         });
 
         it('should return all keys matching suffix pattern', async () => {
             const response = await db.keys('*:1');
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.have.lengthOf(4);
-            expect(response.data.result).to.include.members([
+            expect(response.success).toBe(true);
+            expect(response.data.result).toHaveLength(4);
+            expect(response.data.result).toEqual(expect.arrayContaining([
                 'user:1',
                 'post:1',
                 'hash:1',
                 'zset:1',
-            ]);
+            ]));
         });
 
         it('should return all keys matching question mark pattern', async () => {
             const response = await db.keys('user:?');
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.have.lengthOf(2);
-            expect(response.data.result).to.include.members([
+            expect(response.success).toBe(true);
+            expect(response.data.result).toHaveLength(2);
+            expect(response.data.result).toEqual(expect.arrayContaining([
                 'user:1',
                 'user:2',
-            ]);
+            ]));
         });
 
         it('should return empty array for non-matching pattern', async () => {
             const response = await db.keys('nonexistent:*');
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.have.lengthOf(0);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toHaveLength(0);
         });
 
         it('should return empty array when database is empty', async () => {
             await db.flushDB();
             const response = await db.keys('*');
-            expect(response.success).to.be.true;
-            expect(response.data.result).to.have.lengthOf(0);
+            expect(response.success).toBe(true);
+            expect(response.data.result).toHaveLength(0);
         });
     });
 
@@ -2770,10 +2762,10 @@ describe('DiceDB test cases', () => {
             db.flushDB(),
         ]);
 
-        expect(data.every((d) => d.status === 'fulfilled' && d.value.success === true)).to.be.true;
+        expect(data.every((d) => d.status === 'fulfilled' && d.value.success === true)).toBe(true);
     });
 
-    after(async () => {
+    afterAll(async () => {
         await db.disconnect();
     });
 });
