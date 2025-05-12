@@ -33,7 +33,7 @@ export default class SetCommand extends Command {
     async exec(
         key: string,
         value: string | number,
-        opts: SetCommandOptions = {},
+        opts?: SetCommandOptions,
     ) {
         validateKey(key);
         validateSetValue(value);
@@ -46,7 +46,7 @@ export default class SetCommand extends Command {
             xx = false,
             nx = false,
             keepTTL = false,
-        } = opts;
+        } = opts ?? {};
 
         const cmdArgs = [key, value];
 
