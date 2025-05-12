@@ -8,7 +8,7 @@
     "lint:fix": "npx eslint . --fix",
     "bundle": "rm -rf dist && npx tsup index.ts --dts --format esm,cjs --target node18 --external all",
     "compile": "protoc -I=./dicedb-protos --es_out=target=ts:./proto dicedb-protos/*.proto",
-    "codegen": "node --loader ts-node/esm scripts/codegen.ts",
+    "codegen": "tsx scripts/codegen.ts",
     "build": "npm run compile && npm run codegen && npm run bundle",
     "test": "mocha -r tsx tests/index.test.ts",
     "docs": "npx docsify serve docs"
@@ -48,7 +48,6 @@
     "mocha": "^11.1.0",
     "nodemon": "^3.1.9",
     "ts-morph": "^25.0.1",
-    "ts-node": "^10.9.2",
     "tsup": "^8.4.0",
     "tsx": "^4.19.4",
     "typescript": "^5.8.2"
@@ -59,7 +58,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Aditya-ds-1806/dicedb-js.git"
+    "url": "git+https://github.com/Aditya-ds-1806/dicedb-driver.git"
   },
   "homepage": "https://aditya-ds-1806.github.io/dicedb-driver",
   "files": [

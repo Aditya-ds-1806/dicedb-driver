@@ -133,4 +133,7 @@ const indexFileString = buildIndexFileString();
 const registryFileString = buildRegistryFileString();
 
 await fs.writeFile(INDEX_FILE_PATH, indexFileString);
+console.log('✅ index.ts written!');
+
 await fs.writeFile(REGISTRY_FILE_PATH, registryFileString);
+console.log('✅ registry.ts written!');
