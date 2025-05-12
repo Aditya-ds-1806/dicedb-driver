@@ -4,7 +4,7 @@ import { WatchableCommand } from '../../lib/Command';
 import { validateKey } from '../../lib/Validators';
 import { COMMANDS } from '../constants/commands';
 import { ZElement } from '../../proto/res_pb';
-import { DiceDBResponse } from '../../dist';
+import { DiceDBResponse } from '../../lib/Parsers';
 
 export default class ZRankWatchCommand extends WatchableCommand {
     static get command() {
